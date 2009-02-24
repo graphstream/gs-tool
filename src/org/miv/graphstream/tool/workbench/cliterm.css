@@ -1,0 +1,24 @@
+#cliterm {
+	text-align: left;
+	color: black;
+	font-size: 11pt;
+	font-family: Monospaced;
+}
+
+#cliterm .entry {
+	color: gray;
+}
+
+#cliterm .entry .command {
+	font-size: 12pt;
+	font-weight: bold;
+	color: black;
+}
+
+#cliterm .entry .error {
+	color: red;
+}
+
+#cliterm .entry .warning {
+	color: #ff9001;
+}

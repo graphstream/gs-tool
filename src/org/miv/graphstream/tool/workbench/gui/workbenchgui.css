@@ -1,0 +1,22 @@
+node { 
+	color: black;
+}
+
+node:selected { 
+	color: red; 
+	border-color: black; 
+	border-width: 2px; 
+}
+
+edge.preselect { 
+	color: orange; 
+	width: 3px; 
+	edge-style: dashes;
+}
+	
+edge:selected { 
+	color: red; 
+	width: 2px; 
+	border-color: black; 
+	border-width: 1px;
+}
