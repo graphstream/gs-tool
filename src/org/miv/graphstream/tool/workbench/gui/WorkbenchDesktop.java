@@ -16,8 +16,8 @@
 
 package org.miv.graphstream.tool.workbench.gui;
 
-import org.miv.graphstream.algorithm.layout2.Layout;
-import org.miv.graphstream.algorithm.layout2.LayoutRunner;
+import org.miv.graphstream.ui.layout.Layout;
+import org.miv.graphstream.ui.layout.LayoutRunner;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.Edge;
