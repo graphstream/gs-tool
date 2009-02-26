@@ -33,9 +33,11 @@ import java.util.LinkedList;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
-public class ActionBox extends JPanel implements ActionListener
+public class ActionBox extends JToolBar implements ActionListener
 {
 	public static final long serialVersionUID = 0x00A00401L;
 	
@@ -48,22 +50,28 @@ public class ActionBox extends JPanel implements ActionListener
 	protected Map<Object,ActionMode> actions;
 	protected Map<JButton,ActionAccessory> accessories;
 	protected JPanel accessoryPanel;
+	protected JDialog configureDialog;
 	protected LinkedList<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	
 	public ActionBox( CLI cli )
 	{
+		super( "tools" );
+		
 		this.cli = cli;
 		this.actions = new HashMap<Object,ActionMode>();
 		this.accessories = new HashMap<JButton,ActionAccessory>();
 		this.accessoryPanel = new JPanel();
+		this.configureDialog = new JDialog();
+		configureDialog.setTitle("Configure");
+		configureDialog.add(accessoryPanel);
 		
-		JPanel buttonsPanel = new JPanel(), tmp;
-		buttonsPanel.setLayout( new GridLayout( 2, 4 ) );
+		//JPanel buttonsPanel = new JPanel(), tmp;
+		//buttonsPanel.setLayout( new GridLayout( 2, 4 ) );
 		
-		setPreferredSize( new Dimension( 100, 250 ) );
-		setLayout( new BorderLayout() );
-		add( buttonsPanel, BorderLayout.CENTER );
-		add( accessoryPanel, BorderLayout.SOUTH );
+		//setPreferredSize( new Dimension( 100, 250 ) );
+		//setLayout( new BorderLayout() );
+		//add( buttonsPanel, BorderLayout.CENTER );
+		//add( accessoryPanel, BorderLayout.SOUTH );
 		
 		Dimension buttonDim = new Dimension( 32,32 );
 		//accessoryPanel.setPreferredSize( new Dimension( 100, 75 ) );
@@ -72,76 +80,91 @@ public class ActionBox extends JPanel implements ActionListener
 		
 		JButton button = new JButton( WorkbenchUtils.getImageIcon( "node_32" ) );
 		button.setPreferredSize( buttonDim );
-		button.setBackground( WorkbenchGUI.background );
+		button.setBackground( WGui.background );
 		button.setToolTipText( "add nodes mode" );
 		button.addActionListener( this );
 		actions.put( button, ActionMode.ADD_NODE );
 		aa = new ActionAccessory.AddNodeAccessory( cli );
-		aa.setBackground( WorkbenchGUI.background );
+		aa.setBackground( WGui.background );
 		accessories.put( button, aa );
-		tmp = new JPanel();
-		tmp.add( button );
-		buttonsPanel.add( tmp );
+		add(button);
+		//tmp = new JPanel();
+		//tmp.add( button );
+		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "edge_32" ) );
 		button.setPreferredSize( buttonDim );
-		button.setBackground( WorkbenchGUI.background );
+		button.setBackground( WGui.background );
 		button.setToolTipText( "add edges mode" );
 		button.addActionListener( this );
 		actions.put( button, ActionMode.ADD_EDGE );
 		aa = new ActionAccessory.AddEdgeAccessory( cli );
-		aa.setBackground( WorkbenchGUI.background );
+		aa.setBackground( WGui.background );
 		accessories.put( button, aa );
-		tmp = new JPanel();
-		tmp.add( button );
-		buttonsPanel.add( tmp );
+		add(button);
+		//tmp = new JPanel();
+		//tmp.add( button );
+		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "select_32" ) );
 		button.setPreferredSize( buttonDim );
-		button.setBackground( WorkbenchGUI.background );
+		button.setBackground( WGui.background );
 		button.setToolTipText( "selection mode" );
 		button.addActionListener( this );
 		actions.put( button, ActionMode.SELECT );
 		aa = new ActionAccessory.SelectAccessory( cli );
-		aa.setBackground( WorkbenchGUI.background );
+		aa.setBackground( WGui.background );
 		accessories.put( button, aa );
-		tmp = new JPanel();
-		tmp.add( button );
-		buttonsPanel.add( tmp );
+		add(button);
+		//tmp = new JPanel();
+		//tmp.add( button );
+		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "node_explode_32" ) );
 		button.setPreferredSize( buttonDim );
-		button.setBackground( WorkbenchGUI.background );
+		button.setBackground( WGui.background );
 		button.setToolTipText( "delete nodes" );
 		button.addActionListener( this );
 		actions.put( button, ActionMode.DEL_NODE );
-		tmp = new JPanel();
-		tmp.add( button );
-		buttonsPanel.add( tmp );
+		add(button);
+		//tmp = new JPanel();
+		//tmp.add( button );
+		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "edge_explode_32" ) );
 		button.setPreferredSize( buttonDim );
-		button.setBackground( WorkbenchGUI.background );
+		button.setBackground( WGui.background );
 		button.setToolTipText( "delete edges" );
 		button.addActionListener( this );
 		actions.put( button, ActionMode.DEL_EDGE );
-		tmp = new JPanel();
-		tmp.add( button );
-		buttonsPanel.add( tmp );
+		add(button);
+		//tmp = new JPanel();
+		//tmp.add( button );
+		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "term_32" ) );
 		button.setPreferredSize( buttonDim );
-		button.setBackground( WorkbenchGUI.background );
+		button.setBackground( WGui.background );
 		button.setActionCommand( "open.terminal" );
 		button.setToolTipText( "open a new cli-terminal" );
 		button.addActionListener( this );
-		tmp = new JPanel();
-		tmp.add( button );
-		buttonsPanel.add( tmp );
+		add(button);
+		//tmp = new JPanel();
+		//tmp.add( button );
+		//buttonsPanel.add( tmp );
 		
-		buttonsPanel.setPreferredSize( 
-				buttonsPanel.getLayout().preferredLayoutSize( buttonsPanel ) );
-		setPreferredSize( getLayout().preferredLayoutSize( this ) );
+		add( new JToolBar.Separator() );
+		
+		button = new JButton( "configure" );
+		button.setBackground( WGui.background );
+		button.setActionCommand( "tool.configure" );
+		button.setToolTipText( "configure this tool" );
+		button.addActionListener( this );
+		add(button);
+		
+		//buttonsPanel.setPreferredSize( 
+		//		buttonsPanel.getLayout().preferredLayoutSize( buttonsPanel ) );
+		//setPreferredSize( getLayout().preferredLayoutSize( this ) );
 	}
 	
 	public void addChangeListener( ChangeListener cl )
@@ -180,6 +203,15 @@ public class ActionBox extends JPanel implements ActionListener
 		}
 		setPreferredSize( this.getLayout().preferredLayoutSize( this ) );
 		fireStateChanged();
+		
+		if( configureDialog.isVisible() )
+			configureTool();
+	}
+	
+	protected void configureTool()
+	{
+		configureDialog.pack();
+		configureDialog.setVisible(true);
 	}
 	
 // ActionListener implementation
@@ -202,5 +234,7 @@ public class ActionBox extends JPanel implements ActionListener
 			cli.getCore().saveContext();
 		else if( e.getActionCommand().equals( "new.graph" ) )
 			WorkbenchUtils.newGraph( this, cli );
+		else if( e.getActionCommand().equals( "tool.configure" ) )
+			configureTool();
 	}
 }

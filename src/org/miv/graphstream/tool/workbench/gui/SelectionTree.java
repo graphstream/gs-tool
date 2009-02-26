@@ -63,6 +63,8 @@ public class SelectionTree extends JTree
 		setModel( this.model );
 		setRootVisible( false );
 		setCellRenderer( new SelectionTreeRenderer() );
+		
+		setPreferredSize( new java.awt.Dimension( 150, 300 ) );
 	}
 	
 	public void contextChanged( ContextEvent e )
@@ -72,7 +74,12 @@ public class SelectionTree extends JTree
 	
 	protected void updateSelectionTree()
 	{
-		if( cli.getCore().getActiveContext() == null ) return;
+		if( cli.getCore().getActiveContext() == null )
+		{
+			selection.removeAllChildren();
+			model.reload(selection);
+			return;
+		}
 		if( ctx == cli.getCore().getActiveContext() ) return;
 		
 		if( ctx != null )

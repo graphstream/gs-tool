@@ -22,19 +22,24 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 
+import java.util.HashMap;
+
+import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JSplitPane;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class WorkbenchGUI extends JFrame implements ChangeListener
+public class WGui 
+	extends JFrame
+	implements ChangeListener
 {
 	public static final long serialVersionUID = 0x00A00501L;
 	
-	private static WorkbenchGUI INSTANCE = null;
+	private static WGui INSTANCE = null;
 	public static final void launchWorkbench()
 	{
-		if( INSTANCE == null ) INSTANCE = new WorkbenchGUI();
+		if( INSTANCE == null ) INSTANCE = new WGui();
 		
 		INSTANCE.setVisible( true );
 	}
@@ -43,46 +48,55 @@ public class WorkbenchGUI extends JFrame implements ChangeListener
 	
 	protected ActionBox actionBox;
 	protected InfoBox infoBox;
-	protected WorkbenchMenuBar menuBar;
+	protected WMenuBar menuBar;
 	protected WorkbenchCore core;
-	protected WorkbenchDesktop desktop;
-	protected JSplitPane splitPane;
+	protected WDesktop desktop;
+	protected SelectionTree selectionTree;
+	protected WDialog dialogSelection;
+	protected HashMap<String,WDialog> dialogs;
 	
-	private WorkbenchGUI()
+	private WGui()
 	{
 		super( "GraphStream" );
 		
+		this.dialogs = new HashMap<String,WDialog>();
 		this.core    = new WorkbenchCore();
 		this.core.setTerminalCloseAction( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
 		this.actionBox = new ActionBox( core.getCLI() );
-		this.menuBar = new WorkbenchMenuBar( this.actionBox );
-		this.desktop = new WorkbenchDesktop( core.getCLI() );
+		this.menuBar = new WMenuBar( this.actionBox );
+		this.desktop = new WDesktop( core.getCLI() );
 		this.infoBox = new InfoBox( core.getCLI() );
 		actionBox.addChangeListener( this );
+		
+		this.selectionTree = new SelectionTree( core.getCLI() );
+		core.addSelectionListener( this.selectionTree );
+		
+		WDialogManager.init(this);
+		dialogs.put( "selection", 	new WDialog( "Selection", selectionTree ) );
+		dialogs.put( "graph-infos",	new WDialog( "Graph Infos", new GraphInfo( core.getCLI()) ));
 		
 		setJMenuBar( this.menuBar );
 		setDefaultCloseOperation( EXIT_ON_CLOSE );
 		
-		splitPane = new JSplitPane( JSplitPane.VERTICAL_SPLIT );
-		splitPane.add( actionBox );
-		splitPane.add( infoBox );
-		
 		setLayout( new BorderLayout() );
-		add( splitPane, BorderLayout.CENTER );
+		add( actionBox, BorderLayout.NORTH );
 		
 		applyBackground( infoBox, actionBox, infoBox.graphInfo, infoBox.selectionTree );
 		
 		setIconImage( WorkbenchUtils.getImageIcon( "gs_logo" ).getImage() );
 	    
 		pack();
-		splitPane.setDividerLocation( 0.25 );
 		
 		this.core.addWorkbenchListener( this.desktop );
 	}
 	
+	WMenuBar getWMenuBar()
+	{
+		return menuBar;
+	}
+	
 	public void stateChanged( ChangeEvent e )
 	{
-		splitPane.resetToPreferredSizes();
 	}
 	
 	protected void applyBackground( Component ... carray )
@@ -94,10 +108,29 @@ public class WorkbenchGUI extends JFrame implements ChangeListener
 		}
 	}
 	
-// For tests
+// Launch the workbench
 	
 	public static void main( String [] args )
 	{
-		launchWorkbench();
+		
+	    try
+	    {
+	    	UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceRavenGraphiteGlassLookAndFeel");
+	    	
+			JFrame.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true);
+	    }
+	    catch (Exception e)
+	    {
+	    	System.out.println("unable to load LookAndFeel");
+	    }
+	    
+	    javax.swing.SwingUtilities.invokeLater( new Runnable()
+	    {
+	    	public void run()
+	    	{
+	    		launchWorkbench();
+	    	}
+	    } );
 	}
 }

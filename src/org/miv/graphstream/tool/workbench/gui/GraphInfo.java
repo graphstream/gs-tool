@@ -33,6 +33,7 @@ import java.awt.event.ItemEvent;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.DefaultComboBoxModel;
 
 /**
@@ -54,6 +55,7 @@ public class GraphInfo extends JPanel
 	protected Graph			listeningGraph;
 	protected GraphsModel	graphsModel;
 	
+	@SuppressWarnings("unused")
 	private GraphInfo()
 	{
 		throw new Error( "bad way" );
@@ -81,15 +83,21 @@ public class GraphInfo extends JPanel
 		tmp.add( nodesCount );
 		tmp.add( edgesCount );
 		
+		JTabbedPane tabs = new JTabbedPane();
+		tabs.addTab( "Nodes", new JPanel() );
+		tabs.addTab( "Edges", new JPanel() );
+		
 		setLayout( new BorderLayout() );
 		
 		add( tmp, BorderLayout.NORTH );
-		add( new JPanel(), BorderLayout.CENTER );
+		add( tabs, BorderLayout.CENTER );
 		
 		updateGraphInformation();
 		
 		core.addContextChangeListener( this );
 		core.addWorkbenchListener( graphsModel );
+		
+		setPreferredSize( new java.awt.Dimension( 150, 300 ) );
 	}
 	
 	protected void updateGraphInformation()

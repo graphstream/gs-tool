@@ -50,7 +50,7 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class WorkbenchDesktop implements WorkbenchListener, WindowFocusListener
+public class WDesktop implements WorkbenchListener, WindowFocusListener
 {
 	public static final long serialVersionUID = 0x00A00701L;
 	
@@ -60,7 +60,7 @@ public class WorkbenchDesktop implements WorkbenchListener, WindowFocusListener
 	protected Map<Context,ContextFrame> iframes = new HashMap<Context,ContextFrame>();
 	protected CLI cli;
 	
-	public WorkbenchDesktop( CLI cli )
+	public WDesktop( CLI cli )
 	{
 		this.cli = cli;
 	}
@@ -100,7 +100,7 @@ public class WorkbenchDesktop implements WorkbenchListener, WindowFocusListener
 		}
 	}
 	
-	protected WorkbenchDesktop _this_()
+	protected WDesktop _this_()
 	{
 		return this;
 	}
