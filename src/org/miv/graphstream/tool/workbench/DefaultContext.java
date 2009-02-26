@@ -17,7 +17,10 @@
 package org.miv.graphstream.tool.workbench;
 
 import org.miv.graphstream.tool.workbench.event.ContextListener;
+import org.miv.graphstream.tool.workbench.event.ContextListener.ElementOperation;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
+import org.miv.graphstream.tool.workbench.event.SelectionListener;
+import org.miv.graphstream.tool.workbench.event.SelectionEvent;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
@@ -50,6 +53,8 @@ public class DefaultContext implements Context, GraphListener
 	
 	protected LinkedList<ContextListener> contextListeners = new LinkedList<ContextListener>();
 	
+	protected LinkedList<SelectionListener> selectionListeners = new LinkedList<SelectionListener>();
+	
 	protected String path;
 	
 	protected boolean changed;
@@ -76,18 +81,19 @@ public class DefaultContext implements Context, GraphListener
 		if( selection.contains( e ) ) return;
 		
 		selection.addLast( e );
-		fireSelectionChanged( e, true );
+		fireSelectionAdded( e );
 	}
 
 	public void removeElementFromSelection(Element e)
 	{
 		selection.remove( e );
-		fireSelectionChanged( e, false );
+		fireSelectionRemoved( e );
 	}
 
 	public void clearSelection()
 	{
 		selection.clear();
+		fireSelectionCleared();
 	}
 
 	public Graph getGraph()
@@ -146,6 +152,16 @@ public class DefaultContext implements Context, GraphListener
 		contextListeners.remove( cl );
 	}
 	
+	public void addSelectionListener( SelectionListener sl )
+	{
+		selectionListeners.add(sl);
+	}
+	
+	public void removeSelectionListener( SelectionListener sl )
+	{
+		selectionListeners.remove(sl);
+	}
+	
 	public boolean hasChanged()
 	{
 		return changed;
@@ -166,12 +182,36 @@ public class DefaultContext implements Context, GraphListener
 			cl.contextAutolayoutChanged( ce );
 	}
 	
-	protected void fireSelectionChanged( Element e, boolean add )
+	protected void fireElementOperation( Element e, ElementOperation op, Object data )
 	{
 		ContextEvent ce = new ContextEvent( this, this );
 		
 		for( ContextListener cl: contextListeners )
-			cl.contextSelectionChanged( ce, e, add );
+			cl.contextElementOperation(ce,e,op,data);
+	}
+	
+	protected void fireSelectionAdded( Element elt )
+	{
+		SelectionEvent e = new SelectionEvent( this, this, SelectionEvent.Type.ADD, elt );
+		
+		for( SelectionListener sl: selectionListeners )
+			sl.selectionAdd(e);
+	}
+	
+	protected void fireSelectionRemoved( Element elt )
+	{
+		SelectionEvent e = new SelectionEvent( this, this, SelectionEvent.Type.REMOVE, elt );
+		
+		for( SelectionListener sl: selectionListeners )
+			sl.selectionRemove(e);
+	}
+	
+	protected void fireSelectionCleared()
+	{
+		SelectionEvent e = new SelectionEvent( this, this, SelectionEvent.Type.CLEAR );
+		
+		for( SelectionListener sl: selectionListeners )
+			sl.selectionCleared(e);
 	}
 			
 	
@@ -180,11 +220,13 @@ public class DefaultContext implements Context, GraphListener
 	public void afterNodeAdd( Graph graph, Node node )
 	{
 		changed = true;
+		fireElementOperation(node,ElementOperation.NodeAdded,null);
 	}
 
 	public void afterEdgeAdd( Graph graph, Edge edge )
 	{
 		changed = true;
+		fireElementOperation(edge,ElementOperation.EdgeAdded,null);
 	}
 
 	public void attributeChanged( Element element, String attribute,
@@ -199,6 +241,7 @@ public class DefaultContext implements Context, GraphListener
 		{
 			removeElementFromSelection( edge );
 		}
+		fireElementOperation(edge,ElementOperation.EdgeRemoved,null);
 	}
 
 	public void beforeNodeRemove( Graph graph, Node node )
@@ -207,6 +250,7 @@ public class DefaultContext implements Context, GraphListener
 		{
 			removeElementFromSelection( node );
 		}
+		fireElementOperation(node,ElementOperation.NodeRemoved,null);
 	}
 	
 	public void beforeGraphClear( Graph graph )

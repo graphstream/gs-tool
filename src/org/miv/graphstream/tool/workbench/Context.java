@@ -17,6 +17,7 @@
 package org.miv.graphstream.tool.workbench;
 
 import org.miv.graphstream.tool.workbench.event.ContextListener;
+import org.miv.graphstream.tool.workbench.event.SelectionListener;
 
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
@@ -40,6 +41,11 @@ public interface Context
 	public void addContextListener( ContextListener ce );
 	
 	public void removeContextListener( ContextListener ce );
+	
+	public void addSelectionListener( SelectionListener sl );
+	
+	public void removeSelectionListener( SelectionListener sl );
+	
 	/**
 	 * Get the graph which defines this context.
 	 * 

@@ -20,7 +20,18 @@ import org.miv.graphstream.graph.Element;
 
 public interface ContextListener
 {
+	public static enum ElementOperation
+	{
+		NodeAdded,
+		NodeRemoved,
+		EdgeAdded,
+		EdgeRemoved,
+		AttributeChanged,
+		GraphClear
+	}
+	
 	public void contextAutolayoutChanged( ContextEvent ce );
 	
-	public void contextSelectionChanged( ContextEvent ce, Element e, boolean add );
+	public void contextElementOperation( ContextEvent ce, Element e, 
+			ElementOperation op, Object data );
 }

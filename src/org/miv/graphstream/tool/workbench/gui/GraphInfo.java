@@ -21,7 +21,7 @@ import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
-import org.miv.graphstream.tool.workbench.WorkbenchCore;
+import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.cli.CLI;
 import org.miv.graphstream.tool.workbench.event.*;
 
@@ -33,6 +33,7 @@ import java.awt.event.ItemEvent;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.DefaultComboBoxModel;
 
@@ -47,7 +48,7 @@ public class GraphInfo extends JPanel
 {
 	public static final long serialVersionUID = 0x00A00A01L;
 	
-	protected WorkbenchCore core;
+	protected WCore core;
 	protected CLI			cli;
 	protected JLabel		graphId;
 	protected JLabel		nodesCount;
@@ -83,13 +84,29 @@ public class GraphInfo extends JPanel
 		tmp.add( nodesCount );
 		tmp.add( edgesCount );
 		
-		JTabbedPane tabs = new JTabbedPane();
-		tabs.addTab( "Nodes", new JPanel() );
-		tabs.addTab( "Edges", new JPanel() );
-		
 		setLayout( new BorderLayout() );
 		
 		add( tmp, BorderLayout.NORTH );
+		
+		tmp = new JPanel();
+		tmp.setLayout( new BorderLayout() );
+		WElementList nodeList = WElementList.createNodeList(core); 
+		JScrollPane nodeListSP = new JScrollPane(nodeList);
+		tmp.setPreferredSize(new java.awt.Dimension(150,300));
+		tmp.add( nodeListSP, BorderLayout.CENTER );
+		
+		JTabbedPane tabs = new JTabbedPane();
+		tabs.addTab( "Nodes", tmp );
+		
+		tmp = new JPanel();
+		tmp.setLayout( new BorderLayout() );
+		WElementList edgeList = WElementList.createEdgeList(core); 
+		JScrollPane edgeListSP = new JScrollPane(edgeList);
+		tmp.setPreferredSize(new java.awt.Dimension(150,300));
+		tmp.add( edgeListSP, BorderLayout.CENTER );
+		
+		tabs.addTab( "Edges", tmp );
+		
 		add( tabs, BorderLayout.CENTER );
 		
 		updateGraphInformation();

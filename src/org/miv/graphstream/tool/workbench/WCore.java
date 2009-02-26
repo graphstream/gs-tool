@@ -34,7 +34,8 @@ import java.util.LinkedList;
  * @author Guilhelm Savin
  *
  */
-public class WorkbenchCore implements ContextListener
+public class WCore
+	implements ContextListener, SelectionListener
 {
 	public static final String DEFAULT_GRAPH_CLASS = "org.miv.graphstream.graph.implementations.DefaultGraph";
 	public static final String DEFAULT_CONTEXT_CLASS = "org.miv.graphstream.tool.workbench.DefaultContext";
@@ -55,6 +56,7 @@ public class WorkbenchCore implements ContextListener
 	private int activeCtx = -1;
 	private int createdCtx = 0;
 	private LinkedList<ContextChangeListener> contextChangeListeners = new LinkedList<ContextChangeListener>();
+	private LinkedList<ContextListener> contextListeners = new LinkedList<ContextListener>();
 	private LinkedList<WorkbenchListener> workbenchListeners = new LinkedList<WorkbenchListener>();
 	private LinkedList<SelectionListener> selectionListeners = new LinkedList<SelectionListener>();
 	private CLI cli;
@@ -63,7 +65,7 @@ public class WorkbenchCore implements ContextListener
 	private ActionMode actionMode;
 	private WorkbenchEnvironment env;
 	
-	public WorkbenchCore()
+	public WCore()
 	{
 		cli    = new CLI( this );
 		ctxs   = new LinkedList<Context>();
@@ -93,6 +95,11 @@ public class WorkbenchCore implements ContextListener
 	public int getActiveContextNumber()
 	{
 		return activeCtx;
+	}
+	
+	public void exit()
+	{
+		System.exit(0);
 	}
 	
 	public Context createNewContext()
@@ -189,16 +196,23 @@ public class WorkbenchCore implements ContextListener
 	public void selectContext( String id )
 	{
 		int i = ctxsid.indexOf( id );
-		if( i>=0 ) selectContext(i);
+		
+		if( i>=0 )
+			selectContext(i);
 	}
 	
 	public void selectContext( int i )
 	{
-		if( i<0 || i>ctxs.size() ) return;
+		if( i<0 || i>ctxs.size() )
+			return;
 		
 		if( i != activeCtx )
 		{
+			ctxs.get(activeCtx).removeContextListener(this);
+			ctxs.get(activeCtx).removeSelectionListener(this);
 			activeCtx = i;
+			ctxs.get(activeCtx).addContextListener(this);
+			ctxs.get(activeCtx).addSelectionListener(this);
 			fireContextChanged();
 		}
 	}
@@ -305,21 +319,124 @@ public class WorkbenchCore implements ContextListener
 		return this.actionMode;
 	}
 	
-// ContextListener implementation
+// ContextListener operations
+
+	/**
+	 * Add a ContextListener to the active context.
+	 * 
+	 * @param cl the ContextListener
+	 */
+	public void addContextListener( ContextListener cl )
+	{
+		this.contextListeners.add(cl);
+	}
 	
+	/**
+	 * Remove a ContextListener from the active context.
+	 * 
+	 * @param cl the ContextListener
+	 */
+	public void removeContextListener( ContextListener cl )
+	{
+		this.contextListeners.remove(cl);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.event.ContextListener
+	 */
 	public void contextAutolayoutChanged( ContextEvent ce )
 	{
+		for( ContextListener cl : contextListeners )
+			cl.contextAutolayoutChanged(ce);
 	}
 	
-	public void contextSelectionChanged( ContextEvent ce, Element e, boolean add )
+	/**
+	 * @see org.miv.graphstream.tool.workbench.event.ContextListener
+	 */
+	public void contextElementOperation( ContextEvent ce, Element e, 
+			ElementOperation op, Object data )
 	{
-		if( ce == null ) return;
-		
-		if( add )
-			fireSelectionAdd( ce.getContext(), e );
-		else
-			fireSelectionRemove( ce.getContext(), e );
+		for( ContextListener cl : contextListeners )
+			cl.contextElementOperation(ce,e,op,data);
 	}
+	
+// ContextChangeListener operations
+	
+	protected void fireContextChanged()
+	{
+		ContextEvent cce = new ContextEvent( this, 
+				activeCtx < ctxs.size() && activeCtx >= 0 ? ctxs.get( activeCtx ) : null );
+		
+		for( ContextChangeListener ccl : contextChangeListeners )
+			ccl.contextChanged(cce);
+		for( WorkbenchListener wl: workbenchListeners )
+			wl.contextChanged( cce );
+	}
+	
+	protected void fireContextAdded( Context ctx )
+	{
+		ContextEvent ce = new ContextEvent( this, ctx );
+		
+		for( WorkbenchListener wl: workbenchListeners )
+			wl.contextAdded( ce );
+	}
+	
+	protected void fireContextRemoved( Context ctx )
+	{
+		ContextEvent ce = new ContextEvent( this, ctx );
+		
+		for( WorkbenchListener wl: workbenchListeners )
+			wl.contextRemoved( ce );
+	}
+	
+// SelectionListener operations
+	
+	public void addSelectionListener( SelectionListener sl )
+	{
+		this.selectionListeners.addLast( sl );
+	}
+	
+	public void removeSelectionListener( SelectionListener sl )
+	{
+		this.selectionListeners.remove( sl );
+	}
+	
+	protected void fireSelectionAdd( Context ctx, Element e )
+	{
+		SelectionEvent se = new SelectionEvent( this, ctx, SelectionEvent.Type.ADD, e );
+		selectionAdd(se);
+	}
+	
+	public void selectionAdd( SelectionEvent se )
+	{
+		for( SelectionListener sl: selectionListeners )
+			sl.selectionAdd( se );
+	}
+	
+	protected void fireSelectionRemove( Context ctx, Element e )
+	{
+		SelectionEvent se = new SelectionEvent( this, ctx, SelectionEvent.Type.REMOVE, e );
+		selectionRemove(se);
+	}
+	
+	public void selectionRemove( SelectionEvent se )
+	{
+		for( SelectionListener sl: selectionListeners )
+			sl.selectionRemove( se );
+	}
+	
+	protected void fireSelectionCleared( Context ctx )
+	{
+		SelectionEvent se = new SelectionEvent( this, ctx, SelectionEvent.Type.CLEAR );
+		selectionCleared( se );
+	}
+	
+	public void selectionCleared( SelectionEvent se )
+	{
+		for( SelectionListener sl: selectionListeners )
+			sl.selectionCleared( se );
+	}
+	
 	
 // Clipboard operations
 	
@@ -419,68 +536,7 @@ public class WorkbenchCore implements ContextListener
 		this.workbenchListeners.remove( wl );
 	}
 	
-	public void addSelectionListener( SelectionListener sl )
-	{
-		this.selectionListeners.addLast( sl );
-	}
-	
-	public void removeSelectionListener( SelectionListener sl )
-	{
-		this.selectionListeners.remove( sl );
-	}
-	
 // Fired methods
-	
-	protected void fireContextChanged()
-	{
-		ContextEvent cce = new ContextEvent( this, 
-				activeCtx < ctxs.size() && activeCtx >= 0 ? ctxs.get( activeCtx ) : null );
-		
-		for( ContextChangeListener ccl : contextChangeListeners )
-			ccl.contextChanged(cce);
-		for( WorkbenchListener wl: workbenchListeners )
-			wl.contextChanged( cce );
-	}
-	
-	protected void fireContextAdded( Context ctx )
-	{
-		ContextEvent ce = new ContextEvent( this, ctx );
-		
-		for( WorkbenchListener wl: workbenchListeners )
-			wl.contextAdded( ce );
-	}
-	
-	protected void fireContextRemoved( Context ctx )
-	{
-		ContextEvent ce = new ContextEvent( this, ctx );
-		
-		for( WorkbenchListener wl: workbenchListeners )
-			wl.contextRemoved( ce );
-	}
-	
-	protected void fireSelectionAdd( Context ctx, Element e )
-	{
-		SelectionEvent se = new SelectionEvent( this, ctx, SelectionEvent.Type.ADD, e );
-		
-		for( SelectionListener sl: selectionListeners )
-			sl.selectionAdd( se );
-	}
-	
-	protected void fireSelectionRemove( Context ctx, Element e )
-	{
-		SelectionEvent se = new SelectionEvent( this, ctx, SelectionEvent.Type.REMOVE, e );
-		
-		for( SelectionListener sl: selectionListeners )
-			sl.selectionRemove( se );
-	}
-	
-	protected void fireSelectionCleared( Context ctx )
-	{
-		SelectionEvent se = new SelectionEvent( this, ctx, SelectionEvent.Type.CLEAR );
-		
-		for( SelectionListener sl: selectionListeners )
-			sl.selectionCleared( se );
-	}
 	
 	protected void fireContextShow( Context ctx )
 	{
@@ -505,6 +561,8 @@ public class WorkbenchCore implements ContextListener
 		if( ctxs.size() == 1 )
 		{
 			activeCtx = 0;
+			ctxs.get(activeCtx).addContextListener(this);
+			ctxs.get(activeCtx).addSelectionListener(this);
 			fireContextChanged();
 		}
 	}
@@ -516,13 +574,5 @@ public class WorkbenchCore implements ContextListener
 		int id = ctxs.indexOf( ctx );
 		ctxs.remove( id );
 		ctxsid.remove( id );
-	}
-	
-// Used for tests
-	
-	public static void main( String [] args )
-	{
-		WorkbenchCore core = new WorkbenchCore();
-		core.openTerminal();
 	}
 }

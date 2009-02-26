@@ -63,8 +63,6 @@ public class SelectionTree extends JTree
 		setModel( this.model );
 		setRootVisible( false );
 		setCellRenderer( new SelectionTreeRenderer() );
-		
-		setPreferredSize( new java.awt.Dimension( 150, 300 ) );
 	}
 	
 	public void contextChanged( ContextEvent e )
@@ -159,6 +157,7 @@ public class SelectionTree extends JTree
 	{
 		public static final long serialVersionUID = 0x00A00E01L;
 		
+		@SuppressWarnings("unchecked")
 		public SelectionTreeNode( Object val, boolean isLeaf )
 		{
 			super( val, isLeaf ? null : new Hashtable() );

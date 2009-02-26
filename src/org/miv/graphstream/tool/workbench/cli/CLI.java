@@ -17,7 +17,7 @@
 package org.miv.graphstream.tool.workbench.cli;
 
 import org.miv.graphstream.tool.workbench.Context;
-import org.miv.graphstream.tool.workbench.WorkbenchCore;
+import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.ContextChangeListener;
 
@@ -92,9 +92,9 @@ public class CLI implements ContextChangeListener
 	}
 	
 	protected Context ctx;
-	protected WorkbenchCore core;
+	protected WCore core;
 	
-	public CLI( WorkbenchCore core )
+	public CLI( WCore core )
 	{
 		this.core = core;
 		this.ctx  = null;
@@ -113,7 +113,7 @@ public class CLI implements ContextChangeListener
 		return CLICommand.createErrorMessage( "unknown command \"<i>" + cmd + "</i>\"" );
 	}
 	
-	public WorkbenchCore getCore()
+	public WCore getCore()
 	{
 		return core;
 	}

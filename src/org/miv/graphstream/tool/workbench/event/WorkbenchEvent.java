@@ -16,14 +16,14 @@
 
 package org.miv.graphstream.tool.workbench.event;
 
-import org.miv.graphstream.tool.workbench.WorkbenchCore;
+import org.miv.graphstream.tool.workbench.WCore;
 import java.util.EventObject;
 
 public class WorkbenchEvent extends EventObject
 {
 	public static final long serialVersionUID = 0x00A00901L;
 	
-	public WorkbenchEvent( WorkbenchCore src )
+	public WorkbenchEvent( WCore src )
 	{
 		super( src );
 	}

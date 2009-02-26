@@ -23,8 +23,9 @@ import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.tool.workbench.Context;
 import org.miv.graphstream.tool.workbench.WorkbenchEnvironment;
-import org.miv.graphstream.tool.workbench.WorkbenchCore.ActionMode;
+import org.miv.graphstream.tool.workbench.WCore.ActionMode;
 import org.miv.graphstream.tool.workbench.cli.CLI;
+import org.miv.graphstream.tool.workbench.event.SelectionEvent;
 import org.miv.graphstream.tool.workbench.event.WorkbenchListener;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.ContextListener;
@@ -377,14 +378,36 @@ public class WDesktop implements WorkbenchListener, WindowFocusListener
 			}
 		}
 		
-		public void contextSelectionChanged( ContextEvent ce, Element e, boolean add )
+		public void contextElementOperation( ContextEvent ce, Element e, 
+				ElementOperation op, Object data )
 		{
-			if( add )
-				e.addAttribute( "ui.selected", "" );
-			else
-				e.removeAttribute( "ui.selected" );
+			
 		}
 
+	// SelectionListener implementation
+		
+		/**
+		 * @see org.miv.graphstream.tool.workbench.event.SelectionListener
+		 */
+		public void selectionAdd( SelectionEvent e )
+		{
+			e.getElement().addAttribute( "ui.selected", "" );
+		}
+		/**
+		 * @see org.miv.graphstream.tool.workbench.event.SelectionListener
+		 */
+		public void selectionRemove( SelectionEvent e )
+		{
+			e.getElement().removeAttribute( "ui.selected" );
+		}
+		/**
+		 * @see org.miv.graphstream.tool.workbench.event.SelectionListener
+		 */
+		public void selectionCleared( SelectionEvent e )
+		{
+			
+		}
+		
 	// WindowListener implementation
 		
 		public void windowClosing(WindowEvent e)

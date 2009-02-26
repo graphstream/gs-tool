@@ -19,10 +19,14 @@
 		<item name="Options" command="options"/>
 	</menu>
 	<menu id="dialog" name="Dialog"></menu>
+	<menu id="algorithm" name="Algorithms">
+		<menu id="algorithm:coloring" name="Coloring"></menu>
+		<menu id="algorithm:generator" name="Generators"></menu></menu>
 	<menu id="help" name="Help">
 		<item name="Manual" command="menu.help.manual"/>
 		<item name="Tutorials" command="menu.help.tutorials"/>
 		<separator/>
 		<item name="About" command="menu.help.about"/>
 	</menu>
+	
 </gswb-menubar>

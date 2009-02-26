@@ -16,7 +16,7 @@
 
 package org.miv.graphstream.tool.workbench.gui;
 
-import org.miv.graphstream.tool.workbench.WorkbenchCore;
+import org.miv.graphstream.tool.workbench.WCore;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -26,6 +26,8 @@ import java.util.HashMap;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -49,7 +51,7 @@ public class WGui
 	protected ActionBox actionBox;
 	protected InfoBox infoBox;
 	protected WMenuBar menuBar;
-	protected WorkbenchCore core;
+	protected WCore core;
 	protected WDesktop desktop;
 	protected SelectionTree selectionTree;
 	protected WDialog dialogSelection;
@@ -60,7 +62,7 @@ public class WGui
 		super( "GraphStream" );
 		
 		this.dialogs = new HashMap<String,WDialog>();
-		this.core    = new WorkbenchCore();
+		this.core    = new WCore();
 		this.core.setTerminalCloseAction( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
 		this.actionBox = new ActionBox( core.getCLI() );
 		this.menuBar = new WMenuBar( this.actionBox );
@@ -71,9 +73,15 @@ public class WGui
 		this.selectionTree = new SelectionTree( core.getCLI() );
 		core.addSelectionListener( this.selectionTree );
 		
+		JPanel tmp = new JPanel();
+		tmp.setPreferredSize(new java.awt.Dimension( 150, 300 ));
+		tmp.setLayout( new BorderLayout() );
+		JScrollPane scroll = new JScrollPane(selectionTree);
+		tmp.add( scroll, BorderLayout.CENTER );
+		
 		WDialogManager.init(this);
-		dialogs.put( "selection", 	new WDialog( "Selection", selectionTree ) );
-		dialogs.put( "graph-infos",	new WDialog( "Graph Infos", new GraphInfo( core.getCLI()) ));
+		dialogs.put( "selection", 	new WDialog( "Selection", tmp ) );
+		dialogs.put( "graph-infos",	new WDialog( "Graph Infos", new GraphInfo(core.getCLI()) ));
 		
 		setJMenuBar( this.menuBar );
 		setDefaultCloseOperation( EXIT_ON_CLOSE );

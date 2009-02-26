@@ -16,11 +16,10 @@
 
 package org.miv.graphstream.tool.workbench.gui;
 
-import org.miv.graphstream.tool.workbench.WorkbenchCore.ActionMode;
+import org.miv.graphstream.tool.workbench.WCore.ActionMode;
 import org.miv.graphstream.tool.workbench.cli.CLI;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -37,7 +36,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-public class ActionBox extends JToolBar implements ActionListener
+public class ActionBox
+	extends JToolBar
+	implements ActionListener
 {
 	public static final long serialVersionUID = 0x00A00401L;
 	
@@ -65,16 +66,7 @@ public class ActionBox extends JToolBar implements ActionListener
 		configureDialog.setTitle("Configure");
 		configureDialog.add(accessoryPanel);
 		
-		//JPanel buttonsPanel = new JPanel(), tmp;
-		//buttonsPanel.setLayout( new GridLayout( 2, 4 ) );
-		
-		//setPreferredSize( new Dimension( 100, 250 ) );
-		//setLayout( new BorderLayout() );
-		//add( buttonsPanel, BorderLayout.CENTER );
-		//add( accessoryPanel, BorderLayout.SOUTH );
-		
 		Dimension buttonDim = new Dimension( 32,32 );
-		//accessoryPanel.setPreferredSize( new Dimension( 100, 75 ) );
 		accessoryPanel.setLayout( new BorderLayout() );
 		ActionAccessory aa;
 		
@@ -88,9 +80,6 @@ public class ActionBox extends JToolBar implements ActionListener
 		aa.setBackground( WGui.background );
 		accessories.put( button, aa );
 		add(button);
-		//tmp = new JPanel();
-		//tmp.add( button );
-		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "edge_32" ) );
 		button.setPreferredSize( buttonDim );
@@ -102,9 +91,6 @@ public class ActionBox extends JToolBar implements ActionListener
 		aa.setBackground( WGui.background );
 		accessories.put( button, aa );
 		add(button);
-		//tmp = new JPanel();
-		//tmp.add( button );
-		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "select_32" ) );
 		button.setPreferredSize( buttonDim );
@@ -116,9 +102,6 @@ public class ActionBox extends JToolBar implements ActionListener
 		aa.setBackground( WGui.background );
 		accessories.put( button, aa );
 		add(button);
-		//tmp = new JPanel();
-		//tmp.add( button );
-		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "node_explode_32" ) );
 		button.setPreferredSize( buttonDim );
@@ -127,9 +110,6 @@ public class ActionBox extends JToolBar implements ActionListener
 		button.addActionListener( this );
 		actions.put( button, ActionMode.DEL_NODE );
 		add(button);
-		//tmp = new JPanel();
-		//tmp.add( button );
-		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "edge_explode_32" ) );
 		button.setPreferredSize( buttonDim );
@@ -138,9 +118,6 @@ public class ActionBox extends JToolBar implements ActionListener
 		button.addActionListener( this );
 		actions.put( button, ActionMode.DEL_EDGE );
 		add(button);
-		//tmp = new JPanel();
-		//tmp.add( button );
-		//buttonsPanel.add( tmp );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "term_32" ) );
 		button.setPreferredSize( buttonDim );
@@ -149,9 +126,6 @@ public class ActionBox extends JToolBar implements ActionListener
 		button.setToolTipText( "open a new cli-terminal" );
 		button.addActionListener( this );
 		add(button);
-		//tmp = new JPanel();
-		//tmp.add( button );
-		//buttonsPanel.add( tmp );
 		
 		add( new JToolBar.Separator() );
 		
@@ -161,10 +135,6 @@ public class ActionBox extends JToolBar implements ActionListener
 		button.setToolTipText( "configure this tool" );
 		button.addActionListener( this );
 		add(button);
-		
-		//buttonsPanel.setPreferredSize( 
-		//		buttonsPanel.getLayout().preferredLayoutSize( buttonsPanel ) );
-		//setPreferredSize( getLayout().preferredLayoutSize( this ) );
 	}
 	
 	public void addChangeListener( ChangeListener cl )
@@ -236,5 +206,7 @@ public class ActionBox extends JToolBar implements ActionListener
 			WorkbenchUtils.newGraph( this, cli );
 		else if( e.getActionCommand().equals( "tool.configure" ) )
 			configureTool();
+		else if( e.getActionCommand().equals("quit") )
+			cli.getCore().exit();
 	}
 }
