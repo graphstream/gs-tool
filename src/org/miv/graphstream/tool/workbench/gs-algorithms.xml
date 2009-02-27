@@ -1,63 +1,48 @@
 <gs-algorithms>
 	<algorithm name="APSP" class="org.miv.graphstream.algorithm.APSP" category="default">
-		<description>
-This class defines algorithms that compute all shortest paths lengths 
-between all pair of nodes in a given graph. 
-This algorithm uses the Floyd-Warshal algorithm, that effectively runs
-in O(n^3). This may seems a very large complexity, however this algorithm 
-may perform better than running several Dijkstra on all node pairs of 
-the graph when the graph becomes dense.</description>
+		<description><h2>The APSP algorithm</h2><p>This class defines algorithms that compute all shortest<br/>paths lengths between all pair of nodes in a given graph.<br/>This algorithm uses the Floyd-Warshal algorithm, that<br/>effectively runs in O(n^3). This may seems a very large<br/>complexity, however this algorithm may perform better than<br/>running several Dijkstra on all node pairs of the graph when<br/>the graph becomes dense.</p></description>
 		<parameter name="weightAttributeName" type="java.lang.String"/>
 		<parameter name="directed" type="boolean"/>
 	</algorithm>
 	<algorithm name="AStar" class="org.miv.graphstream.algorithm.AStar" category="default">
-		<description>
-A* computes the shortest path from a node to another in a graph.
-It can eventually fail if the two nodes are in two distinct connected
-components.	
-		</description>
+		<description><h2>The A* algorithm</h2><p>A* computes the shortest path from a node to another in a<br/>graph. It can eventually fail if the two nodes are in two<br/>distinct connected components.</p></description>
 		<parameter name="source" type="org.miv.graphstream.graph.Node"/>
 		<parameter name="target" type="org.miv.graphstream.graph.Node"/>
 	</algorithm>
 	<algorithm name="BellmanFord" class="org.miv.graphstream.algorithm.BellmanFord" category="default">
-		<description>
-The BellmanFord algorithm computes single-source shortest paths in a
-weighted digraph (where some of the edge weights may be negative). Dijkstra's
-algorithm accomplishes the same problem with a lower running time, but
-requires edge weights to be non-negative. Thus, BellmanFord is usually used
-only when there are negative edge weights.
-		</description>
+		<description><h2>The BellmanFord algorithm</h2><p>The BellmanFord algorithm computes single-source shortest<br/>paths in a weighted digraph (where some of the edge weights<br/>may be negative). Dijkstra's algorithm accomplishes the same<br/>problem with a lower running time, but requires edge weights<br/>to be non-negative. Thus, BellmanFord is usually used only<br/>when there are negative edge weights.</p></description>
 		<parameter name="attribute" type="java.lang.String"/>
 		<parameter name="source" type="java.lang.String"/>
 	</algorithm>
 	<algorithm name="WelshPowell" class="org.miv.graphstream.algorithm.coloring.WelshPowell" category="coloring">
-		<description>
-This class is intended to give some algorithm for computing the well-known
-coloring problem. It provides the Welsh and Powell greedy algorithm that may
-used as a static method.
-		</description>
+		<description><h2>The Welsh and Powell algorithm</h2><p>This class is intended to give some algorithm for computing<br/>the well-known coloring problem. It provides the Welsh and<br/>Powell greedy algorithm that may used as a static method.</p></description>
 		<parameter name="modify" type="boolean"/>
 		<parameter name="attribute" type="java.lang.String"/>
 	</algorithm>
 	<algorithm name="RandomGenerator" class="org.miv.graphstream.algorithm.generator.RandomGenerator" category="generator">
-		<description>
-This generator creates random graphs of any size. Calling
-begin(Graph) put one unique node in the graph, then
-nextElement() will add a new node each time it is called and
-connect this node randomly to others.
-		</description>
+		<description><h2>The random generator</h2><p>This generator creates random graphs of any size. Calling<br/>begin(Graph) put one unique node in the graph, then<br/>nextElement() will add a new node each time it is called and<br/>connect this node randomly to others.</p></description>
 		<parameter name="averageDegree" type="int"/>
 		<parameter name="directed" type="boolean"/>
 		<parameter name="randomlyDirectedEdges" type="boolean"/>
 	</algorithm>
 	<algorithm name="GraphNervousness" class="org.miv.graphstream.algorithm.measure.GraphNervousness" category="measure">
-		<description>
-The graph nervousness is a measure that give for each step of a dynamic graph a ratio
-between the number of structural events ( addition and removal of nodes and edges) and the number
-of elements (nodes and edges) in the graph.
-
-This measure is different from the Element Nervousness even different from the average element
-nervousness.
-		</description>
+		<description><h2>The graph nervousness measure</h2><p>The graph nervousness is a measure that give for each step<br/>of a dynamic graph a ratio between the number of structural<br/>events ( addition and removal of nodes and edges) and the<br/>number of elements (nodes and edges) in the graph.<br/><br/>This measure is different from the Element Nervousness even<br/>			different from the average element nervousness.</p></description>
+	</algorithm>
+	<algorithm name="GridGenerator"
+		class="org.miv.graphstream.algorithm.generator.GridGenerator"
+		category="generator">
+		<description><h2>The grid generator</h2><p>
+			Generator for grids.
+			</p></description>
+		<parameter name="cross" type="boolean"></parameter>
+		<parameter name="tore" type="boolean"></parameter>
+		<parameter name="generateXY" type="boolean"></parameter>
+		<parameter name="directed" type="boolean"></parameter>
+	</algorithm>
+	<algorithm name="DorogovtsevMendesGenerator"
+		class="org.miv.graphstream.algorithm.generator.DorogovtsevMendesGenerator"
+		category="generator">
+		<description><h2>The Dorogovtsev Mendes generator</h2><p>Generates a graph using the Dorogovtsev - Mendes algorithm. This starts by<br/>creating three nodes and tree edges, making a triangle, and then add one<br/>node at a time. Each time a node is added, an edge is choosed randomly and<br/>the node is connected to the two extremities of this edge.</p>
+			</description>
 	</algorithm>
 </gs-algorithms>

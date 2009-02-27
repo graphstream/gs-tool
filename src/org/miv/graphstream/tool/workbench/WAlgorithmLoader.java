@@ -28,7 +28,16 @@ public class WAlgorithmLoader
 			      String qName, Attributes atts)
 			throws SAXException
 		{
-			if( qName.equals("gs-algorithms") )
+			if( readingDesc )
+			{
+				desc.append("<" + qName );
+				for( int i = 0; i < atts.getLength(); i++ )
+				{
+					desc.append( String.format( " %s=\"%s\"", atts.getQName(i), atts.getValue(i) ));
+				}
+				desc.append(">");
+			}
+			else if( qName.equals("gs-algorithms") )
 				rooted = true;
 			else if( qName.equals("algorithm") )
 			{
@@ -103,7 +112,11 @@ public class WAlgorithmLoader
 		
 		public void endElement(String uri, String localName, String qName)
 		{
-			if( qName.equals("algorithm") )
+			if( readingDesc && ! qName.equals("description") )
+			{
+					desc.append("</" + qName + ">");
+			}
+			else if( qName.equals("algorithm") )
 			{
 				WAlgorithm.register(current);
 				
@@ -115,6 +128,7 @@ public class WAlgorithmLoader
 				if( current == null )
 					return;
 				
+				System.err.println(desc);
 				current.setDescription(desc.toString());
 				readingDesc = false;
 			}

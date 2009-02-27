@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.StringReader;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -50,6 +51,8 @@ import javax.swing.JTextPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataListener;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 public class WAlgorithmGUI
 	extends JDialog
@@ -360,8 +363,27 @@ public class WAlgorithmGUI
 		setLayout( new BorderLayout() );
 		setTitle( "Algorithm : " + algorithm.getName() );
 		
+		HTMLEditorKit editor = new HTMLEditorKit();
+		HTMLDocument doc = (HTMLDocument) editor.createDefaultDocument();
+		StringReader in = new StringReader( 
+				"<html>" +
+				"<head></head>" +
+				"<body><div id='content'>" + 
+				algorithm.getDescription() + 
+				"</div></body></html>" );
+		try
+		{
+			editor.read(in,doc,0);
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+		
 		JTextPane desc = new JTextPane();
-		desc.setText(algorithm.getDescription());
+		desc.setEditorKit(editor);
+		desc.setDocument(doc);
+		//desc.setText(algorithm.getDescription());
 		desc.setEditable(false);
 		add( desc, BorderLayout.CENTER );
 		
@@ -449,6 +471,24 @@ public class WAlgorithmGUI
 	
 	public void algorithmError( WAlgorithm algo, String error )
 	{
+		if( SwingUtilities.isEventDispatchThread() )
+		{
+
+			JOptionPane.showMessageDialog(this, error, "Algorithm error", 
+					JOptionPane.ERROR_MESSAGE );
+		}
+		else
+		{
+			final String ferror = error;
+			SwingUtilities.invokeLater( new Runnable()
+			{
+				public void run()
+				{
+					JOptionPane.showMessageDialog(WAlgorithmGUI.this, ferror, "Algorithm error", 
+							JOptionPane.ERROR_MESSAGE );
+				}
+			} );
+		}
 		JOptionPane.showMessageDialog(this, error, "Algorithm error", 
 				JOptionPane.ERROR_MESSAGE );
 	}

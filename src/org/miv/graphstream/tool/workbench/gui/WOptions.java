@@ -167,10 +167,10 @@ public class WOptions
 	{
 		try
 		{
-			javax.swing.JFrame.setDefaultLookAndFeelDecorated(false);
-			javax.swing.JDialog.setDefaultLookAndFeelDecorated(false);
+			//javax.swing.JFrame.setDefaultLookAndFeelDecorated(false);
+			//javax.swing.JDialog.setDefaultLookAndFeelDecorated(false);
 			
-			UIManager.getLookAndFeel().uninitialize();
+			//UIManager.getLookAndFeel().uninitialize();
 			UIManager.setLookAndFeel(name);
 			
 			javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);

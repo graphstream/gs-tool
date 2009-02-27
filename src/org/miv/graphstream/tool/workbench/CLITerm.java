@@ -150,8 +150,8 @@ public class CLITerm extends JPanel
 		doc = (HTMLDocument) editor.createDefaultDocument();
 		try
 		{
-			URL url = ClassLoader.getSystemResource( DEFAULT_STYLE );
-			doc.getStyleSheet().loadRules( new InputStreamReader( url.openStream() ), null );
+			//URL url = ClassLoader.getSystemResource( DEFAULT_STYLE );
+			//doc.getStyleSheet().loadRules( new InputStreamReader( url.openStream() ), null );
 		}
 		catch( Exception e )
 		{

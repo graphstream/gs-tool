@@ -294,7 +294,7 @@ public class WAlgorithm
 	{
 		Generator gen = null;
 		
-		if( parameters == null )
+		if( parameters == null || parameters.size() == 0 )
 			gen = (Generator) c.newInstance();
 		else
 		{
