@@ -23,9 +23,12 @@ import java.awt.event.InputEvent;
 
 import java.io.InputStream;
 
+import java.net.URL;
+
 import java.util.LinkedList;
 import java.util.HashMap;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
@@ -88,6 +91,14 @@ public class WMenuBar extends JMenuBar
 			if( qName.equals( "menu" ) )
 			{
 				JMenu menu = new JMenu( atts.getValue("name") );
+				
+				if( atts.getValue("icon") != null )
+				{
+					URL iconURL = ClassLoader.getSystemResource(atts.getValue("icon"));
+					if( iconURL != null )
+						menu.setIcon( new ImageIcon(iconURL) );
+				}
+				
 				queue.addFirst(menu);
 				last = menu;
 			}
@@ -165,6 +176,13 @@ public class WMenuBar extends JMenuBar
 			{
 				// TODO
 				System.err.printf( "%s not yet implemented\n", atts.getValue("type") );
+			}
+			
+			if( atts.getValue("icon") != null )
+			{
+				URL iconURL = ClassLoader.getSystemResource(atts.getValue("icon"));
+				if( iconURL != null )
+					item.setIcon( new ImageIcon(iconURL) );
 			}
 
 			if( useStroke && useModifier )

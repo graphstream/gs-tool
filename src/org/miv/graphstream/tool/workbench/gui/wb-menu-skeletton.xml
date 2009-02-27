@@ -20,8 +20,9 @@
 	</menu>
 	<menu id="dialog" name="Dialog"></menu>
 	<menu id="algorithm" name="Algorithms">
-		<menu id="algorithm:coloring" name="Coloring"></menu>
-		<menu id="algorithm:generator" name="Generators"></menu></menu>
+		<menu id="algorithm:coloring" name="Coloring" icon="org/miv/graphstream/tool/workbench/gearscolored_32.png"></menu>
+		<menu id="algorithm:generator" name="Generators"></menu>
+		<menu id="algorithm:measure" name="Measure"></menu></menu>
 	<menu id="help" name="Help">
 		<item name="Manual" command="menu.help.manual"/>
 		<item name="Tutorials" command="menu.help.tutorials"/>

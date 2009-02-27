@@ -16,14 +16,19 @@
 
 package org.miv.graphstream.tool.workbench.gui;
 
+
 import org.miv.graphstream.tool.workbench.WCore;
+import org.miv.graphstream.tool.workbench.WAlgorithm;
+import org.miv.graphstream.tool.workbench.WAlgorithmLoader;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -96,11 +101,28 @@ public class WGui
 		pack();
 		
 		this.core.addWorkbenchListener( this.desktop );
+		
+		loadAlgorithms();
 	}
 	
 	WMenuBar getWMenuBar()
 	{
 		return menuBar;
+	}
+	
+	protected void loadAlgorithms()
+	{
+		WAlgorithmLoader.load();
+		
+		if( System.getProperty("graphstream.user.algorithms") != null )
+			WAlgorithmLoader.load(ClassLoader.getSystemResourceAsStream(
+					System.getProperty("graphstream.user.algorithms")));
+		
+		WAlgorithmManager.init(this);
+		Iterator<WAlgorithm> ite = WAlgorithm.algorithms();
+		
+		while( ite.hasNext() )
+			WAlgorithmManager.registerAlgorithm( new WAlgorithmGUI(core.getCLI(),ite.next()) );
 	}
 	
 	public void stateChanged( ChangeEvent e )
