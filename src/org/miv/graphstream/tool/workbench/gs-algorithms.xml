@@ -8,7 +8,7 @@ in O(n^3). This may seems a very large complexity, however this algorithm
 may perform better than running several Dijkstra on all node pairs of 
 the graph when the graph becomes dense.</description>
 		<parameter name="weightAttributeName" type="java.lang.String"/>
-		<parameter name="directed" type="java.lang.Boolean"/>
+		<parameter name="directed" type="boolean"/>
 	</algorithm>
 	<algorithm name="AStar" class="org.miv.graphstream.algorithm.AStar" category="default">
 		<description>
@@ -46,9 +46,9 @@ begin(Graph) put one unique node in the graph, then
 nextElement() will add a new node each time it is called and
 connect this node randomly to others.
 		</description>
-		<parameter name="averageDegree" type="java.lang.Integer"/>
-		<parameter name="directed" type="java.lang.Boolean"/>
-		<parameter name="randomlyDirectedEdges" type="java.lang.Boolean"/>
+		<parameter name="averageDegree" type="int"/>
+		<parameter name="directed" type="boolean"/>
+		<parameter name="randomlyDirectedEdges" type="boolean"/>
 	</algorithm>
 	<algorithm name="GraphNervousness" class="org.miv.graphstream.algorithm.measure.GraphNervousness" category="measure">
 		<description>

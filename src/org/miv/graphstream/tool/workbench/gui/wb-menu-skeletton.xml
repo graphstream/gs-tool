@@ -1,8 +1,9 @@
 <gswb-menubar>
 	<menu id="file" name="File">
 		<item name="New" command="new.graph" strokeKey="VK_N" strokeModifier="CTRL_MASK"/>
-		<item name="Open" command="open.graph" strokeKey="VK_O" strokeModifier="CTRL_MASK"/>,
-		<item name="Save" command="save.graph" strokeKey="VK_S" strokeModifier="CTRL_MASK"/>
+		<item name="Open" command="open.graph" strokeKey="VK_O" strokeModifier="CTRL_MASK"/><menu
+			id="algorithm:generator" name="Generate">
+</menu><separator></separator><item name="Save" command="save.graph" strokeKey="VK_S" strokeModifier="CTRL_MASK"/>
 		<separator/>
 		<item name="Quit" command="quit" strokeKey="VK_Q" strokeModifier="CTRL_MASK"/>
 	</menu>
@@ -21,7 +22,6 @@
 	<menu id="dialog" name="Dialog"></menu>
 	<menu id="algorithm" name="Algorithms">
 		<menu id="algorithm:coloring" name="Coloring" icon="org/miv/graphstream/tool/workbench/gearscolored_32.png"></menu>
-		<menu id="algorithm:generator" name="Generators"></menu>
 		<menu id="algorithm:measure" name="Measure"></menu></menu>
 	<menu id="help" name="Help">
 		<item name="Manual" command="menu.help.manual"/>

@@ -44,8 +44,10 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataListener;
 
@@ -68,8 +70,11 @@ public class WAlgorithmGUI
 		fields.put( "java.lang.String",		WAlgorithmParametersGUIFieldString.class.getName() );
 		fields.put( "boolean", 				WAlgorithmParametersGUIFieldBoolean.class.getName() );
 		fields.put( "java.lang.Boolean", 	WAlgorithmParametersGUIFieldBoolean.class.getName() );
+		fields.put( "int",					WAlgorithmParametersGUIFieldInteger.class.getName() );
 		fields.put( "java.lang.Integer",	WAlgorithmParametersGUIFieldInteger.class.getName() );
+		fields.put( "float",				WAlgorithmParametersGUIFieldFloat.class.getName() );
 		fields.put( "java.lang.Float",		WAlgorithmParametersGUIFieldFloat.class.getName() );
+		fields.put( "double",				WAlgorithmParametersGUIFieldDouble.class.getName() );
 		fields.put( "java.lang.Double",		WAlgorithmParametersGUIFieldDouble.class.getName() );
 		
 		fields.put( "org.miv.graphstream.graph.Node",
@@ -78,6 +83,7 @@ public class WAlgorithmGUI
 	
 	class WAlgorithmParametersGUI
 		extends JDialog
+		implements ActionListener
 	{
 		private static final long serialVersionUID = 0x0001L;
 		
@@ -124,11 +130,19 @@ public class WAlgorithmGUI
 			
 			JPanel okPanel = new JPanel();
 			JButton ok = new JButton("close");
-			okPanel.add(ok);
+				ok.setActionCommand("close");
+				ok.addActionListener(this);
+				okPanel.add(ok);
 			
 			add( okPanel );
 			
 			pack();
+		}
+		
+		public void actionPerformed( ActionEvent ae )
+		{
+			if( ae.getActionCommand().equals("close") )
+				setVisible(false);
 		}
 		
 		public Object [] getValues()
@@ -209,18 +223,24 @@ public class WAlgorithmGUI
 	}
 	
 	public static class WAlgorithmParametersGUIFieldInteger
-		extends WAlgorithmParametersGUIFieldString
+		extends WAlgorithmParametersGUIField
 	{
 		private static final long serialVersionUID = 0x0001L;
 		
+		JSpinner value;
+		
 		public WAlgorithmParametersGUIFieldInteger( WAlgorithm.Parameter param )
 		{
-			super(param);
+			setLayout( new BorderLayout() );
+			
+			SpinnerNumberModel model = new SpinnerNumberModel(1,0,100,1);
+			value = new JSpinner(model);
+			add( value, BorderLayout.CENTER );
 		}
 		
 		public Object getValue()
 		{
-			return new Integer( (String) super.getValue() );
+			return value.getValue();
 		}
 	}
 	
@@ -327,7 +347,7 @@ public class WAlgorithmGUI
 	private WAlgorithm algorithm;
 	private WAlgorithmParametersGUI params;
 	private CLI cli;
-	private JButton run;
+	private JButton run, stop;
 	
 	public WAlgorithmGUI( CLI cli, WAlgorithm algorithm )
 	{
@@ -353,9 +373,15 @@ public class WAlgorithmGUI
 			options.addActionListener(this);
 		if( algorithm.getParametersCount() == 0 )
 			options.setEnabled(false);
+		stop = new JButton("stop");
+			stop.setActionCommand("algorithm.stop");
+			stop.addActionListener(this);
+			stop.setEnabled(false);
 		
 		JPanel buttons = new JPanel();
 		buttons.add(run);
+		if( algorithm.isDynamic() )
+			buttons.add(stop);
 		buttons.add(options);
 		add( buttons, BorderLayout.SOUTH );
 		
@@ -377,25 +403,48 @@ public class WAlgorithmGUI
 			execute();
 		else if( ae.getActionCommand().equals("algorithm.configure") )
 			params.setVisible(true);
+		else if( ae.getActionCommand().equals("algorithm.stop") )
+			algorithm.stop();
 	}
 	
 	public void execute()
 	{
+		if( ! run.isEnabled() )
+			return;
+		
 		run.setEnabled(false);
 		
-		SwingUtilities.invokeLater( new Runnable()
+		Runnable r = new Runnable()
 		{
 			public void run()
 			{
 				algorithm.execute(cli.getCore().getActiveContext().getGraph(),
 						params.getValues());
 			}
-		} );
+		};
+		
+		Thread t = new Thread( r, "algorithm" );
+		t.start();
 	}
 	
 	public void algorithmStart( WAlgorithm algo )
 	{
-		run.setEnabled(false);
+		if( SwingUtilities.isEventDispatchThread() )
+		{
+			run.setEnabled(false);
+			stop.setEnabled(true);
+		}
+		else
+		{
+			SwingUtilities.invokeLater( new Runnable()
+			{
+				public void run()
+				{
+					run.setEnabled(false);
+					stop.setEnabled(true);
+				}
+			} );
+		}
 	}
 	
 	public void algorithmError( WAlgorithm algo, String error )
@@ -406,6 +455,21 @@ public class WAlgorithmGUI
 	
 	public void algorithmEnd( WAlgorithm algo )
 	{
-		run.setEnabled(true);
+		if( SwingUtilities.isEventDispatchThread() )
+		{
+			run.setEnabled(true);
+			stop.setEnabled(false);
+		}
+		else
+		{
+			SwingUtilities.invokeLater( new Runnable()
+			{
+				public void run()
+				{
+					run.setEnabled(true);
+					stop.setEnabled(false);
+				}
+			} );
+		}
 	}
 }

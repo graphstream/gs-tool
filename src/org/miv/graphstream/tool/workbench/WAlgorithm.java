@@ -23,6 +23,8 @@
 package org.miv.graphstream.tool.workbench;
 
 import org.miv.graphstream.algorithm.Algorithm;
+import org.miv.graphstream.algorithm.DynamicAlgorithm;
+import org.miv.graphstream.algorithm.generator.Generator;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.tool.workbench.event.AlgorithmListener;
 
@@ -73,6 +75,7 @@ public class WAlgorithm
 	String category;
 	LinkedList<Parameter> parameters;
 	LinkedList<AlgorithmListener> listeners;
+	boolean dynamize = false;
 	
 	public WAlgorithm( String clazz )
 	{
@@ -181,41 +184,91 @@ public class WAlgorithm
 			al.algorithmEnd(this);
 	}
 	
+	public boolean isDynamic()
+	{
+		try
+		{
+			Class<?> c = Class.forName(clazz);
+			return DynamicAlgorithm.class.isAssignableFrom(c) ||
+				Generator.class.isAssignableFrom(c);
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public void stop()
+	{
+		dynamize = false;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void execute( Graph graph, Object ... values )
 	{
 		fireAlgorithmStart();
 		
-		Algorithm algo = null;
-		
 		try
 		{
-			Class<? extends Algorithm> c = (Class<? extends Algorithm>) Class.forName(clazz);
+			Class<?> c = (Class<?>) Class.forName(clazz);
 			
-			if( parameters == null )
-				algo = c.newInstance();
+			if( Generator.class.isAssignableFrom(c) )
+			{
+				generate( c, graph, values );
+			}
 			else
 			{
-				Class<?> [] paramsTypes = new Class<?>[parameters.size()+1];
-				
-				paramsTypes [0] = Graph.class;
-				for( int i = 0; i < parameters.size(); i++ )
-				{
-					paramsTypes [i+1] = parameters.get(i).type;
-				}
-				
-				Object [] fullValues = new Object [paramsTypes.length];
-				fullValues [0] = graph;
-				if( values != null )
-					for( int i = 0; i < values.length; i++ )
-						fullValues [i+1] = values [i];
-				
-				Constructor<? extends Algorithm> co = c.getConstructor(paramsTypes);
-				algo = co.newInstance(fullValues);
-			}
+				Algorithm algo = null;
 			
-			algo.setGraph(graph);
-			algo.compute();
+				if( parameters == null )
+					algo = (Algorithm) c.newInstance();
+				else
+				{
+					Class<?> [] paramsTypes = new Class<?>[parameters.size()+1];
+				
+					paramsTypes [0] = Graph.class;
+					for( int i = 0; i < parameters.size(); i++ )
+					{
+						paramsTypes [i+1] = parameters.get(i).type;
+					}
+				
+					Object [] fullValues = new Object [paramsTypes.length];
+					fullValues [0] = graph;
+					if( values != null )
+						for( int i = 0; i < values.length; i++ )
+							fullValues [i+1] = values [i];
+				
+					Constructor<? extends Algorithm> co = (Constructor<? extends Algorithm>) 
+						c.getConstructor(paramsTypes);
+					algo = co.newInstance(fullValues);
+				}
+			
+				algo.setGraph(graph);
+			
+				if( algo instanceof DynamicAlgorithm )
+				{
+					DynamicAlgorithm dalgo = (DynamicAlgorithm) algo;
+					
+					dynamize = true;
+					dalgo.begin();
+					while( dynamize )
+					{
+						dalgo.compute();
+						try
+						{
+							Thread.sleep(200);
+						}
+						catch( Exception e )
+						{
+						}
+					}
+					dalgo.end();
+				}
+				else
+					algo.compute();
+			}
 		}
 		catch( Exception e )
 		{
@@ -227,9 +280,50 @@ public class WAlgorithm
 			
 			error = t.getMessage() == null ? t.getClass().getName() : t.getMessage();
 			
+			t.printStackTrace();
+			
 			fireAlgorithmError( error );
 		}
 		
 		fireAlgorithmEnd();
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void generate( Class<?> c, Graph graph, Object [] values )
+		throws Exception
+	{
+		Generator gen = null;
+		
+		if( parameters == null )
+			gen = (Generator) c.newInstance();
+		else
+		{
+			Class<?> [] paramsTypes = new Class<?>[parameters.size()];
+		
+			paramsTypes [0] = Graph.class;
+			for( int i = 0; i < parameters.size(); i++ )
+			{
+				paramsTypes [i] = parameters.get(i).type;
+			}
+			
+			Constructor<? extends Generator> co = (Constructor<? extends Generator>)
+				c.getConstructor(paramsTypes);
+			gen = co.newInstance(values);
+		}
+	
+		dynamize = true;
+		gen.begin(graph);
+		while( dynamize )
+		{
+			gen.nextElement();
+			try
+			{
+				Thread.sleep(200);
+			}
+			catch( Exception e )
+			{
+			}
+		}
+		gen.end();
 	}
 }
