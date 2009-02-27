@@ -128,7 +128,6 @@ public class WAlgorithmLoader
 				if( current == null )
 					return;
 				
-				System.err.println(desc);
 				current.setDescription(desc.toString());
 				readingDesc = false;
 			}
