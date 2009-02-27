@@ -7,7 +7,6 @@ import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.ContextListener;
 import org.miv.graphstream.tool.workbench.event.ContextChangeListener;
-import org.miv.graphstream.tool.workbench.event.ContextListener.ElementOperation;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,6 +21,19 @@ public class WElementList
 	implements ContextChangeListener, ContextListener
 {
 	private static final long serialVersionUID = 0x0001L;
+	
+	private static ElementsModel NODE_MODEL = null;
+	private static ElementsModel EDGE_MODEL = null;
+	
+	public static ElementsModel getNodeModel()
+	{
+		return NODE_MODEL;
+	}
+	
+	public static ElementsModel getEdgeModel()
+	{
+		return EDGE_MODEL;
+	}
 	
 	class ElementsModel
 		implements ListModel
@@ -83,14 +95,24 @@ public class WElementList
 	
 	public static WElementList createNodeList( WCore core )
 	{
-		return new WElementList( core, ElementOperation.NodeAdded, 
-				ElementOperation.NodeRemoved );
+		WElementList wel = new WElementList( core, ElementOperation.NodeAdded, 
+				ElementOperation.NodeRemoved, NODE_MODEL );
+		
+		if( NODE_MODEL == null )
+			NODE_MODEL = wel.nmodel;
+		
+		return wel;
 	}
 	
 	public static WElementList createEdgeList( WCore core )
 	{
-		return new WElementList( core, ElementOperation.EdgeAdded, 
-				ElementOperation.EdgeRemoved );
+		WElementList wel = new WElementList( core, ElementOperation.EdgeAdded, 
+				ElementOperation.EdgeRemoved, EDGE_MODEL );
+		
+		if( EDGE_MODEL == null )
+			EDGE_MODEL = wel.nmodel;
+		
+		return wel;
 	}
 	
 	WCore core;
@@ -99,16 +121,26 @@ public class WElementList
 	ElementOperation add;
 	ElementOperation del;
 	
-	protected WElementList( WCore core, ElementOperation add, ElementOperation del )
+	protected WElementList( WCore core, ElementOperation add, ElementOperation del,
+			ElementsModel nmodel )
 	{
 		this.core = core;
 		this.elements = new LinkedList<String>();
-		this.nmodel = new ElementsModel();
+		
+		if( nmodel == null )
+		{
+			this.nmodel = new ElementsModel();
+			core.addContextListener(this);
+		}
+		else
+		{
+			this.nmodel = nmodel;
+		}
+		
 		this.add = add;
 		this.del = del;
 		
-		setModel(nmodel);
-		core.addContextListener(this);
+		setModel(this.nmodel);
 		
 		rebuild();
 	}

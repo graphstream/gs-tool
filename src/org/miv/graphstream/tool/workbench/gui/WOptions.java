@@ -26,6 +26,8 @@ public class WOptions
 {
 	private static final long serialVersionUID = 0x0001L;
 	
+	protected static String userSettings = "";
+	
 	static class SettingsHandler extends DefaultHandler
 	{
 		public SettingsHandler()

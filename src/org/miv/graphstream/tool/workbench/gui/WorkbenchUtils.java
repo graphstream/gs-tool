@@ -362,7 +362,7 @@ public class WorkbenchUtils
 			graphId = new JTextField( 20 );
 			graphFile = new JTextField( 20 );
 			graphClass = new JTextField( 20 );
-			autolayout = new JCheckBox( "autolayout", true );
+			autolayout = new JCheckBox( "autolayout", false );
 			setFile = new JCheckBox( "Save in file", false );
 			setClass = new JCheckBox( "Graph class", false );
 			autoid = new JCheckBox( "Auto-id", true );
@@ -634,7 +634,7 @@ public class WorkbenchUtils
 			this.useGraphId = new JCheckBox( "Graph id:", false );
 			this.graphId.setEnabled( false );
 			this.useGraphId.addChangeListener( this );
-			this.autolayout = new JCheckBox( "Use autolayout", true );
+			this.autolayout = new JCheckBox( "Use autolayout", false );
 			
 			JPanel tmp = new JPanel();
 			tmp.setLayout( new GridLayout(5,1) );

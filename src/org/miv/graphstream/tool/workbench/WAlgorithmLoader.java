@@ -66,7 +66,22 @@ public class WAlgorithmLoader
 				name = atts.getValue("name");
 				try
 				{
-					type = Class.forName(atts.getValue("type") );
+					String t = atts.getValue("type");
+					
+					if( t.equals("int") )
+						type = Integer.TYPE;
+					else if( t.equals("float") )
+						type = Float.TYPE;
+					else if( t.equals("double") )
+						type = Double.TYPE;
+					else if( t.equals("long") )
+						type = Long.TYPE;
+					else if( t.equals("boolean") )
+						type = Boolean.TYPE;
+					else if( t.equals("char") )
+						type = Character.TYPE;
+					else
+						type = Class.forName(t);
 				}
 				catch( Exception e )
 				{

@@ -24,6 +24,7 @@ package org.miv.graphstream.tool.workbench;
 
 import org.miv.graphstream.algorithm.Algorithm;
 import org.miv.graphstream.graph.Graph;
+import org.miv.graphstream.tool.workbench.event.AlgorithmListener;
 
 import java.lang.reflect.Constructor;
 import java.util.Iterator;
@@ -54,6 +55,16 @@ public class WAlgorithm
 			this.name = name;
 			this.type = type;
 		}
+		
+		public String getName()
+		{
+			return name;
+		}
+		
+		public String getClassName()
+		{
+			return type.getName();
+		}
 	}
 	
 	String name;
@@ -61,6 +72,7 @@ public class WAlgorithm
 	String desc;
 	String category;
 	LinkedList<Parameter> parameters;
+	LinkedList<AlgorithmListener> listeners;
 	
 	public WAlgorithm( String clazz )
 	{
@@ -90,6 +102,7 @@ public class WAlgorithm
 		this.desc 		= desc;
 		this.category  	= category;
 		this.parameters = new LinkedList<Parameter>();
+		this.listeners	= new LinkedList<AlgorithmListener>();
 		
 		if( parameters != null )
 			for( Parameter param : parameters ) this.parameters.add(param);
@@ -137,12 +150,42 @@ public class WAlgorithm
 	
 	public void addParameter( Parameter param )
 	{
-		//parameters.add(param);
+		parameters.add(param);
+	}
+	
+	public void addAlgorithmListener( AlgorithmListener al )
+	{
+		listeners.add(al);
+	}
+	
+	public void removeAlgorithmListener( AlgorithmListener al )
+	{
+		listeners.remove(al);
+	}
+	
+	protected void fireAlgorithmStart()
+	{
+		for( AlgorithmListener al : listeners )
+			al.algorithmStart(this);
+	}
+	
+	protected void fireAlgorithmError( String error )
+	{
+		for( AlgorithmListener al : listeners )
+			al.algorithmError(this,error);
+	}
+	
+	protected void fireAlgorithmEnd()
+	{
+		for( AlgorithmListener al : listeners )
+			al.algorithmEnd(this);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void execute( Graph graph, Object ... values )
 	{
+		fireAlgorithmStart();
+		
 		Algorithm algo = null;
 		
 		try
@@ -153,13 +196,22 @@ public class WAlgorithm
 				algo = c.newInstance();
 			else
 			{
-				Class<?> [] paramsTypes = new Class<?>[parameters.size()];
+				Class<?> [] paramsTypes = new Class<?>[parameters.size()+1];
 				
+				paramsTypes [0] = Graph.class;
 				for( int i = 0; i < parameters.size(); i++ )
-					paramsTypes [i] = parameters.get(i).type;
+				{
+					paramsTypes [i+1] = parameters.get(i).type;
+				}
+				
+				Object [] fullValues = new Object [paramsTypes.length];
+				fullValues [0] = graph;
+				if( values != null )
+					for( int i = 0; i < values.length; i++ )
+						fullValues [i+1] = values [i];
 				
 				Constructor<? extends Algorithm> co = c.getConstructor(paramsTypes);
-				algo = co.newInstance(values);
+				algo = co.newInstance(fullValues);
 			}
 			
 			algo.setGraph(graph);
@@ -167,8 +219,17 @@ public class WAlgorithm
 		}
 		catch( Exception e )
 		{
-			System.err.printf( "while running \"%s\" algorithm:\n%s\n", name,
-					e.getMessage() == null ? e.getClass() : e.getMessage() );
+			String error;
+			Throwable t = e;
+			
+			if( e instanceof java.lang.reflect.InvocationTargetException )
+				t = ((java.lang.reflect.InvocationTargetException)e).getTargetException();
+			
+			error = t.getMessage() == null ? t.getClass().getName() : t.getMessage();
+			
+			fireAlgorithmError( error );
 		}
+		
+		fireAlgorithmEnd();
 	}
 }

@@ -16,8 +16,8 @@ A* computes the shortest path from a node to another in a graph.
 It can eventually fail if the two nodes are in two distinct connected
 components.	
 		</description>
-		<parameter name="source" type="java.lang.String"/>
-		<parameter name="target" type="java.lang.String"/>
+		<parameter name="source" type="org.miv.graphstream.graph.Node"/>
+		<parameter name="target" type="org.miv.graphstream.graph.Node"/>
 	</algorithm>
 	<algorithm name="BellmanFord" class="org.miv.graphstream.algorithm.BellmanFord" category="default">
 		<description>
@@ -30,13 +30,13 @@ only when there are negative edge weights.
 		<parameter name="attribute" type="java.lang.String"/>
 		<parameter name="source" type="java.lang.String"/>
 	</algorithm>
-	<algorithm name="WelsPowell" class="org.miv.graphstream.algorithm.coloring.WelshPowell" category="coloring">
+	<algorithm name="WelshPowell" class="org.miv.graphstream.algorithm.coloring.WelshPowell" category="coloring">
 		<description>
 This class is intended to give some algorithm for computing the well-known
 coloring problem. It provides the Welsh and Powell greedy algorithm that may
 used as a static method.
 		</description>
-		<parameter name="modify" type="java.lang.Boolean"/>
+		<parameter name="modify" type="boolean"/>
 		<parameter name="attribute" type="java.lang.String"/>
 	</algorithm>
 	<algorithm name="RandomGenerator" class="org.miv.graphstream.algorithm.generator.RandomGenerator" category="generator">
