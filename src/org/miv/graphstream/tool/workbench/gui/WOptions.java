@@ -3,6 +3,8 @@ package org.miv.graphstream.tool.workbench.gui;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import java.io.InputStream;
+
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
@@ -13,11 +15,40 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.event.ListDataListener;
 
+import org.miv.graphstream.tool.workbench.WAlgorithm;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 public class WOptions
 	extends JDialog
 	implements ItemListener
 {
 	private static final long serialVersionUID = 0x0001L;
+	
+	static class SettingsHandler extends DefaultHandler
+	{
+		public SettingsHandler()
+		{
+		}
+		
+		public void startElement (String uri, String localName,
+			      String qName, Attributes atts)
+			throws SAXException
+		{
+			
+		}
+		
+		public void characters(char[] ch, int start, int length)
+		{
+			
+		}
+		
+		public void endElement(String uri, String localName, String qName)
+		{
+			
+		}
+	}
 	
 	protected static String [] skins =
 	{
@@ -40,7 +71,8 @@ public class WOptions
 		"org.jvnet.substance.skin.SubstanceRavenLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceMagmaLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel",
-		"org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel"
+		"org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel",
+		"com.sun.java.swing.plaf.gtk.GTKLookAndFeel"
 	};
 	
 	static class SkinModel
@@ -133,6 +165,10 @@ public class WOptions
 	{
 		try
 		{
+			javax.swing.JFrame.setDefaultLookAndFeelDecorated(false);
+			javax.swing.JDialog.setDefaultLookAndFeelDecorated(false);
+			
+			UIManager.getLookAndFeel().uninitialize();
 			UIManager.setLookAndFeel(name);
 			
 			javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);
@@ -145,5 +181,15 @@ public class WOptions
 					e.getMessage() == null ? e.getClass() : e.getMessage() ),
 					"Skin error", javax.swing.JOptionPane.ERROR_MESSAGE); 
 		}
+	}
+	
+	public void loadUserSetting()
+	{
+		
+	}
+	
+	public void loadSettings( InputStream in )
+	{
+		
 	}
 }
