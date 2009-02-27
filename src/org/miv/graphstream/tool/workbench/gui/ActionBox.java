@@ -53,6 +53,7 @@ public class ActionBox
 	protected JPanel accessoryPanel;
 	protected JDialog configureDialog;
 	protected LinkedList<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
+	protected WOptions options = new WOptions();
 	
 	public ActionBox( CLI cli )
 	{
@@ -208,5 +209,7 @@ public class ActionBox
 			configureTool();
 		else if( e.getActionCommand().equals("quit") )
 			cli.getCore().exit();
+		else if( e.getActionCommand().equals("options") )
+			options.setVisible(true);
 	}
 }
