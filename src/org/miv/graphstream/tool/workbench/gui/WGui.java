@@ -58,7 +58,7 @@ public class WGui
 	
 	protected static Color background = new Color( 238, 238, 238 );
 	
-	protected ActionBox actionBox;
+	protected WActions actionBox;
 	protected InfoBox infoBox;
 	protected WMenuBar menuBar;
 	protected WCore core;
@@ -74,7 +74,7 @@ public class WGui
 		this.dialogs = new HashMap<String,WDialog>();
 		this.core    = new WCore();
 		this.core.setTerminalCloseAction( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
-		this.actionBox = new ActionBox( core.getCLI() );
+		this.actionBox = new WActions( core.getCLI() );
 		this.menuBar = new WMenuBar( this.actionBox );
 		this.desktop = new WDesktop( core.getCLI() );
 		this.infoBox = new InfoBox( core.getCLI() );

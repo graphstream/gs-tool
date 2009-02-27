@@ -265,8 +265,8 @@ public class WDesktop implements WorkbenchListener, WindowFocusListener
 			WorkbenchEnvironment env = cli.getCore().getEnvironment();
 			
 			String id = null;
-			if( env.containsKey( ActionBox.OPT_ADD_NODE_ID ) )
-				id = env.getString( ActionBox.OPT_ADD_NODE_ID );
+			if( env.containsKey( WActions.OPT_ADD_NODE_ID ) )
+				id = env.getString( WActions.OPT_ADD_NODE_ID );
 			if( id == null ) id = "node#%n";
 			id = WorkbenchUtils.getAutomaticNodeId( ctx, id );
 			
@@ -298,12 +298,12 @@ public class WDesktop implements WorkbenchListener, WindowFocusListener
 				else
 				{
 					String id = null;
-					if( env.containsKey( ActionBox.OPT_ADD_EDGE_ID ) )
-						id = env.getString( ActionBox.OPT_ADD_EDGE_ID );
+					if( env.containsKey( WActions.OPT_ADD_EDGE_ID ) )
+						id = env.getString( WActions.OPT_ADD_EDGE_ID );
 					if( id == null ) id = "edge#%n";
 					id = WorkbenchUtils.getAutomaticEdgeId( ctx, id );
 					
-					Boolean directed = env.getBoolean( ActionBox.OPT_ADD_EDGE_DIRECTED );
+					Boolean directed = env.getBoolean( WActions.OPT_ADD_EDGE_DIRECTED );
 					if( directed == null ) directed = false;
 					
 					try
@@ -317,7 +317,7 @@ public class WDesktop implements WorkbenchListener, WindowFocusListener
 								"cannot create edge\n" + ex.getMessage() );
 					}
 					
-					Boolean cycle = env.getBoolean( ActionBox.OPT_ADD_EDGE_CYCLE );
+					Boolean cycle = env.getBoolean( WActions.OPT_ADD_EDGE_CYCLE );
 					if( cycle != null && ! cycle )
 						lastNodeSelected = null;
 				}

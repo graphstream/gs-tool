@@ -1,11 +1,19 @@
 <gswb-menubar>
 	<menu id="file" name="File">
-		<item name="New" command="new.graph" strokeKey="VK_N" strokeModifier="CTRL_MASK"/>
-		<item name="Open" command="open.graph" strokeKey="VK_O" strokeModifier="CTRL_MASK"/><menu
+		<item name="New" command="new.graph" strokeKey="VK_N" strokeModifier="CTRL_MASK" icon="@file:new"/>
+		<item name="Open" command="open.graph" strokeKey="VK_O"
+			strokeModifier="CTRL_MASK" icon="@file:open" />
+		<menu
 			id="algorithm:generator" name="Generate">
-</menu><separator></separator><item name="Save" command="save.graph" strokeKey="VK_S" strokeModifier="CTRL_MASK"/>
+</menu><separator></separator>
+		<item name="Save" command="save.graph" strokeKey="VK_S"
+			strokeModifier="CTRL_MASK" icon="@file:save" />
+		<item name="Save as" command="saveas.graph" strokeKey="VK_S"
+			strokeModifier="CTRL_MASK,SHIFT_MASK" icon="@file:saveas">
+		</item>
 		<separator/>
-		<item name="Quit" command="quit" strokeKey="VK_Q" strokeModifier="CTRL_MASK"/>
+		<item name="Quit" command="quit" strokeKey="VK_Q"
+			strokeModifier="CTRL_MASK" icon="@exit" />
 	</menu>
 	<menu id="edit" name="Edit">
 		<menu name="Selection">
@@ -13,9 +21,12 @@
 			<item name="None" command="@CLI:unselect all" strokeKey="VK_A" strokeModifier="CTRL_MASK,SHIFT_MASK"/>
 		</menu>
 		<separator/>
-		<item name="Copy" command="@CLI:copy" strokeKey="VK_C" strokeModifier="CTRL_MASK"/>
-		<item name="Cut" command="@CLI:cut" strokeKey="VK_X" strokeModifier="CTRL_MASK"/>
-		<item name="Paste" command="@CLI:paste" strokeKey="VK_V" strokeModifier="CTRL_MASK"/>
+		<item name="Copy" command="@CLI:copy" strokeKey="VK_C"
+			strokeModifier="CTRL_MASK" icon="@edit:copy" />
+		<item name="Cut" command="@CLI:cut" strokeKey="VK_X"
+			strokeModifier="CTRL_MASK" icon="@edit:cut" />
+		<item name="Paste" command="@CLI:paste" strokeKey="VK_V"
+			strokeModifier="CTRL_MASK" icon="@edit:paste" />
 		<separator/>
 		<item name="Options" command="options"/>
 	</menu>
@@ -27,7 +38,7 @@
 		<item name="Manual" command="menu.help.manual"/>
 		<item name="Tutorials" command="menu.help.tutorials"/>
 		<separator/>
-		<item name="About" command="menu.help.about"/>
+		<item name="About" command="menu.help.about" icon="@help" />
 	</menu>
 	
 </gswb-menubar>

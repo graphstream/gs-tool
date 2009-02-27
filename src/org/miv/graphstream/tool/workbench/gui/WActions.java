@@ -36,7 +36,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-public class ActionBox
+public class WActions
 	extends JToolBar
 	implements ActionListener
 {
@@ -55,7 +55,7 @@ public class ActionBox
 	protected LinkedList<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
 	protected WOptions options = new WOptions();
 	
-	public ActionBox( CLI cli )
+	public WActions( CLI cli )
 	{
 		super( "tools" );
 		
@@ -71,29 +71,7 @@ public class ActionBox
 		accessoryPanel.setLayout( new BorderLayout() );
 		ActionAccessory aa;
 		
-		JButton button = new JButton( WorkbenchUtils.getImageIcon( "node_32" ) );
-		button.setPreferredSize( buttonDim );
-		button.setBackground( WGui.background );
-		button.setToolTipText( "add nodes mode" );
-		button.addActionListener( this );
-		actions.put( button, ActionMode.ADD_NODE );
-		aa = new ActionAccessory.AddNodeAccessory( cli );
-		aa.setBackground( WGui.background );
-		accessories.put( button, aa );
-		add(button);
-		
-		button = new JButton( WorkbenchUtils.getImageIcon( "edge_32" ) );
-		button.setPreferredSize( buttonDim );
-		button.setBackground( WGui.background );
-		button.setToolTipText( "add edges mode" );
-		button.addActionListener( this );
-		actions.put( button, ActionMode.ADD_EDGE );
-		aa = new ActionAccessory.AddEdgeAccessory( cli );
-		aa.setBackground( WGui.background );
-		accessories.put( button, aa );
-		add(button);
-		
-		button = new JButton( WorkbenchUtils.getImageIcon( "select_32" ) );
+		JButton button = new JButton( WorkbenchUtils.getImageIcon( "action:select" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setToolTipText( "selection mode" );
@@ -104,7 +82,29 @@ public class ActionBox
 		accessories.put( button, aa );
 		add(button);
 		
-		button = new JButton( WorkbenchUtils.getImageIcon( "node_explode_32" ) );
+		button = new JButton( WorkbenchUtils.getImageIcon( "action:add_node" ) );
+		button.setPreferredSize( buttonDim );
+		button.setBackground( WGui.background );
+		button.setToolTipText( "add nodes mode" );
+		button.addActionListener( this );
+		actions.put( button, ActionMode.ADD_NODE );
+		aa = new ActionAccessory.AddNodeAccessory( cli );
+		aa.setBackground( WGui.background );
+		accessories.put( button, aa );
+		add(button);
+		
+		button = new JButton( WorkbenchUtils.getImageIcon( "action:add_edge" ) );
+		button.setPreferredSize( buttonDim );
+		button.setBackground( WGui.background );
+		button.setToolTipText( "add edges mode" );
+		button.addActionListener( this );
+		actions.put( button, ActionMode.ADD_EDGE );
+		aa = new ActionAccessory.AddEdgeAccessory( cli );
+		aa.setBackground( WGui.background );
+		accessories.put( button, aa );
+		add(button);
+		
+		button = new JButton( WorkbenchUtils.getImageIcon( "action:del_node" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setToolTipText( "delete nodes" );
@@ -112,7 +112,7 @@ public class ActionBox
 		actions.put( button, ActionMode.DEL_NODE );
 		add(button);
 		
-		button = new JButton( WorkbenchUtils.getImageIcon( "edge_explode_32" ) );
+		button = new JButton( WorkbenchUtils.getImageIcon( "action:del_edge" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setToolTipText( "delete edges" );
@@ -120,7 +120,7 @@ public class ActionBox
 		actions.put( button, ActionMode.DEL_EDGE );
 		add(button);
 		
-		button = new JButton( WorkbenchUtils.getImageIcon( "term_32" ) );
+		button = new JButton( WorkbenchUtils.getImageIcon( "term" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setActionCommand( "open.terminal" );

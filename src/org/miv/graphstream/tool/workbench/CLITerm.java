@@ -28,9 +28,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowEvent;
 
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.URL;
 
 import java.util.LinkedList;
 
@@ -222,7 +220,7 @@ public class CLITerm extends JPanel
 	        frame = new JFrame( "GraphStream CLI Terminal" );
 			frame.add( this );
 			frame.pack();
-			frame.setIconImage( WorkbenchUtils.getImageIcon( "term_32" ).getImage() );
+			frame.setIconImage( WorkbenchUtils.getImageIcon( "term" ).getImage() );
 			frame.setDefaultCloseOperation( closeAction );
 			frame.addWindowFocusListener( this );
 		}

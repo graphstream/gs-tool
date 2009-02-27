@@ -1,3 +1,4 @@
+<!-- GraphStream algorithms -->
 <gs-algorithms>
 	<algorithm name="APSP" class="org.miv.graphstream.algorithm.APSP" category="default">
 		<description><h2>The APSP algorithm</h2><p>This class defines algorithms that compute all shortest<br/>paths lengths between all pair of nodes in a given graph.<br/>This algorithm uses the Floyd-Warshal algorithm, that<br/>effectively runs in O(n^3). This may seems a very large<br/>complexity, however this algorithm may perform better than<br/>running several Dijkstra on all node pairs of the graph when<br/>the graph becomes dense.</p></description>

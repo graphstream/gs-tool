@@ -67,26 +67,23 @@ public class WorkbenchUtils
 	{
 		String [][] iconsUrl =
 		{
-				{ "node_16", "org/miv/graphstream/tool/workbench/node_16.png" },
-				{ "node_32", "org/miv/graphstream/tool/workbench/node_32.png" },
-				{ "node_64", "org/miv/graphstream/tool/workbench/node_64.png" },
-				{ "edge_16", "org/miv/graphstream/tool/workbench/edge_16.png" },
-				{ "edge_32", "org/miv/graphstream/tool/workbench/edge_32.png" },
-				{ "edge_64", "org/miv/graphstream/tool/workbench/edge_64.png" },
-				{ "term_16", "org/miv/graphstream/tool/workbench/term_16.png" },
-				{ "term_32", "org/miv/graphstream/tool/workbench/term_32.png" },
-				{ "term_64", "org/miv/graphstream/tool/workbench/term_64.png" },
-				{ "gs_logo", "org/miv/graphstream/tool/workbench/gs_logo.png" },
-				{ "key_16",  "org/miv/graphstream/tool/workbench/key_16.png"  },
-				{ "select_16",  "org/miv/graphstream/tool/workbench/select_16.png"  },
-				{ "select_32",  "org/miv/graphstream/tool/workbench/select_32.png"  },
-				{ "select_64",  "org/miv/graphstream/tool/workbench/select_64.png"  },
-				{ "node_explode_16", "org/miv/graphstream/tool/workbench/node_explode_16.png" },
-				{ "node_explode_32", "org/miv/graphstream/tool/workbench/node_explode_32.png" },
-				{ "node_explode_64", "org/miv/graphstream/tool/workbench/node_explode_64.png" },
-				{ "edge_explode_16", "org/miv/graphstream/tool/workbench/edge_explode_16.png" },
-				{ "edge_explode_32", "org/miv/graphstream/tool/workbench/edge_explode_32.png" },
-				{ "edge_explode_64", "org/miv/graphstream/tool/workbench/edge_explode_64.png" }
+				{ "action:add_node", "org/miv/graphstream/tool/workbench/ressources/node_32.png" },
+				{ "action:add_edge", "org/miv/graphstream/tool/workbench/ressources/edge_32.png" },
+				{ "action:select",  "org/miv/graphstream/tool/workbench/ressources/select_32.png"  },
+				{ "action:del_node", "org/miv/graphstream/tool/workbench/ressources/node_explode_32.png" },
+				{ "action:del_edge", "org/miv/graphstream/tool/workbench/ressources/edge_explode_32.png" },
+				{ "term", "org/miv/graphstream/tool/workbench/ressources/term_32.png" },
+				{ "gs_logo", "org/miv/graphstream/tool/workbench/ressources/gs_logo.png" },
+				{ "key",  "org/miv/graphstream/tool/workbench/ressources/key_16.png"  },
+				{ "file:new", "org/miv/graphstream/tool/workbench/ressources/filenew.png" },
+				{ "file:open", "org/miv/graphstream/tool/workbench/ressources/fileopen.png" },
+				{ "file:save", "org/miv/graphstream/tool/workbench/ressources/filesave.png" },
+				{ "file:saveas", "org/miv/graphstream/tool/workbench/ressources/filesaveas.png" },
+				{ "exit", "org/miv/graphstream/tool/workbench/ressources/exit.png" },
+				{ "edit:copy", "org/miv/graphstream/tool/workbench/ressources/editcopy.png" },
+				{ "edit:cut", "org/miv/graphstream/tool/workbench/ressources/editcut.png" },
+				{ "edit:paste", "org/miv/graphstream/tool/workbench/ressources/editpaste.png" },
+				{ "help", "org/miv/graphstream/tool/workbench/ressources/help.png" }
 		};
 		
 		for( int i = 0; i < iconsUrl.length; i++ )

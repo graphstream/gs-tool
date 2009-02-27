@@ -100,9 +100,16 @@ public class WMenuBar extends JMenuBar
 				
 				if( atts.getValue("icon") != null )
 				{
-					URL iconURL = ClassLoader.getSystemResource(atts.getValue("icon"));
-					if( iconURL != null )
-						menu.setIcon( new ImageIcon(iconURL) );
+					if( atts.getValue("icon").startsWith("@"))
+					{
+						menu.setIcon( WorkbenchUtils.getImageIcon(atts.getValue("icon").substring(1)) );
+					}
+					else
+					{
+						URL iconURL = ClassLoader.getSystemResource(atts.getValue("icon"));
+						if( iconURL != null )
+							menu.setIcon( new ImageIcon(iconURL) );
+					}
 				}
 				
 				queue.addFirst(menu);
@@ -186,9 +193,16 @@ public class WMenuBar extends JMenuBar
 			
 			if( atts.getValue("icon") != null )
 			{
-				URL iconURL = ClassLoader.getSystemResource(atts.getValue("icon"));
-				if( iconURL != null )
-					item.setIcon( new ImageIcon(iconURL) );
+				if( atts.getValue("icon").startsWith("@"))
+				{
+					item.setIcon( WorkbenchUtils.getImageIcon(atts.getValue("icon").substring(1)) );
+				}
+				else
+				{
+					URL iconURL = ClassLoader.getSystemResource(atts.getValue("icon"));
+					if( iconURL != null )
+						item.setIcon( new ImageIcon(iconURL) );
+				}
 			}
 
 			if( useStroke && useModifier )

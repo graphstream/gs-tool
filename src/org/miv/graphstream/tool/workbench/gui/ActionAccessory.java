@@ -172,14 +172,14 @@ public class ActionAccessory extends JPanel
 		public void insertUpdate(DocumentEvent e)
 		{
 			cli.getCore().getEnvironment().put( 
-					ActionBox.OPT_ADD_NODE_ID, nodeIdFormat.getText() );
+					WActions.OPT_ADD_NODE_ID, nodeIdFormat.getText() );
 			checkId();
 		}
 			
 		public void removeUpdate(DocumentEvent e) 
 		{
 			cli.getCore().getEnvironment().put( 
-					ActionBox.OPT_ADD_NODE_ID, nodeIdFormat.getText() );
+					WActions.OPT_ADD_NODE_ID, nodeIdFormat.getText() );
 			checkId();
 		}
 		
@@ -237,9 +237,9 @@ public class ActionAccessory extends JPanel
 		public void stateChanged( ChangeEvent e )
 		{
 			cli.getCore().getEnvironment().put( 
-					ActionBox.OPT_ADD_EDGE_CYCLE, cycle.isSelected() );
+					WActions.OPT_ADD_EDGE_CYCLE, cycle.isSelected() );
 			cli.getCore().getEnvironment().put( 
-					ActionBox.OPT_ADD_EDGE_DIRECTED, directed.isSelected() );
+					WActions.OPT_ADD_EDGE_DIRECTED, directed.isSelected() );
 		}
 		
 	// DocumentListener implementation
@@ -250,14 +250,14 @@ public class ActionAccessory extends JPanel
 		public void insertUpdate(DocumentEvent e)
 		{
 			cli.getCore().getEnvironment().put( 
-					ActionBox.OPT_ADD_EDGE_ID, edgeIdFormat.getText() );
+					WActions.OPT_ADD_EDGE_ID, edgeIdFormat.getText() );
 			checkId();
 		}
 		
 		public void removeUpdate(DocumentEvent e) 
 		{
 			cli.getCore().getEnvironment().put( 
-					ActionBox.OPT_ADD_EDGE_ID, edgeIdFormat.getText() );
+					WActions.OPT_ADD_EDGE_ID, edgeIdFormat.getText() );
 			checkId();
 		}
 		
