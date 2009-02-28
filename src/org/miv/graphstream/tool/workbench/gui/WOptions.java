@@ -9,20 +9,22 @@ import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
 
-import org.miv.graphstream.tool.workbench.WAlgorithm;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class WOptions
 	extends JDialog
-	implements ItemListener
+	implements ItemListener, ChangeListener
 {
 	private static final long serialVersionUID = 0x0001L;
 	
@@ -140,9 +142,15 @@ public class WOptions
         }
 	}
 	
-	public WOptions()
+	protected WGui gui;
+	protected JCheckBox fullMode;
+	
+	public WOptions( WGui gui )
 	{
 		setTitle( "Options" );
+		setLayout( new java.awt.FlowLayout() );
+		
+		this.gui = gui;
 		
 		ComboBoxModel cbm = new SkinModel();
 		JComboBox jcb = new JComboBox(cbm);
@@ -154,6 +162,10 @@ public class WOptions
 		
 		add(skinPanel);
 		
+		fullMode = new JCheckBox("Full mode");
+		fullMode.addChangeListener(this);
+		add(fullMode);
+		
 		pack();
 	}
 	
@@ -163,14 +175,18 @@ public class WOptions
 			setSkin( (String) ie.getItem() );
 	}
 	
+	public void stateChanged( ChangeEvent e )
+	{
+		if( e.getSource() == fullMode )
+		{
+			gui.setFullMode(fullMode.isSelected());
+		}
+	}
+	
 	protected void setSkin( String name )
 	{
 		try
 		{
-			//javax.swing.JFrame.setDefaultLookAndFeelDecorated(false);
-			//javax.swing.JDialog.setDefaultLookAndFeelDecorated(false);
-			
-			//UIManager.getLookAndFeel().uninitialize();
 			UIManager.setLookAndFeel(name);
 			
 			javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);

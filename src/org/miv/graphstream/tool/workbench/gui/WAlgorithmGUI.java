@@ -383,7 +383,6 @@ public class WAlgorithmGUI
 		JTextPane desc = new JTextPane();
 		desc.setEditorKit(editor);
 		desc.setDocument(doc);
-		//desc.setText(algorithm.getDescription());
 		desc.setEditable(false);
 		add( desc, BorderLayout.CENTER );
 		

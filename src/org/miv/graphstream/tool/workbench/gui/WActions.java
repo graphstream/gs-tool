@@ -47,22 +47,26 @@ public class WActions
 	public static final String OPT_ADD_EDGE_DIRECTED = "actions.options.addedge.directed";
 	public static final String OPT_ADD_EDGE_CYCLE = "actions.options.addedge.cycle";
 	
+	protected WGui gui;
 	protected CLI cli;
 	protected Map<Object,ActionMode> actions;
 	protected Map<JButton,ActionAccessory> accessories;
 	protected JPanel accessoryPanel;
 	protected JDialog configureDialog;
 	protected LinkedList<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
-	protected WOptions options = new WOptions();
+	protected WOptions options;
+	protected boolean showConfigure = false;
 	
-	public WActions( CLI cli )
+	public WActions( WGui gui )
 	{
 		super( "tools" );
 		
-		this.cli = cli;
+		this.gui = gui;
+		this.cli = gui.getCore().getCLI();
 		this.actions = new HashMap<Object,ActionMode>();
 		this.accessories = new HashMap<JButton,ActionAccessory>();
 		this.accessoryPanel = new JPanel();
+		this.options = new WOptions(gui);
 		this.configureDialog = new JDialog();
 		configureDialog.setTitle("Configure");
 		configureDialog.add(accessoryPanel);
@@ -82,6 +86,8 @@ public class WActions
 		accessories.put( button, aa );
 		add(button);
 		
+		add( new JToolBar.Separator() );
+		
 		button = new JButton( WorkbenchUtils.getImageIcon( "action:add_node" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
@@ -89,17 +95,6 @@ public class WActions
 		button.addActionListener( this );
 		actions.put( button, ActionMode.ADD_NODE );
 		aa = new ActionAccessory.AddNodeAccessory( cli );
-		aa.setBackground( WGui.background );
-		accessories.put( button, aa );
-		add(button);
-		
-		button = new JButton( WorkbenchUtils.getImageIcon( "action:add_edge" ) );
-		button.setPreferredSize( buttonDim );
-		button.setBackground( WGui.background );
-		button.setToolTipText( "add edges mode" );
-		button.addActionListener( this );
-		actions.put( button, ActionMode.ADD_EDGE );
-		aa = new ActionAccessory.AddEdgeAccessory( cli );
 		aa.setBackground( WGui.background );
 		accessories.put( button, aa );
 		add(button);
@@ -112,6 +107,19 @@ public class WActions
 		actions.put( button, ActionMode.DEL_NODE );
 		add(button);
 		
+		add( new JToolBar.Separator() );
+		
+		button = new JButton( WorkbenchUtils.getImageIcon( "action:add_edge" ) );
+		button.setPreferredSize( buttonDim );
+		button.setBackground( WGui.background );
+		button.setToolTipText( "add edges mode" );
+		button.addActionListener( this );
+		actions.put( button, ActionMode.ADD_EDGE );
+		aa = new ActionAccessory.AddEdgeAccessory( cli );
+		aa.setBackground( WGui.background );
+		accessories.put( button, aa );
+		add(button);
+		
 		button = new JButton( WorkbenchUtils.getImageIcon( "action:del_edge" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
@@ -119,6 +127,8 @@ public class WActions
 		button.addActionListener( this );
 		actions.put( button, ActionMode.DEL_EDGE );
 		add(button);
+		
+		add( new JToolBar.Separator() );
 		
 		button = new JButton( WorkbenchUtils.getImageIcon( "term" ) );
 		button.setPreferredSize( buttonDim );
@@ -171,7 +181,13 @@ public class WActions
 		if( accessories.containsKey( current ) )
 		{
 			accessoryPanel.add( accessories.get( current ), BorderLayout.CENTER );
+			showConfigure = true;
 		}
+		else
+		{
+			showConfigure = false;
+		}
+		
 		setPreferredSize( this.getLayout().preferredLayoutSize( this ) );
 		fireStateChanged();
 		
@@ -182,7 +198,7 @@ public class WActions
 	protected void configureTool()
 	{
 		configureDialog.pack();
-		configureDialog.setVisible(true);
+		configureDialog.setVisible(showConfigure);
 	}
 	
 // ActionListener implementation
@@ -211,5 +227,7 @@ public class WActions
 			cli.getCore().exit();
 		else if( e.getActionCommand().equals("options") )
 			options.setVisible(true);
+		else if( e.getActionCommand().equals("menu.help.about") )
+			WAbout.whatAbout();
 	}
 }

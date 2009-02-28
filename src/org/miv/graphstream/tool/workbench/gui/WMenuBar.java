@@ -22,6 +22,8 @@
  */
 package org.miv.graphstream.tool.workbench.gui;
 
+import org.miv.graphstream.tool.workbench.event.NotificationListener;
+
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -49,7 +51,9 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-public class WMenuBar extends JMenuBar
+public class WMenuBar
+	extends JMenuBar
+	implements NotificationListener
 {
 	public static final long serialVersionUID = 0x00A00301L;
 
@@ -60,8 +64,8 @@ public class WMenuBar extends JMenuBar
 	 * ------------------
 	 * 
 	 * [gswb:menubar] : root tag of the file
-	 * [menu] {id,name} : starts a menu
-	 * [item] {id,name,type,strokeKey,strokeMask,command} : adds a new item
+	 * [menu] {id,name,icon,disableOn,enableOn} : starts a menu
+	 * [item] {id,name,type,strokeKey,strokeMask,command,icon,disableOn,enableOn} : adds a new item
 	 * [separator] : a menu separator
 	 *
 	 */
@@ -123,6 +127,20 @@ public class WMenuBar extends JMenuBar
 			{
 				if( queue.size() > 0 )
 					queue.getFirst().addSeparator();
+			}
+			
+			if( atts.getValue("disableOn") != null )
+			{
+				String [] notifs = atts.getValue("disableOn").split(",");
+				for( String notif : notifs )
+					WMenuBar.this.disableOn(last,notif);
+			}
+			
+			if( atts.getValue("enableOn") != null )
+			{
+				String [] notifs = atts.getValue("enableOn").split(",");
+				for( String notif : notifs )
+					WMenuBar.this.enableOn(last,notif);
 			}
 				
 			if( last != null && atts.getValue("id") != null )
@@ -221,7 +239,31 @@ public class WMenuBar extends JMenuBar
 		}
 	}
 	
+	static class ComponentPool
+		extends LinkedList<JComponent>
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		public void disable()
+		{
+			java.util.Iterator<JComponent> ite = iterator();
+			
+			while( ite.hasNext() )
+				ite.next().setEnabled(false);
+		}
+		
+		public void enable()
+		{
+			java.util.Iterator<JComponent> ite = iterator();
+			
+			while( ite.hasNext() )
+				ite.next().setEnabled(true);
+		}
+	}
+	
 	HashMap<String,JComponent> idMapping;
+	HashMap<Notification,ComponentPool> toDisable;
+	HashMap<Notification,ComponentPool> toEnable;
 	
 	public WMenuBar( ActionListener listener )
 	{
@@ -229,13 +271,17 @@ public class WMenuBar extends JMenuBar
 		
 		setPreferredSize( new Dimension( 200, 25 ) );
 		
-		//installItems( this, listener );
-		idMapping = new HashMap<String,JComponent>();
+		idMapping 	= new HashMap<String,JComponent>();
+		toDisable 	= new HashMap<Notification,ComponentPool>();
+		toEnable 	= new HashMap<Notification,ComponentPool>();
+		
 		InputStream skel = ClassLoader.getSystemResourceAsStream(GSWB_MENUBAR_XML);
 		if( skel == null )
 			System.err.printf( "can not load xml skeletton file : \"%s\"\n", GSWB_MENUBAR_XML );
 		else
 			loadXml(listener,skel);
+		
+		WNotificationServer.connect(this);
 	}
 	
 	private void loadXml( ActionListener al, InputStream in )
@@ -262,5 +308,33 @@ public class WMenuBar extends JMenuBar
 	public JComponent getRegisteredComponent( String id )
 	{
 		return idMapping.get(id);
+	}
+	
+	public void disableOn( JComponent c, String n )
+	{
+		Notification notif = Notification.valueOf(n);
+		
+		if( ! toDisable.containsKey(notif) )
+			toDisable.put(notif,new ComponentPool());
+		
+		toDisable.get(notif).add(c);
+	}
+	
+	public void enableOn( JComponent c, String n )
+	{
+		Notification notif = Notification.valueOf(n);
+		
+		if( ! toEnable.containsKey(notif) )
+			toEnable.put(notif,new ComponentPool());
+		
+		toEnable.get(notif).add(c);
+	}
+	
+	public void handleNotification( Notification n )
+	{
+		if( toDisable.containsKey(n) )
+			toDisable.get(n).disable();
+		if( toEnable.containsKey(n) )
+			toEnable.get(n).enable();
 	}
 }

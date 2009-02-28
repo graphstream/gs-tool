@@ -196,10 +196,10 @@ public class SelectionTree extends JTree
 				 SelectionTreeNode stn = (SelectionTreeNode) value;
 				 if( stn.isNode() )
 					 return new JLabel( stn.getId(), 
-							 WorkbenchUtils.getImageIcon( "node_16" ), SwingConstants.LEFT );
+							 WorkbenchUtils.getImageIcon( "action:add_node" ), SwingConstants.LEFT );
 				 else
 					 return new JLabel( stn.getId(), 
-							 WorkbenchUtils.getImageIcon( "edge_16" ), SwingConstants.LEFT );
+							 WorkbenchUtils.getImageIcon( "action:add_edge" ), SwingConstants.LEFT );
 			 }
 			 return new JLabel( value.toString() );
 		 }

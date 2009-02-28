@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -67,11 +68,13 @@ public class WorkbenchUtils
 	{
 		String [][] iconsUrl =
 		{
-				{ "action:add_node", "org/miv/graphstream/tool/workbench/ressources/node_32.png" },
-				{ "action:add_edge", "org/miv/graphstream/tool/workbench/ressources/edge_32.png" },
-				{ "action:select",  "org/miv/graphstream/tool/workbench/ressources/select_32.png"  },
-				{ "action:del_node", "org/miv/graphstream/tool/workbench/ressources/node_explode_32.png" },
-				{ "action:del_edge", "org/miv/graphstream/tool/workbench/ressources/edge_explode_32.png" },
+				{ "node", "org/miv/graphstream/tool/workbench/ressources/node32.png" },
+				{ "edge", "org/miv/graphstream/tool/workbench/ressources/edge32.png" },
+				{ "action:add_node", "org/miv/graphstream/tool/workbench/ressources/nodeadd32.png" },
+				{ "action:add_edge", "org/miv/graphstream/tool/workbench/ressources/edgeadd32.png" },
+				{ "action:select",  "org/miv/graphstream/tool/workbench/ressources/select32.png"  },
+				{ "action:del_node", "org/miv/graphstream/tool/workbench/ressources/nodedelete32.png" },
+				{ "action:del_edge", "org/miv/graphstream/tool/workbench/ressources/edgedelete32.png" },
 				{ "term", "org/miv/graphstream/tool/workbench/ressources/term_32.png" },
 				{ "gs_logo", "org/miv/graphstream/tool/workbench/ressources/gs_logo.png" },
 				{ "key",  "org/miv/graphstream/tool/workbench/ressources/key_16.png"  },
@@ -83,7 +86,8 @@ public class WorkbenchUtils
 				{ "edit:copy", "org/miv/graphstream/tool/workbench/ressources/editcopy.png" },
 				{ "edit:cut", "org/miv/graphstream/tool/workbench/ressources/editcut.png" },
 				{ "edit:paste", "org/miv/graphstream/tool/workbench/ressources/editpaste.png" },
-				{ "help", "org/miv/graphstream/tool/workbench/ressources/help.png" }
+				{ "help", "org/miv/graphstream/tool/workbench/ressources/help.png" },
+				{ "splash", "org/miv/graphstream/tool/workbench/ressources/splash.png" }
 		};
 		
 		for( int i = 0; i < iconsUrl.length; i++ )
@@ -242,6 +246,28 @@ public class WorkbenchUtils
 	{
 		SelectPatternDialog spd = new SelectPatternDialog( parent, cli );
 		spd.setVisible( true );
+	}
+	
+	private static Font defaultFont = null;
+	private static String defaultFontName = "org/miv/graphstream/tool/workbench/ressources/AG-Stencil.ttf";
+	
+	public static Font getDefaultFont()
+	{
+		if( defaultFont == null )
+		{
+			try
+			{
+				defaultFont = Font.createFont(
+					Font.TRUETYPE_FONT,
+					ClassLoader.getSystemResourceAsStream(defaultFontName) ).deriveFont(16.0f);
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		return defaultFont;
 	}
 	
 // Classes declarations	

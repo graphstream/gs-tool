@@ -4,12 +4,13 @@
 		<item name="Open" command="open.graph" strokeKey="VK_O"
 			strokeModifier="CTRL_MASK" icon="@file:open" />
 		<menu
-			id="algorithm:generator" name="Generate">
+			id="algorithm:generator" name="Generate" disableOn="noContext" enableOn="contextAdded">
 </menu><separator></separator>
 		<item name="Save" command="save.graph" strokeKey="VK_S"
-			strokeModifier="CTRL_MASK" icon="@file:save" />
+			strokeModifier="CTRL_MASK" icon="@file:save" disableOn="noContext" enableOn="contextAdded"/>
 		<item name="Save as" command="saveas.graph" strokeKey="VK_S"
-			strokeModifier="CTRL_MASK,SHIFT_MASK" icon="@file:saveas">
+			strokeModifier="CTRL_MASK,SHIFT_MASK" icon="@file:saveas"
+			disableOn="noContext" enableOn="contextAdded">
 		</item>
 		<separator/>
 		<item name="Quit" command="quit" strokeKey="VK_Q"
@@ -30,10 +31,14 @@
 		<separator/>
 		<item name="Options" command="options"/>
 	</menu>
-	<menu id="dialog" name="Dialog"></menu>
-	<menu id="algorithm" name="Algorithms">
-		<menu id="algorithm:coloring" name="Coloring" icon="org/miv/graphstream/tool/workbench/gearscolored_32.png"></menu>
-		<menu id="algorithm:measure" name="Measure"></menu></menu>
+	<menu id="dialog" name="Dialog" disableOn="fullMode" enableOn="normalMode"></menu>
+	<menu id="algorithm" name="Algorithms" disableOn="noContext"
+		enableOn="contextAdded">
+		<menu id="algorithm:coloring" name="Coloring"
+			icon="org/miv/graphstream/tool/workbench/gearscolored_32.png">
+		</menu>
+		<menu id="algorithm:measure" name="Measure"></menu>
+	</menu>
 	<menu id="help" name="Help">
 		<item name="Manual" command="menu.help.manual"/>
 		<item name="Tutorials" command="menu.help.tutorials"/>

@@ -1,5 +1,6 @@
 package org.miv.graphstream.tool.workbench.gui;
 
+import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JComponent;
 
@@ -17,6 +18,8 @@ public class WDialog extends JDialog
 		
 		setTitle(name);
 		setName(name);
+		content.setBorder( BorderFactory.createLoweredBevelBorder() );
+		
 		add(content);
 		
 		pack();

@@ -32,6 +32,7 @@ import org.miv.graphstream.tool.workbench.event.ContextListener;
 import org.miv.graphstream.ui.graphicGraph.GraphicNode;
 import org.miv.graphstream.ui.swing.SwingGraphViewer;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.MouseListener;
@@ -48,10 +49,14 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.LinkedList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
-public class WDesktop implements WorkbenchListener, WindowFocusListener
+public class WDesktop
+	extends JPanel
+	implements WorkbenchListener,WindowFocusListener
 {
 	public static final long serialVersionUID = 0x00A00701L;
 	
@@ -60,10 +65,18 @@ public class WDesktop implements WorkbenchListener, WindowFocusListener
 	
 	protected Map<Context,ContextFrame> iframes = new HashMap<Context,ContextFrame>();
 	protected CLI cli;
+	protected boolean fullMode = false;
 	
 	public WDesktop( CLI cli )
 	{
 		this.cli = cli;
+		setLayout( new BorderLayout() );
+		setBorder( BorderFactory.createLoweredBevelBorder() );
+	}
+	
+	public void setFullMode( boolean fullMode )
+	{
+		this.fullMode = fullMode;
 	}
 	
 	public void add( Context ctx )
@@ -82,7 +95,17 @@ public class WDesktop implements WorkbenchListener, WindowFocusListener
 	public void show( Context ctx )
 	{
 		if( ! iframes.containsKey( ctx ) ) add( ctx );
-		iframes.get( ctx ).setVisible( true );
+		
+		if( fullMode )
+		{
+			removeAll();
+			add( iframes.get(ctx).viewer.getSwingComponent(),
+					BorderLayout.CENTER );
+		}
+		else
+		{
+			iframes.get( ctx ).setVisible( true );
+		}
 	}
 	
 	public void hide( Context ctx )

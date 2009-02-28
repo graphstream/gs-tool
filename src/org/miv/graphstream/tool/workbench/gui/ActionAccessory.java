@@ -203,7 +203,7 @@ public class ActionAccessory extends JPanel
 		{
 			super( cli, "Add edge options" );
 			
-			cycle = addBooleanOption( "Cycle ?", "cycle", true );
+			cycle = addBooleanOption( "Cycle ?", "cycle", false );
 			directed = addBooleanOption( "Directed ?", "directed", false );
 			edgeIdFormat = addTextOption( "id ", "id", "edge#%n" );
 			

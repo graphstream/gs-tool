@@ -22,14 +22,15 @@
  */
 package org.miv.graphstream.tool.workbench.gui;
 
-
 import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.WAlgorithm;
 import org.miv.graphstream.tool.workbench.WAlgorithmLoader;
+import org.miv.graphstream.tool.workbench.event.NotificationListener.Notification;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Toolkit;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,7 +75,7 @@ public class WGui
 		this.dialogs = new HashMap<String,WDialog>();
 		this.core    = new WCore();
 		this.core.setTerminalCloseAction( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
-		this.actionBox = new WActions( core.getCLI() );
+		this.actionBox = new WActions( this );
 		this.menuBar = new WMenuBar( this.actionBox );
 		this.desktop = new WDesktop( core.getCLI() );
 		this.infoBox = new InfoBox( core.getCLI() );
@@ -108,11 +109,45 @@ public class WGui
 		this.core.addWorkbenchListener( this.desktop );
 		
 		loadAlgorithms();
+		WNotificationServer.init(core);
 	}
 	
 	WMenuBar getWMenuBar()
 	{
 		return menuBar;
+	}
+	
+	public void setFullMode( boolean fullMode )
+	{
+		desktop.setFullMode(fullMode);
+		
+		if( fullMode )
+		{
+			add( desktop, BorderLayout.CENTER );
+			add( dialogs.get("graph-infos").getContentPane(), BorderLayout.WEST );
+			add( dialogs.get("selection").getContentPane(), BorderLayout.EAST );
+		
+			Toolkit toolkit = Toolkit.getDefaultToolkit();
+			setSize( toolkit.getScreenSize() );
+			setLocation(0,0);
+		
+			WNotificationServer.dispatch(Notification.fullMode);
+		}
+		else
+		{
+			remove(desktop);
+			remove(dialogs.get("graph-infos").getContentPane());
+			remove(dialogs.get("selection").getContentPane());
+			
+			pack();
+			
+			WNotificationServer.dispatch(Notification.normalMode);
+		}
+	}
+	
+	public WCore getCore()
+	{
+		return core;
 	}
 	
 	protected void loadAlgorithms()

@@ -145,8 +145,8 @@ public class WCore
 	
 	public void removeContext( Context ctx )
 	{
-		fireContextRemoved( ctx );
 		unregisterContext( ctx );
+		fireContextRemoved( ctx );
 		
 		if( activeCtx >= ctxs.size() )
 			activeCtx = ctxs.size() - 1;
