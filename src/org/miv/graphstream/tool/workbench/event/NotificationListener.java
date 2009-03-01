@@ -12,7 +12,8 @@ public interface NotificationListener
 		contextElementOperation,
 		noContext,
 		fullMode,
-		normalMode
+		normalMode,
+		langChanged
 	}
 	
 	void handleNotification( Notification notification );

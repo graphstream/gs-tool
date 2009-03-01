@@ -27,7 +27,7 @@ public class WAbout
 		setLayout( new BorderLayout() );
 		setResizable(false);
 		
-		Icon splash = WorkbenchUtils.getImageIcon("splash");
+		Icon splash = WUtils.getImageIcon("splash");
 		JLabel splashLabel = new JLabel(splash);
 		splashLabel.setBounds(0,0,splash.getIconWidth(),splash.getIconHeight());
 		
@@ -36,7 +36,7 @@ public class WAbout
 		layers.add( splashLabel, new Integer(0) );
 		
 		JLabel institute = new JLabel( "LITIS, University of Le Havre (FR)" );
-		institute.setFont( WorkbenchUtils.getDefaultFont() );
+		institute.setFont( WUtils.getDefaultFont() );
 		institute.setBounds( 15, 15, 
 				(int) institute.getPreferredSize().getWidth(),
 				(int) institute.getPreferredSize().getHeight() );
@@ -50,7 +50,7 @@ public class WAbout
 		for( String a : autorsData )
 		{
 			JLabel al = new JLabel(a,JLabel.RIGHT);
-			al.setFont( WorkbenchUtils.getDefaultFont() );
+			al.setFont( WUtils.getDefaultFont() );
 			autors.add(al);
 		}
 		autors.setBounds( splash.getIconWidth() - 15 - autors.getPreferredSize().width, 15,
@@ -60,7 +60,7 @@ public class WAbout
 		layers.add( autors, new Integer(1) );
 		
 		JLabel copyrights = new JLabel( "Copyright (c) 2006 - 2009" );
-		copyrights.setFont(WorkbenchUtils.getDefaultFont());
+		copyrights.setFont(WUtils.getDefaultFont());
 		copyrights.setBounds( 15, splash.getIconHeight() - 15 - copyrights.getPreferredSize().height,
 				copyrights.getPreferredSize().width, copyrights.getPreferredSize().height );
 		layers.add( copyrights, new Integer(1) );

@@ -1,0 +1,50 @@
+<gswb-gettext>
+	<!-- English part -->
+	<entry name="menu:file" lang="en" value="File"/>
+	<entry name="menu:new" lang="en" value="New"/>
+	<entry name="menu:open" lang="en" value="Open"/>
+	<entry name="menu:generate" lang="en" value="Generate"/>
+	<entry name="menu:save" lang="en" value="Save"/>
+	<entry name="menu:saveas" lang="en" value="Save as"/>
+	<entry name="menu:quit" lang="en" value="Exit"/>
+	<entry name="menu:edit" lang="en" value="Edit"/>
+	<entry name="menu:copy" lang="en" value="Copy"/>
+	<entry name="menu:cut" lang="en" value="Cut"/>
+	<entry name="menu:paste" lang="en" value="Paste"/>
+	<entry name="menu:select" lang="en" value="Select"/>
+	<entry name="menu:selectall" lang="en" value="All"/>
+	<entry name="menu:unselectall" lang="en" value="None"/>
+	<entry name="menu:options" lang="en" value="Options"/>
+	<entry name="menu:dialog" lang="en" value="Dialog"/>
+	<entry name="menu:algorithms" lang="en" value="Algorithms"/>
+	<entry name="menu:coloring" lang="en" value="Coloring"/>
+	<entry name="menu:measure" lang="en" value="Measure"/>
+	<entry name="menu:help" lang="en" value="Help"/>
+	<entry name="menu:about" lang="en" value="About"/>
+	<entry name="menu:manual" lang="en" value="Manual"/>
+	<entry name="menu:tutorials" lang="en" value="Tutorials"/>
+	<!--  French part -->
+	<entry name="menu:file" lang="fr" value="Fichier"/>
+	<entry name="menu:new" lang="fr" value="Nouveau"/>
+	<entry name="menu:open" lang="fr" value="Ouvrir"/>
+	<entry name="menu:generate" lang="fr" value="Générere"/>
+	<entry name="menu:save" lang="fr" value="Enregistrer"/>
+	<entry name="menu:saveas" lang="fr" value="Enregistrer sous"/>
+	<entry name="menu:quit" lang="fr" value="Quitter"/>
+	<entry name="menu:edit" lang="fr" value="Edition"/>
+	<entry name="menu:copy" lang="fr" value="Copier"/>
+	<entry name="menu:cut" lang="fr" value="Couper"/>
+	<entry name="menu:paste" lang="fr" value="Coller"/>
+	<entry name="menu:select" lang="fr" value="Selectionner"/>
+	<entry name="menu:selectall" lang="fr" value="Tout"/>
+	<entry name="menu:unselectall" lang="fr" value="Aucune"/>
+	<entry name="menu:options" lang="fr" value="Options"/>
+	<entry name="menu:dialog" lang="fr" value="Boites de dialogue"/>
+	<entry name="menu:algorithms" lang="fr" value="Algorithmes"/>
+	<entry name="menu:coloring" lang="fr" value="Coloration"/>
+	<entry name="menu:measure" lang="fr" value="Mesure"/>
+	<entry name="menu:help" lang="fr" value="Aide"/>
+	<entry name="menu:about" lang="fr" value="A propos"/>
+	<entry name="menu:manual" lang="fr" value="Manuel"/>
+	<entry name="menu:tutorials" lang="fr" value="Tutoriels"/>
+</gswb-gettext>

@@ -75,7 +75,7 @@ public class WActions
 		accessoryPanel.setLayout( new BorderLayout() );
 		ActionAccessory aa;
 		
-		JButton button = new JButton( WorkbenchUtils.getImageIcon( "action:select" ) );
+		JButton button = new JButton( WUtils.getImageIcon( "action:select" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setToolTipText( "selection mode" );
@@ -88,7 +88,7 @@ public class WActions
 		
 		add( new JToolBar.Separator() );
 		
-		button = new JButton( WorkbenchUtils.getImageIcon( "action:add_node" ) );
+		button = new JButton( WUtils.getImageIcon( "action:add_node" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setToolTipText( "add nodes mode" );
@@ -99,7 +99,7 @@ public class WActions
 		accessories.put( button, aa );
 		add(button);
 		
-		button = new JButton( WorkbenchUtils.getImageIcon( "action:del_node" ) );
+		button = new JButton( WUtils.getImageIcon( "action:del_node" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setToolTipText( "delete nodes" );
@@ -109,7 +109,7 @@ public class WActions
 		
 		add( new JToolBar.Separator() );
 		
-		button = new JButton( WorkbenchUtils.getImageIcon( "action:add_edge" ) );
+		button = new JButton( WUtils.getImageIcon( "action:add_edge" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setToolTipText( "add edges mode" );
@@ -120,7 +120,7 @@ public class WActions
 		accessories.put( button, aa );
 		add(button);
 		
-		button = new JButton( WorkbenchUtils.getImageIcon( "action:del_edge" ) );
+		button = new JButton( WUtils.getImageIcon( "action:del_edge" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setToolTipText( "delete edges" );
@@ -130,7 +130,7 @@ public class WActions
 		
 		add( new JToolBar.Separator() );
 		
-		button = new JButton( WorkbenchUtils.getImageIcon( "term" ) );
+		button = new JButton( WUtils.getImageIcon( "term" ) );
 		button.setPreferredSize( buttonDim );
 		button.setBackground( WGui.background );
 		button.setActionCommand( "open.terminal" );
@@ -216,17 +216,19 @@ public class WActions
 		else if( e.getActionCommand().equals( "open.terminal" ) )
 			cli.getCore().openTerminal();
 		else if( e.getActionCommand().equals( "open.graph" ) )
-			WorkbenchUtils.openGraph( this, cli );
+			WUtils.openGraph( this, cli );
 		else if( e.getActionCommand().equals( "save.graph" ) )
 			cli.getCore().saveContext();
 		else if( e.getActionCommand().equals( "new.graph" ) )
-			WorkbenchUtils.newGraph( this, cli );
+			WUtils.newGraph( this, cli );
 		else if( e.getActionCommand().equals( "tool.configure" ) )
 			configureTool();
 		else if( e.getActionCommand().equals("quit") )
 			cli.getCore().exit();
 		else if( e.getActionCommand().equals("options") )
 			options.setVisible(true);
+		else if( e.getActionCommand().equals("menu.help") )
+			WHelp.showHelp();
 		else if( e.getActionCommand().equals("menu.help.about") )
 			WAbout.whatAbout();
 	}

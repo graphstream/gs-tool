@@ -16,7 +16,7 @@
 
 package org.miv.graphstream.tool.workbench;
 
-import org.miv.graphstream.tool.workbench.gui.WorkbenchUtils;
+import org.miv.graphstream.tool.workbench.gui.WUtils;
 
 import java.awt.Dimension;
 import java.awt.BorderLayout;
@@ -220,7 +220,7 @@ public class CLITerm extends JPanel
 	        frame = new JFrame( "GraphStream CLI Terminal" );
 			frame.add( this );
 			frame.pack();
-			frame.setIconImage( WorkbenchUtils.getImageIcon( "term" ).getImage() );
+			frame.setIconImage( WUtils.getImageIcon( "term" ).getImage() );
 			frame.setDefaultCloseOperation( closeAction );
 			frame.addWindowFocusListener( this );
 		}

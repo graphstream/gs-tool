@@ -19,6 +19,7 @@ package org.miv.graphstream.tool.workbench.gui;
 import org.miv.graphstream.tool.workbench.Context;
 import org.miv.graphstream.tool.workbench.cli.CLI;
 import org.miv.graphstream.tool.workbench.cli.CLICommand;
+import org.miv.graphstream.tool.workbench.event.NotificationListener;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -33,10 +34,13 @@ import java.awt.event.ActionEvent;
 
 import java.io.File;
 
+import java.lang.reflect.Method;
+
 import java.net.URL;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -58,7 +62,7 @@ import javax.swing.filechooser.FileFilter;
  * @author Guilhelm Savin
  *
  */
-public class WorkbenchUtils
+public class WUtils
 {
 	protected static final Map<String,ImageIcon> ICONS = new HashMap<String,ImageIcon>();
 	/*
@@ -780,5 +784,82 @@ public class WorkbenchUtils
 		{
 			return description;
 		}
+	}
+	/**
+	 * Defines an object to reload.
+	 */
+	static class ReloadField
+	{
+		Object obj;
+		String gettext;
+		Method method;
+		
+		public ReloadField( Object obj, String gettext, String method )
+		{
+			this.obj = obj;
+			this.gettext = gettext;
+			
+			try
+			{
+				this.method = obj.getClass().getMethod(method, String.class);
+			}
+			catch( Exception e )
+			{
+				
+			}
+		}
+		
+		public void reload()
+		{
+			try
+			{
+				method.invoke(obj,WGetText.getTextLookup(gettext));
+			}
+			catch( Exception e )
+			{
+				System.err.printf( "reloading object:\n\t%s\n", 
+						e.getMessage() == null ? e.getClass() : e.getMessage() );
+			}
+		}
+	}
+	/**
+	 * Defines a pool containing objects to reload. 
+	 */
+	static class ReloadPool
+		extends LinkedList<ReloadField>
+		implements NotificationListener
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		public ReloadPool()
+		{
+			WNotificationServer.connect(this);
+		}
+		
+		public void reload()
+		{
+			for( int i = 0; i < size(); i++ )
+				get(i).reload();
+		}
+		
+		public void handleNotification( Notification n )
+		{
+			if( n == Notification.langChanged ) reload();
+		}
+	}
+	/**
+	 * Contains all objects to reload.
+	 */
+	private static final ReloadPool reloadPool = new ReloadPool(); 
+	/**
+	 * Add an object to be reload when lang changed.
+	 * 
+	 * @param obj object to reload
+	 * @param gettext text to reload
+	 * @param callMethod method to call, taking String as argument
+	 */
+	public static void reloadOnLangChanged( Object obj, String gettext, String callMethod )
+	{
+		reloadPool.add( new ReloadField(obj,gettext,callMethod) );
 	}
 }

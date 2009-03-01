@@ -15,21 +15,21 @@
 		<parameter name="attribute" type="java.lang.String"/>
 		<parameter name="source" type="java.lang.String"/>
 	</algorithm>
-	<algorithm name="WelshPowell" class="org.miv.graphstream.algorithm.coloring.WelshPowell" category="coloring">
+	<!--Coloring--><algorithm name="WelshPowell" class="org.miv.graphstream.algorithm.coloring.WelshPowell" category="coloring">
 		<description><h2>The Welsh and Powell algorithm</h2><p>This class is intended to give some algorithm for computing<br/>the well-known coloring problem. It provides the Welsh and<br/>Powell greedy algorithm that may used as a static method.</p></description>
 		<parameter name="modify" type="boolean"/>
 		<parameter name="attribute" type="java.lang.String"/>
-	</algorithm>
-	<algorithm name="RandomGenerator" class="org.miv.graphstream.algorithm.generator.RandomGenerator" category="generator">
-		<description><h2>The random generator</h2><p>This generator creates random graphs of any size. Calling<br/>begin(Graph) put one unique node in the graph, then<br/>nextElement() will add a new node each time it is called and<br/>connect this node randomly to others.</p></description>
-		<parameter name="averageDegree" type="int"/>
-		<parameter name="directed" type="boolean"/>
-		<parameter name="randomlyDirectedEdges" type="boolean"/>
-	</algorithm>
+	</algorithm><!--Measure-->
+	
 	<algorithm name="GraphNervousness" class="org.miv.graphstream.algorithm.measure.GraphNervousness" category="measure">
 		<description><h2>The graph nervousness measure</h2><p>The graph nervousness is a measure that give for each step<br/>of a dynamic graph a ratio between the number of structural<br/>events ( addition and removal of nodes and edges) and the<br/>number of elements (nodes and edges) in the graph.<br/><br/>This measure is different from the Element Nervousness even<br/>			different from the average element nervousness.</p></description>
 	</algorithm>
-	<algorithm name="GridGenerator"
+	<!--Generators--><algorithm name="RandomGenerator" class="org.miv.graphstream.algorithm.generator.RandomGenerator" category="generator">
+		<description><h2>The random generator</h2><p>This generator creates random graphs of any size. Calling<br />begin(Graph) put one unique node in the graph, then<br />nextElement() will add a new node each time it is called and<br />connect this node randomly to others.</p></description>
+		<parameter name="averageDegree" type="int" />
+		<parameter name="directed" type="boolean" />
+		<parameter name="randomlyDirectedEdges" type="boolean" />
+	</algorithm><algorithm name="GridGenerator"
 		class="org.miv.graphstream.algorithm.generator.GridGenerator"
 		category="generator">
 		<description><h2>The grid generator</h2><p>
@@ -45,5 +45,34 @@
 		category="generator">
 		<description><h2>The Dorogovtsev Mendes generator</h2><p>Generates a graph using the Dorogovtsev - Mendes algorithm. This starts by<br/>creating three nodes and tree edges, making a triangle, and then add one<br/>node at a time. Each time a node is added, an edge is choosed randomly and<br/>the node is connected to the two extremities of this edge.</p>
 			</description>
+	</algorithm>
+	<algorithm name="FullGenerator"
+		class="org.miv.graphstream.algorithm.generator.FullGenerator"
+		category="generator">
+		<description><h2>Full generator</h2><p>Probably not very usefull, still sometimes needed. This genertor creates<br/>fully connected graphs of any size. Calling {@link #begin(Graph)} put one<br/>unique node in the graph, then {@link #nextElement()} will add a new node<br/>each time it is called.</p><p>This generator has the ability to add randomly choosed numerical values<br/>on arbitrary attributes on edges or nodes of the graph, and to randomly<br/>choose a direction for edges.</p><p>A list of attributes can be given for nodes and edges. In this case each<br/>new node or edge added will have this attribute and the value will be a<br/>randomly choosed number. The range in which these numbers are choosed can be<br/>specified.</p><p>By default, edges are not oriented. It is possible to ask orientation, in<br/>which case the direction is choosed randomly.</p></description>
+		<parameter name="directed" type="boolean"></parameter>
+		<parameter name="randomlyDirectedEdges" type="boolean"></parameter>
+		<parameter name="nodeAttribute" type="java.lang.String"></parameter>
+		<parameter name="edgeAttribute" type="java.lang.String"></parameter>
+	</algorithm>
+	<algorithm name="IncompleteGridGenerator" class="org.miv.graphstream.algorithm.generator.IncompleteGridGenerator" category="generator">
+		<description><h2>Incomplete grid generator</h2><p>This class allow the user to generate 2D-grid graph into the dgs format.</p><br/><br/><p>This is a very simple graph generator that generates a grid of size nXm.<br/>However, four different versions are possible:<ol><li> The simple 2D-grid, in such a case, two parameters (width and height) are enough</li><li> The 2D-Cross-Grid, in which inner nodes have 8 neighbors (North, South, East, West,<br/>North-West, North-East, South-West and South-East).</li><li> The 2D-Torus, in which all nodes have 4 neighbors, and,</li><li> The 2D-Cross-Torus, in which all nodes have 8 neighbors.</li></ol></p></description>
+		<parameter name="width" type="int"></parameter>
+		<parameter name="height" type="int"></parameter>
+		<parameter name="cross" type="boolean"></parameter>
+		<parameter name="torus" type="boolean"></parameter>
+		<parameter name="nbObstacles" type="int"></parameter>
+		<parameter name="obstacleSize" type="int"></parameter>
+	</algorithm>
+	<algorithm name="PreferentialAttachmentGenerator" class="org.miv.graphstream.algorithm.generator.PreferentialAttachmentGenerator" category="generator">
+		<description><h2>The Preferential Attachment generator</h2><p>Scale-free graph (tree) generator using the preferential attachement rule.</p><br/><br/><p>This is a very simple graph generator that generates a tree using the<br/>preferential attachement rule: nodes are generated one by one, and each time<br/>attached by an edge to another node that has more chance to choosed if it<br/>already has lots of nodes attached to it.</p><p>The more this generator is iterated, the more nodes are generated. It can<br/>therefore generate trees of any size.</p></description>
+	</algorithm>
+	<algorithm name="RandomEuclideanGenerator" class="org.miv.graphstream.algorithm.generator.RandomEuclideanGenerator" category="generator">
+		<description><h2>Random Euclidean graph generator.</h2><p>This generator creates random graphs of any size. Links of such graphs are<br/>created according to a threshold. If the Euclidean distance between two nodes<br/>is less than a given threshold, then a link is created between those 2 nodes.<br/>Calling {@link #begin(Graph)} put one unique node in the graph, then<br/>{@link #nextElement()} will add a new node each time it is called and connect<br/>this node to its neighbors according to the threshold planar Euclidean<br/>distance.</p><br/><p>This generator has the ability to add randomly chosen numerical values on<br/>arbitrary attributes on edges or nodes of the graph, and to randomly choose a<br/>direction for edges.</p><br/><p>A list of attributes can be given for nodes and edges. In this case each new<br/>node or edge added will have this attribute and the value will be a randomly<br/>chosen number. The range in which these numbers are chosen can be specified.</p><br/><p>By default, edges are not oriented. It is possible to ask orientation, in<br/>which case the direction is chosen randomly.</p><br/><p>By default, the graph is generated in the plane (2 dimensions) . Cartesian<br/>coordinates on nodes will be generated at random. So, each node will<br/>automatically be given two attributes: "x" and "y". If a dimension is<br/>specified, then |dimension| attributes are generated, and the 2-norm distance (<br/><a href="http://en.wikipedia.org/wiki/Euclidean_distance">Euclidean distance</a>)<br/>is considered in that dimension between the nodes.</p><br/><p>If the dimension is 2, then attributes "x" and "y" are defined for each node.<br/>If dimension is 3, then attributes "x", "y" and "z" are used. For other<br/>values of dimension, |dimension| attributes are defined ("xi" with "i" \in<br/>|dimension|) .</p></description>
+		<parameter name="dimension" type="int"></parameter>
+		<parameter name="directed" type="boolean"></parameter>
+		<parameter name="randomlyDirectedEdges" type="boolean"></parameter>
+		<parameter name="nodeAttribute" type="java.lang.String"></parameter>
+		<parameter name="edgeAttribute" type="java.lang.String"></parameter>
 	</algorithm>
 </gs-algorithms>

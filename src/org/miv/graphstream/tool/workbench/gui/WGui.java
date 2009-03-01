@@ -72,6 +72,8 @@ public class WGui
 	{
 		super( "GraphStream" );
 		
+		WGetText.load();
+		
 		this.dialogs = new HashMap<String,WDialog>();
 		this.core    = new WCore();
 		this.core.setTerminalCloseAction( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
@@ -100,9 +102,9 @@ public class WGui
 		setLayout( new BorderLayout() );
 		add( actionBox, BorderLayout.NORTH );
 		
-		applyBackground( infoBox, actionBox, infoBox.graphInfo, infoBox.selectionTree );
+		//applyBackground( infoBox, actionBox, infoBox.graphInfo, infoBox.selectionTree );
 		
-		setIconImage( WorkbenchUtils.getImageIcon( "gs_logo" ).getImage() );
+		setIconImage( WUtils.getImageIcon( "gs_logo" ).getImage() );
 	    
 		pack();
 		
@@ -110,6 +112,7 @@ public class WGui
 		
 		loadAlgorithms();
 		WNotificationServer.init(core);
+		WHelp.init();
 	}
 	
 	WMenuBar getWMenuBar()

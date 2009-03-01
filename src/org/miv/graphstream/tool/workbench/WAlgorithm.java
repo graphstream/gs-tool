@@ -315,7 +315,8 @@ public class WAlgorithm
 		gen.begin(graph);
 		while( dynamize )
 		{
-			gen.nextElement();
+			if( ! gen.nextElement() )
+				break;
 			try
 			{
 				Thread.sleep(200);

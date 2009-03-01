@@ -1,0 +1,50 @@
+<gswb-menubar>
+	<menu id="file" name="@gettext(menu:file)">
+		<item name="@gettext(menu:new)" command="new.graph" strokeKey="VK_N" strokeModifier="CTRL_MASK" icon="@file:new"/>
+		<item name="@gettext(menu:open)" command="open.graph" strokeKey="VK_O"
+			strokeModifier="CTRL_MASK" icon="@file:open" />
+		<menu
+			id="algorithm:generator" name="@gettext(menu:generate)" disableOn="noContext" enableOn="contextAdded">
+</menu><separator></separator>
+		<item name="@gettext(menu:save)" command="save.graph" strokeKey="VK_S"
+			strokeModifier="CTRL_MASK" icon="@file:save" disableOn="noContext" enableOn="contextAdded"/>
+		<item name="@gettext(menu:saveas)" command="saveas.graph" strokeKey="VK_S"
+			strokeModifier="CTRL_MASK,SHIFT_MASK" icon="@file:saveas"
+			disableOn="noContext" enableOn="contextAdded">
+		</item>
+		<separator/>
+		<item name="@gettext(menu:quit)" command="quit" strokeKey="VK_Q"
+			strokeModifier="CTRL_MASK" icon="@exit" />
+	</menu>
+	<menu id="edit" name="@gettext(menu:edit)">
+		<menu name="@gettext(menu:select)">
+			<item name="@gettext(menu:selectall)" command="@CLI:select all" strokeKey="VK_A" strokeModifier="CTRL_MASK"/>
+			<item name="@gettext(menu:unselectall)" command="@CLI:unselect all" strokeKey="VK_A" strokeModifier="CTRL_MASK,SHIFT_MASK"/>
+		</menu>
+		<separator/>
+		<item name="@gettext(menu:copy)" command="@CLI:copy" strokeKey="VK_C"
+			strokeModifier="CTRL_MASK" icon="@edit:copy" />
+		<item name="@gettext(menu:cut)" command="@CLI:cut" strokeKey="VK_X"
+			strokeModifier="CTRL_MASK" icon="@edit:cut" />
+		<item name="@gettext(menu:paste)" command="@CLI:paste" strokeKey="VK_V"
+			strokeModifier="CTRL_MASK" icon="@edit:paste" />
+		<separator/>
+		<item name="@gettext(menu:options)" command="options"/>
+	</menu>
+	<menu id="dialog" name="@gettext(menu:dialog)" disableOn="fullMode" enableOn="normalMode"></menu>
+	<menu id="algorithm" name="@gettext(menu:algorithms)" disableOn="noContext"
+		enableOn="contextAdded">
+		<menu id="algorithm:coloring" name="@gettext(menu:coloring)"
+			icon="org/miv/graphstream/tool/workbench/gearscolored_32.png">
+		</menu>
+		<menu id="algorithm:measure" name="@gettext(menu:measure)"></menu>
+	</menu>
+	<menu id="help" name="@gettext(menu:help)">
+		<item name="@gettext(menu:help)" command="menu.help" icon="@help"></item>
+		<separator></separator><item name="@gettext(menu:manual)" command="menu.help.manual"/>
+		<item name="@gettext(menu:tutorials)" command="menu.help.tutorials"/>
+		<separator/>
+		<item name="@gettext(menu:about)" command="menu.help.about"/>
+	</menu>
+	
+</gswb-menubar>

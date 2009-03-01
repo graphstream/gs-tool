@@ -1,5 +1,7 @@
 package org.miv.graphstream.tool.workbench.gui;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -9,9 +11,11 @@ import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -147,24 +151,61 @@ public class WOptions
 	
 	public WOptions( WGui gui )
 	{
+		GridBagLayout 		bag = new GridBagLayout();
+		GridBagConstraints	c	= new GridBagConstraints();
+		
 		setTitle( "Options" );
-		setLayout( new java.awt.FlowLayout() );
+		setLayout( bag );
 		
 		this.gui = gui;
 		
+		JLabel 		label;
+		JComboBox	comboBox;
+		JPanel		panel;
+		JCheckBox	checkBox;
+		
 		ComboBoxModel cbm = new SkinModel();
-		JComboBox jcb = new JComboBox(cbm);
-		jcb.addItemListener(this);
+		comboBox = new JComboBox(cbm);
+		comboBox.addItemListener(this);
 		
-		JPanel skinPanel = new JPanel();
-		skinPanel.setBorder( BorderFactory.createTitledBorder("Skin") );
-		skinPanel.add(jcb);
+		label = new JLabel("skin");
+			c.weightx = 1.0;
+		bag.setConstraints(label,c);
+		add(label);
+			c.gridwidth = GridBagConstraints.REMAINDER;
+		bag.setConstraints(comboBox,c);
+		add(comboBox);
 		
-		add(skinPanel);
+		DefaultComboBoxModel langModel = new DefaultComboBoxModel();
+		for( int i = 0; i < WGetText.getLangCount(); i++ )
+		{
+			langModel.addElement(WGetText.getLang(i));
+		}
+		langModel.setSelectedItem(WGetText.getLang());
+		comboBox = new JComboBox(langModel);
+		comboBox.addItemListener( new ItemListener()
+			{
+				public void itemStateChanged( ItemEvent ie )
+				{
+					WGetText.setLang((String) ie.getItem());
+				}
+			});
+		
+		label = new JLabel("lang");
+			c.weightx = 1.0;
+			c.gridwidth = GridBagConstraints.RELATIVE;
+		bag.setConstraints(label,c);
+		add(label);
+			c.fill = GridBagConstraints.BOTH;
+			c.gridwidth = GridBagConstraints.REMAINDER;
+		bag.setConstraints(comboBox,c);
+		add(comboBox);
 		
 		fullMode = new JCheckBox("Full mode");
 		fullMode.addChangeListener(this);
+		bag.setConstraints(fullMode,c);
 		add(fullMode);
+		
 		
 		pack();
 	}

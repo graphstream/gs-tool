@@ -35,6 +35,8 @@ import org.miv.graphstream.ui.swing.SwingGraphViewer;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Window;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelListener;
@@ -181,7 +183,7 @@ public class WDesktop
 // Stuff
 	
 	class ContextFrame extends JFrame 
-		implements ContextListener, WindowListener, MouseListener, MouseWheelListener
+		implements ContextListener, WindowListener, MouseListener, MouseWheelListener, KeyListener
 	{
 		public static final long serialVersionUID = 0x00A00801L;
 		
@@ -209,6 +211,7 @@ public class WDesktop
 			
 			pack();
 			
+			addKeyListener( this );
 			addWindowFocusListener( _this_() );
 			addWindowListener( this );
 			
@@ -274,10 +277,12 @@ public class WDesktop
 			
 			if( n != null )
 			{
-				switch( e.getButton() )
+				if( e.getButton() == MouseEvent.BUTTON1 )
 				{
-				case MouseEvent.BUTTON1: nodeClicked( n.getId() ); break;
-				case MouseEvent.BUTTON2: edgeSelectionMode( n.getId() ); break;
+					if( e.isControlDown() )
+						edgeSelectionMode( n.getId() );
+					else
+						nodeClicked( n.getId() );
 				}
 			}
 		}
@@ -291,7 +296,7 @@ public class WDesktop
 			if( env.containsKey( WActions.OPT_ADD_NODE_ID ) )
 				id = env.getString( WActions.OPT_ADD_NODE_ID );
 			if( id == null ) id = "node#%n";
-			id = WorkbenchUtils.getAutomaticNodeId( ctx, id );
+			id = WUtils.getAutomaticNodeId( ctx, id );
 			
 			try
 			{
@@ -301,7 +306,7 @@ public class WDesktop
 			}
 			catch( Exception ex )
 			{
-				WorkbenchUtils.errorMessage( this, "cannot create node\n" + ex.getMessage() );
+				WUtils.errorMessage( this, "cannot create node\n" + ex.getMessage() );
 			}
 		}
 		
@@ -324,7 +329,7 @@ public class WDesktop
 					if( env.containsKey( WActions.OPT_ADD_EDGE_ID ) )
 						id = env.getString( WActions.OPT_ADD_EDGE_ID );
 					if( id == null ) id = "edge#%n";
-					id = WorkbenchUtils.getAutomaticEdgeId( ctx, id );
+					id = WUtils.getAutomaticEdgeId( ctx, id );
 					
 					Boolean directed = env.getBoolean( WActions.OPT_ADD_EDGE_DIRECTED );
 					if( directed == null ) directed = false;
@@ -336,7 +341,7 @@ public class WDesktop
 					}
 					catch( Exception ex )
 					{
-						WorkbenchUtils.errorMessage( this, 
+						WUtils.errorMessage( this, 
 								"cannot create edge\n" + ex.getMessage() );
 					}
 					
@@ -446,7 +451,7 @@ public class WDesktop
 				case JOptionPane.YES_OPTION: 
 				{
 					if( ctx.getDefaultFile() == null )
-						WorkbenchUtils.selectFile( this, ctx );
+						WUtils.selectFile( this, ctx );
 					
 					if( ! cli.getCore().saveContext( ctx ) )
 					{
@@ -507,22 +512,37 @@ public class WDesktop
 		
 		public void mouseEntered(MouseEvent e)
 		{
-			
 		}
 		
 		public void mouseExited(MouseEvent e)
 		{
-			
 		}
 		
 		public void mousePressed(MouseEvent e)
 		{
-			
 		}
 		
 		public void mouseReleased(MouseEvent e) 
 		{
-			
+		}
+		
+	// KeyListener
+		
+		public void keyPressed(KeyEvent e)
+		{
+			switch( e.getKeyCode() )
+			{
+			case KeyEvent.VK_PAGE_UP: 	edgeSelectionHandler.next(); 		break;
+			case KeyEvent.VK_PAGE_DOWN: edgeSelectionHandler.previous();	break;
+			}
+		}
+		
+		public void keyReleased(KeyEvent e)
+		{
+		}
+		
+		public void keyTyped(KeyEvent e)
+		{
 		}
 		
 	// More stuff !

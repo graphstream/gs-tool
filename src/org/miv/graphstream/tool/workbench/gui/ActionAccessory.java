@@ -287,7 +287,7 @@ public class ActionAccessory extends JPanel
 		public void actionPerformed( ActionEvent e )
 		{
 			if( e != null && e.getSource() == pattern )
-				WorkbenchUtils.selectPattern( this, cli );
+				WUtils.selectPattern( this, cli );
 		}
 	}
 }

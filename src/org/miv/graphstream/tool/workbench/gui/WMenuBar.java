@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.HashMap;
 
+import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -57,7 +58,7 @@ public class WMenuBar
 {
 	public static final long serialVersionUID = 0x00A00301L;
 
-	static final String GSWB_MENUBAR_XML = "org/miv/graphstream/tool/workbench/gui/wb-menu-skeletton.xml";
+	static final String GSWB_MENUBAR_XML = "org/miv/graphstream/tool/workbench/ressources/gswb-menu.xml";
 	
 	/*
 	 * XML Menu Skeletton
@@ -96,17 +97,18 @@ public class WMenuBar
 			}
 			
 			rooted = true;
-			JComponent last = null;
+			AbstractButton last = null;
 			
 			if( qName.equals( "menu" ) )
 			{
-				JMenu menu = new JMenu( atts.getValue("name") );
+				String name = atts.getValue("name");
+				JMenu menu = new JMenu( WGetText.getTextLookup(name) );
 				
 				if( atts.getValue("icon") != null )
 				{
 					if( atts.getValue("icon").startsWith("@"))
 					{
-						menu.setIcon( WorkbenchUtils.getImageIcon(atts.getValue("icon").substring(1)) );
+						menu.setIcon( WUtils.getImageIcon(atts.getValue("icon").substring(1)) );
 					}
 					else
 					{
@@ -144,7 +146,12 @@ public class WMenuBar
 			}
 				
 			if( last != null && atts.getValue("id") != null )
+			{
 				WMenuBar.this.registerComponent(atts.getValue("id"),last);
+			}
+			
+			if( last != null )
+				WUtils.reloadOnLangChanged(last,atts.getValue("name"),"setText");
 		}
 		
 		public void endElement(String uri, String localName, String qName)
@@ -159,12 +166,14 @@ public class WMenuBar
 			}
 		}
 		
-		protected JComponent handleNewItem( Attributes atts )
+		protected AbstractButton handleNewItem( Attributes atts )
 		{
 			int strokeKey = 0;
 			int strokeModifier = 0;
 			boolean useStroke = false;
 			boolean useModifier = false;
+			String name = atts.getValue("name");
+			name = WGetText.getTextLookup(name);
 			
 			if( atts.getValue("strokeKey") != null )
 			{
@@ -200,9 +209,9 @@ public class WMenuBar
 			JMenuItem item = null;
 			
 			if( atts.getValue("type") == null || atts.getValue("type").equals("menuitem") )
-				item = new JMenuItem( atts.getValue("name") );
+				item = new JMenuItem( name );
 			else if( atts.getValue("type").equals("checkbox") )
-				item = new JCheckBoxMenuItem( atts.getValue("name") );
+				item = new JCheckBoxMenuItem( name );
 			else
 			{
 				// TODO
@@ -213,7 +222,7 @@ public class WMenuBar
 			{
 				if( atts.getValue("icon").startsWith("@"))
 				{
-					item.setIcon( WorkbenchUtils.getImageIcon(atts.getValue("icon").substring(1)) );
+					item.setIcon( WUtils.getImageIcon(atts.getValue("icon").substring(1)) );
 				}
 				else
 				{
@@ -274,8 +283,9 @@ public class WMenuBar
 		idMapping 	= new HashMap<String,JComponent>();
 		toDisable 	= new HashMap<Notification,ComponentPool>();
 		toEnable 	= new HashMap<Notification,ComponentPool>();
-		
+
 		InputStream skel = ClassLoader.getSystemResourceAsStream(GSWB_MENUBAR_XML);
+		
 		if( skel == null )
 			System.err.printf( "can not load xml skeletton file : \"%s\"\n", GSWB_MENUBAR_XML );
 		else
