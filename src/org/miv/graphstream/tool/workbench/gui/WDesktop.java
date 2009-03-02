@@ -498,6 +498,7 @@ public class WDesktop
 		
 		public void mouseClicked(MouseEvent e)
 		{
+			System.err.printf( "%s\n", cli.getCore().getActionMode() );
 			if( cli.getCore().getActionMode() == ActionMode.SELECT )
 				actionSelection( e );
 			else if( cli.getCore().getActionMode() == ActionMode.ADD_NODE )

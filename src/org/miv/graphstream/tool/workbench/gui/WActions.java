@@ -77,7 +77,7 @@ public class WActions
 				button.setBackground( WGui.background );
 				button.setToolTipText( WGetText.getTextLookup(tooltip) );
 				button.addActionListener( actions );
-			actions.actions.put( button, ActionMode.SELECT );
+			actions.actions.put( button, mode );
 			
 			if( accessory != null )
 			{

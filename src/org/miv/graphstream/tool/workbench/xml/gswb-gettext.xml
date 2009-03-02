@@ -11,7 +11,8 @@
 		<entry name="menu:save" lang="en" value="Save" />
 		<entry name="menu:saveas" lang="en" value="Save as" />
 		<entry name="menu:quit" lang="en" value="Exit" />
-		<entry name="menu:edit" lang="en" value="Edit" />
+		<entry name="menu:edit" lang="en" value="Edit" /><entry name="menu:undo" value="Undo" lang="en"></entry>
+		<entry name="menu:redo" value="Redo" lang="en"></entry>
 		<entry name="menu:copy" lang="en" value="Copy" />
 		<entry name="menu:cut" lang="en" value="Cut" />
 		<entry name="menu:paste" lang="en" value="Paste" />
@@ -50,7 +51,8 @@
 		<entry name="menu:save" lang="fr" value="Enregistrer" />
 		<entry name="menu:saveas" lang="fr" value="Enregistrer sous" />
 		<entry name="menu:quit" lang="fr" value="Quitter" />
-		<entry name="menu:edit" lang="fr" value="Edition" />
+		<entry name="menu:edit" lang="fr" value="Edition" /><entry name="menu:undo" lang="fr" value="Annuler"></entry>
+		<entry name="menu:redo" lang="fr" value="Rétablir"></entry>
 		<entry name="menu:copy" lang="fr" value="Copier" />
 		<entry name="menu:cut" lang="fr" value="Couper" />
 		<entry name="menu:paste" lang="fr" value="Coller" />

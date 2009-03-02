@@ -66,8 +66,7 @@ public class WAlgorithmGUI
 	public static ImageIcon ALGORITHM_ICON = null;
 	static
 	{
-		ALGORITHM_ICON = new ImageIcon(ClassLoader.getSystemResource(
-		"org/miv/graphstream/tool/workbench/gears_32.png"));
+		ALGORITHM_ICON = WUtils.getImageIcon("gears");
 	}
 	
 	static HashMap<String,String> fields = new HashMap<String,String>();

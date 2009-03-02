@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE gswb PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "jar:org/miv/graphstream/tool/workbench/xml/graphstream-workbench.dtd">
 <gswb:menubar xmlns="org/miv/graphstream" xmlns:gswb="workbench">
-	<menu id="file" name="@gettext(menu:file)">
+	<!--File menu--><menu id="file" name="@gettext(menu:file)">
 		<item name="@gettext(menu:new)" command="new.graph" strokeKey="VK_N" strokeModifier="CTRL_MASK" icon="@file:new"/>
 		<item name="@gettext(menu:open)" command="open.graph" strokeKey="VK_O"
 			strokeModifier="CTRL_MASK" icon="@file:open" />
@@ -17,8 +17,11 @@
 		<separator/>
 		<item name="@gettext(menu:quit)" command="quit" strokeKey="VK_Q"
 			strokeModifier="CTRL_MASK" icon="@exit" />
-	</menu>
+	</menu><!--Edit menu-->
 	<menu id="edit" name="@gettext(menu:edit)">
+		<item name="@gettext(menu:undo)" command="@CLI:undo" strokeKey="VK_Z" strokeModifier="CTRL_MASK" icon="@edit:undo"></item>
+		<item name="@gettext(menu:redo)" command="@CLI:redo" strokeKey="VK_Z" strokeModifier="CTRL_MASK,SHIFT_MASK" icon="@edit:redo"></item>
+		<separator></separator>
 		<menu name="@gettext(menu:select)">
 			<item name="@gettext(menu:selectall)" command="@CLI:select all" strokeKey="VK_A" strokeModifier="CTRL_MASK"/>
 			<item name="@gettext(menu:unselectall)" command="@CLI:unselect all" strokeKey="VK_A" strokeModifier="CTRL_MASK,SHIFT_MASK"/>
@@ -32,14 +35,14 @@
 			strokeModifier="CTRL_MASK" icon="@edit:paste" />
 		<separator/>
 		<item name="@gettext(menu:options)" command="options"/>
-	</menu>
-	<menu id="dialog" name="@gettext(menu:dialog)" disableOn="fullMode" enableOn="normalMode"></menu>
+	</menu><!--Dialog menu-->
+	<menu id="dialog" name="@gettext(menu:dialog)" disableOn="fullMode" enableOn="normalMode"></menu><!--Algorithms menu-->
 	<menu id="algorithm" name="@gettext(menu:algorithms)" disableOn="noContext"
 		enableOn="contextAdded">
 		<menu id="algorithm:coloring" name="@gettext(menu:coloring)">
 		</menu>
 		<menu id="algorithm:measure" name="@gettext(menu:measure)"></menu>
-	</menu>
+	</menu><!--Help menu-->
 	<menu id="help" name="@gettext(menu:help)">
 		<item name="@gettext(menu:help)" command="menu.help" icon="@help"></item>
 		<separator></separator><item name="@gettext(menu:manual)" command="menu.help.manual"/>

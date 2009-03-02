@@ -90,11 +90,14 @@ public class WUtils
 				{ "file:save", "org/miv/graphstream/tool/workbench/ressources/filesave.png" },
 				{ "file:saveas", "org/miv/graphstream/tool/workbench/ressources/filesaveas.png" },
 				{ "exit", "org/miv/graphstream/tool/workbench/ressources/exit.png" },
+				{ "edit:undo", "org/miv/graphstream/tool/workbench/ressources/undo.png" },
+				{ "edit:redo", "org/miv/graphstream/tool/workbench/ressources/redo.png" },
 				{ "edit:copy", "org/miv/graphstream/tool/workbench/ressources/editcopy.png" },
 				{ "edit:cut", "org/miv/graphstream/tool/workbench/ressources/editcut.png" },
 				{ "edit:paste", "org/miv/graphstream/tool/workbench/ressources/editpaste.png" },
 				{ "help", "org/miv/graphstream/tool/workbench/ressources/help.png" },
-				{ "splash", "org/miv/graphstream/tool/workbench/ressources/splash.png" }
+				{ "splash", "org/miv/graphstream/tool/workbench/ressources/splash.png" },
+				{ "gears", "org/miv/graphstream/tool/workbench/ressources/gears32.png" }
 		};
 		
 		for( int i = 0; i < iconsUrl.length; i++ )
