@@ -133,7 +133,7 @@ public class WGetText
 	}
 	
 	private static final String GSWB_GETTEXT_XML = 
-		"org/miv/graphstream/tool/workbench/ressources/gswb-gettext.xml";
+		"org/miv/graphstream/tool/workbench/xml/gswb-gettext.xml";
 	
 	public static void load()
 	{

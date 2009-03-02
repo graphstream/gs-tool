@@ -1,11 +1,9 @@
-<!--<!ELEMENT gswb (menubar|gettext|algorithms)?>-->
-
 <!ELEMENT gswb:menubar (menu)+>
 <!ELEMENT menu (menu|item|separator)+>
 <!ELEMENT item EMPTY>
 <!ELEMENT separator EMPTY>
-<!ATTLIST menu id ID #IMPLIED name CDATA #REQUIRED>
-<!ATTLIST item id ID #IMPLIED name CDATA #REQUIRED type CDATA #IMPLIED command CDATA #IMPLIED icon CDATA #IMPLIED strokeKey CDATA #IMPLIED strokeModifier CDATA #IMPLIED>
+<!ATTLIST menu id ID #IMPLIED name CDATA #REQUIRED disableOn CDATA #IMPLIED enableOn CDATA #IMPLIED>
+<!ATTLIST item id ID #IMPLIED name CDATA #REQUIRED type CDATA #IMPLIED command CDATA #IMPLIED icon CDATA #IMPLIED strokeKey CDATA #IMPLIED strokeModifier CDATA #IMPLIED disableOn CDATA #IMPLIED enableOn CDATA #IMPLIED>
 
 <!ELEMENT gswb:gettext ((locale)+|(container|entry)+)>
 <!ELEMENT locale EMPTY>

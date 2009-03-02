@@ -41,10 +41,14 @@ public interface WXmlConstants
 	public static final String QNAME_GSWB_MENU_MENU_NAME					= "name";
 	public static final String QNAME_GSWB_MENU_MENU_ID						= "id";
 	public static final String QNAME_GSWB_MENU_MENU_ICON					= "icon";
+	public static final String QNAME_GSWB_MENU_MENU_DISABLEON				= "disableOn";
+	public static final String QNAME_GSWB_MENU_MENU_ENABLEON				= "enableOn";
 	public static final String QNAME_GSWB_MENU_ITEM							= "item";
 	public static final String QNAME_GSWB_MENU_ITEM_NAME					= "name";
 	public static final String QNAME_GSWB_MENU_ITEM_TYPE					= "type";
 	public static final String QNAME_GSWB_MENU_ITEM_COMMAND					= "command";
+	public static final String QNAME_GSWB_MENU_ITEM_DISABLEON				= "disableOn";
+	public static final String QNAME_GSWB_MENU_ITEM_ENABLEON				= "enableOn";
 	public static final String QNAME_GSWB_MENU_ITEM_ICON					= "icon";
 	public static final String QNAME_GSWB_MENU_ITEM_STROKEKEY				= "strokeKey";
 	public static final String QNAME_GSWB_MENU_ITEM_STROKEMODIFIER			= "strokeModifier";

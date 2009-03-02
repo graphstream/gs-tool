@@ -24,12 +24,6 @@ import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
 public class WHelp
 	extends JDialog
 	implements NotificationListener, WXmlConstants
@@ -38,7 +32,7 @@ public class WHelp
 	
 	static void init() {}
 	
-	private static final String GSWB_HELP_XML = "org/miv/graphstream/tool/workbench/ressources/gswb-help.xml";
+	private static final String GSWB_HELP_XML = "org/miv/graphstream/tool/workbench/xml/gswb-help.xml";
 	private static final String GSWB_HELP_CSS = "org/miv/graphstream/tool/workbench/ressources/gswb-help.css";
 	
 	private static final StyleSheet style = new StyleSheet();
@@ -49,75 +43,7 @@ public class WHelp
 		if( url != null )
 			style.importStyleSheet(url);
 	}
-	/*
-	class HelpHandler
-		extends WGetText.GetTextHandler
-	{
-		boolean rooted = false;
-		StringBuffer content;
-		boolean readingContent = false;
-		SectionContent current = null;
-		String sectionName = null;
-		String subsectionName = null;
-		
-		public HelpHandler()
-		{
-		}
-		
-		public void startElementFiltered(String uri, String localName,
-			      String qName, Attributes atts)
-			throws SAXException
-		{
-			if( readingContent )
-			{
-				content.append("<" + qName );
-				for( int i = 0; i < atts.getLength(); i++ )
-				{
-					content.append( String.format( " %s=\"%s\"", atts.getQName(i), atts.getValue(i) ));
-				}
-				content.append(">");
-			}
-			else if( qName.equals("section") )
-			{
-				sectionName = atts.getValue("name");
-				current 	= new SectionContent();
-			}
-			else if( qName.equals("subsection") )
-			{
-				subsectionName 	= atts.getValue("name");
-				readingContent 	= true;
-				content			= new StringBuffer();
-			}
-		}
-		
-		public void charactersFiltered(char[] ch, int start, int length)
-		{
-			if( readingContent && ch != null )
-				content.append(ch,start,length);
-		}
-		
-		public void endElementFiltered(String uri, String localName, String qName)
-		{
-			if( readingContent && ! qName.equals("subsection") )
-			{
-				content.append("</" + qName + ">");
-			}
-			else if( qName.equals("section") )
-			{
-				addSection( sectionName, current );
-				sectionName = null;
-				current = null;
-			}
-			else if( qName.equals("subsection") )
-			{
-				current.newSubSection( subsectionName, content.toString() );
-				subsectionName = null;
-				content = null;
-				readingContent = false;
-			}
-		}
-	}
-	*/
+	
 	class HelpHandler
 		implements WXmlHandler.WXElementHandler
 	{

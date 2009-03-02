@@ -53,20 +53,7 @@ public class WMenuBar
 {
 	public static final long serialVersionUID = 0x00A00301L;
 
-	public static final String GSWB_MENUBAR_XML = "org/miv/graphstream/tool/workbench/ressources/gswb-menu.xml";
-	
-	/*
-	 * XML Menu Skeletton
-	 * ------------------
-	 * 
-	 * [gswb:menubar] : root tag of the file
-	 * [menu] {id,name,icon,disableOn,enableOn} : starts a menu
-	 * [item] {id,name,type,strokeKey,strokeMask,command,icon,disableOn,enableOn} : adds a new item
-	 * [separator] : a menu separator
-	 *
-	 */
-
-	static String BALISE_ROOT = "gswb-menubar";
+	public static final String GSWB_MENUBAR_XML = "org/miv/graphstream/tool/workbench/xml/gswb-menu.xml";
 	
 	public void handle( JMenu parent, WXElement wxe, ActionListener listener )
 	{
@@ -75,6 +62,9 @@ public class WMenuBar
 			String id	= wxe.getAttribute(QNAME_GSWB_MENU_MENU_ID);
 			String name = wxe.getAttribute(QNAME_GSWB_MENU_MENU_NAME);
 			String icon = wxe.getAttribute(QNAME_GSWB_MENU_MENU_ICON);
+			
+			String disableOn = wxe.getAttribute(QNAME_GSWB_MENU_MENU_DISABLEON);
+			String enableOn  = wxe.getAttribute(QNAME_GSWB_MENU_MENU_ENABLEON);
 			
 			JMenu menu = new JMenu( WGetText.getTextLookup(name) );
 
@@ -101,6 +91,22 @@ public class WMenuBar
 			else
 				parent.add(menu);
 			
+			if( disableOn != null )
+			{
+				String [] events = disableOn.split(",");
+				
+				for( String event : events )
+					disableOn(menu,event);
+			}
+			
+			if( enableOn != null )
+			{
+				String [] events = enableOn.split(",");
+				
+				for( String event : events )
+					enableOn(menu,event);
+			}
+			
 			Iterator<WXElement> ite = wxe.iteratorOnChildren();
 			while( ite.hasNext() )
 				handle(menu,ite.next(),listener);
@@ -114,6 +120,9 @@ public class WMenuBar
 			boolean useStroke 	= false;
 			boolean useModifier = false;
 			String name 		= wxe.getAttribute(QNAME_GSWB_MENU_ITEM_NAME);
+			
+			String disableOn = wxe.getAttribute(QNAME_GSWB_MENU_ITEM_DISABLEON);
+			String enableOn  = wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ENABLEON);
 			
 			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY) != null )
 			{
@@ -191,6 +200,22 @@ public class WMenuBar
 			if( parent != null )
 				parent.add(item);
 			
+			if( disableOn != null )
+			{
+				String [] events = disableOn.split(",");
+				
+				for( String event : events )
+					disableOn(item,event);
+			}
+			
+			if( enableOn != null )
+			{
+				String [] events = enableOn.split(",");
+				
+				for( String event : events )
+					enableOn(item,event);
+			}
+			
 			WUtils.reloadOnLangChanged(item,name,"setText");
 		}
 		else if( wxe.is(SPEC_MENU_SEPARATOR) )
@@ -255,20 +280,6 @@ public class WMenuBar
 	
 	private void loadXml( ActionListener al, InputStream in )
 	{
-		/*
-		XMLReader rx;
-		
-		try
-		{
-			rx = XMLReaderFactory.createXMLReader();
-			rx.setContentHandler(new SkelettonHandler(al));
-			rx.parse(new InputSource(in));
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
-		}
-		*/
 		handle( null, WGetText.readGetTextXml(null,in), al );
 	}
 	

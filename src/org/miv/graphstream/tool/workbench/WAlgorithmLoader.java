@@ -10,7 +10,7 @@ import org.miv.graphstream.tool.workbench.xml.WXElement;
 public class WAlgorithmLoader
 	implements WXmlConstants
 {
-	protected static String ALGORITHMS_XML = "org/miv/graphstream/tool/workbench/gs-algorithms.xml";
+	protected static String ALGORITHMS_XML = "org/miv/graphstream/tool/workbench/xml/gs-algorithms.xml";
 	
 	static class AlgorithmHandler
 		implements WXmlHandler.WXElementHandler
