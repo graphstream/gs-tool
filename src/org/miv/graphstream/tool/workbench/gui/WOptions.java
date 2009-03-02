@@ -177,21 +177,24 @@ public class WOptions
 		add(comboBox);
 		
 		DefaultComboBoxModel langModel = new DefaultComboBoxModel();
-		for( int i = 0; i < WGetText.getLangCount(); i++ )
+		
+		for( java.util.Locale locale : WGetText.getEnabledLocales() )
 		{
-			langModel.addElement(WGetText.getLang(i));
+			langModel.addElement( locale );
 		}
-		langModel.setSelectedItem(WGetText.getLang());
+		
+		langModel.setSelectedItem( java.util.Locale.getDefault() );
+		
 		comboBox = new JComboBox(langModel);
 		comboBox.addItemListener( new ItemListener()
 			{
 				public void itemStateChanged( ItemEvent ie )
 				{
-					WGetText.setLang((String) ie.getItem());
+					WGetText.setLocale( (java.util.Locale) ie.getItem() );
 				}
 			});
 		
-		label = new JLabel("lang");
+		label = new JLabel("locale");
 			c.weightx = 1.0;
 			c.gridwidth = GridBagConstraints.RELATIVE;
 		bag.setConstraints(label,c);

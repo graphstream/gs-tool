@@ -40,6 +40,13 @@ public class WCore
 	public static final String DEFAULT_GRAPH_CLASS = "org.miv.graphstream.graph.implementations.DefaultGraph";
 	public static final String DEFAULT_CONTEXT_CLASS = "org.miv.graphstream.tool.workbench.DefaultContext";
 	
+	private static final WCore core = new WCore();
+	
+	public static WCore getCore()
+	{
+		return core;
+	}
+	
 	public static enum ActionMode
 	{
 		NONE,
@@ -54,18 +61,19 @@ public class WCore
 	private LinkedList<String> ctxsid;
 	
 	private int activeCtx = -1;
+	private String activeCtxId = null;
 	private int createdCtx = 0;
-	private LinkedList<ContextChangeListener> contextChangeListeners = new LinkedList<ContextChangeListener>();
-	private LinkedList<ContextListener> contextListeners = new LinkedList<ContextListener>();
-	private LinkedList<WorkbenchListener> workbenchListeners = new LinkedList<WorkbenchListener>();
-	private LinkedList<SelectionListener> selectionListeners = new LinkedList<SelectionListener>();
+	private LinkedList<ContextChangeListener> 	contextChangeListeners 	= new LinkedList<ContextChangeListener>();
+	private LinkedList<ContextListener> 		contextListeners 		= new LinkedList<ContextListener>();
+	private LinkedList<WorkbenchListener> 		workbenchListeners 		= new LinkedList<WorkbenchListener>();
+	private LinkedList<SelectionListener> 		selectionListeners 		= new LinkedList<SelectionListener>();
 	private CLI cli;
 	private int terminalCloseAction = javax.swing.JFrame.EXIT_ON_CLOSE;
 	private LinkedList<Element> clipboard = new LinkedList<Element>();
 	private ActionMode actionMode;
 	private WorkbenchEnvironment env;
 	
-	public WCore()
+	private WCore()
 	{
 		cli    = new CLI( this );
 		ctxs   = new LinkedList<Context>();
@@ -203,14 +211,15 @@ public class WCore
 	
 	public void selectContext( int i )
 	{
-		if( i<0 || i>ctxs.size() )
+		if( i<0 || i>=ctxs.size() )
 			return;
 		
-		if( i != activeCtx )
+		if( activeCtxId == null || ! activeCtxId.equals(ctxsid.get(i)) )
 		{
 			ctxs.get(activeCtx).removeContextListener(this);
 			ctxs.get(activeCtx).removeSelectionListener(this);
 			activeCtx = i;
+			activeCtxId = ctxsid.get(i);
 			ctxs.get(activeCtx).addContextListener(this);
 			ctxs.get(activeCtx).addSelectionListener(this);
 			fireContextChanged();

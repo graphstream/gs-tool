@@ -23,6 +23,7 @@
 package org.miv.graphstream.tool.workbench.gui;
 
 import org.miv.graphstream.tool.workbench.WAlgorithm;
+import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.cli.CLI;
 import org.miv.graphstream.tool.workbench.event.AlgorithmListener;
 
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -79,9 +81,14 @@ public class WAlgorithmGUI
 		fields.put( "java.lang.Float",		WAlgorithmParametersGUIFieldFloat.class.getName() );
 		fields.put( "double",				WAlgorithmParametersGUIFieldDouble.class.getName() );
 		fields.put( "java.lang.Double",		WAlgorithmParametersGUIFieldDouble.class.getName() );
+		fields.put( "enum",					WAlgorithmParametersGUIFieldEnum.class.getName() );
 		
+		fields.put( "node",
+				WAlgorithmParametersGUIFieldNode.class.getName() );
 		fields.put( "org.miv.graphstream.graph.Node",
 				WAlgorithmParametersGUIFieldNode.class.getName() );
+		fields.put( "nodeid",
+				WAlgorithmParametersGUIFieldNodeId.class.getName() );
 	}
 	
 	class WAlgorithmParametersGUI
@@ -103,7 +110,7 @@ public class WAlgorithmGUI
 
 				add( new JLabel( p.getName() ));
 				
-				String clazz = fields.get(p.getClassName() );
+				String clazz = fields.get(p.getType() );
 				WAlgorithmParametersGUIField field = null;
 				
 				if( clazz == null )
@@ -195,6 +202,10 @@ public class WAlgorithmGUI
 			setLayout( new BorderLayout() );
 			
 			value = new JTextField(20);
+			
+			if( param.hasDefaultValue() )
+				value.setText(param.getDefaultValue());
+			
 			add( value, BorderLayout.CENTER );
 		}
 		
@@ -216,6 +227,10 @@ public class WAlgorithmGUI
 			setLayout( new BorderLayout() );
 
 			value = new JCheckBox();
+			
+			if( param.hasDefaultValue() )
+				value.setSelected( new Boolean(param.getDefaultValue()) );
+			
 			add( value, BorderLayout.CENTER );
 		}
 		
@@ -231,13 +246,18 @@ public class WAlgorithmGUI
 		private static final long serialVersionUID = 0x0001L;
 		
 		JSpinner value;
+		SpinnerNumberModel model;
 		
 		public WAlgorithmParametersGUIFieldInteger( WAlgorithm.Parameter param )
 		{
 			setLayout( new BorderLayout() );
 			
-			SpinnerNumberModel model = new SpinnerNumberModel(1,0,100,1);
+			model = new SpinnerNumberModel(1,Integer.MIN_VALUE,Integer.MAX_VALUE,1);
 			value = new JSpinner(model);
+			
+			if( param.hasDefaultValue() )
+				model.setValue( new Integer(param.getDefaultValue()) );
+			
 			add( value, BorderLayout.CENTER );
 		}
 		
@@ -248,51 +268,177 @@ public class WAlgorithmGUI
 	}
 	
 	public static class WAlgorithmParametersGUIFieldFloat
-		extends WAlgorithmParametersGUIFieldString
+		extends WAlgorithmParametersGUIField
 	{
 		private static final long serialVersionUID = 0x0001L;
 		
+		JSpinner value;
+		SpinnerNumberModel model;
+		
 		public WAlgorithmParametersGUIFieldFloat( WAlgorithm.Parameter param )
 		{
-			super(param);
+			setLayout( new BorderLayout() );
+			
+			model = new SpinnerNumberModel(1.0f,Float.MIN_VALUE,Float.MAX_VALUE,1.0f);
+			value = new JSpinner(model);
+			
+			if( param.hasDefaultValue() )
+				model.setValue( new Float(param.getDefaultValue()) );
+			
+			add( value, BorderLayout.CENTER );
 		}
 		
 		public Object getValue()
 		{
-			return new Float( (String) super.getValue() );
+			return value.getValue();
 		}
 	}
 	
 	public static class WAlgorithmParametersGUIFieldDouble
-		extends WAlgorithmParametersGUIFieldString
+		extends WAlgorithmParametersGUIField
 	{
 		private static final long serialVersionUID = 0x0001L;
 		
+		JSpinner value;
+		SpinnerNumberModel model;
+		
 		public WAlgorithmParametersGUIFieldDouble( WAlgorithm.Parameter param )
 		{
-			super(param);
+			setLayout( new BorderLayout() );
+			
+			model = new SpinnerNumberModel(1.0,Double.MIN_VALUE,Double.MAX_VALUE,1.0);
+			value = new JSpinner(model);
+			
+			if( param.hasDefaultValue() )
+				model.setValue( new Double(param.getDefaultValue()) );
+			
+			add( value, BorderLayout.CENTER );
 		}
 		
 		public Object getValue()
 		{
-			return new Double( (String) super.getValue() );
+			return value.getValue();
 		}
 	}
 	
-	public static class WAlgorithmParametersGUIFieldNode
+	public static class WAlgorithmParametersGUIFieldNodeId
 		extends WAlgorithmParametersGUIField
 	{
 		private static final long serialVersionUID = 0x0001L;
 		
 		JComboBox value;
 		
-		public WAlgorithmParametersGUIFieldNode( WAlgorithm.Parameter p )
+		public WAlgorithmParametersGUIFieldNodeId( WAlgorithm.Parameter p )
 		{
 			WAlgorithmParametersGUIFieldElementModel model = 
 				new WAlgorithmParametersGUIFieldElementModel( WElementList.getNodeModel() );
 			
 			value = new JComboBox(model);
 			add(value);
+		}
+		
+		public Object getValue()
+		{
+			return value.getSelectedItem();
+		}
+	}
+	
+	public static class WAlgorithmParametersGUIFieldNode
+		extends WAlgorithmParametersGUIFieldNodeId
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		public WAlgorithmParametersGUIFieldNode( WAlgorithm.Parameter p )
+		{
+			super(p);
+		}
+		
+		public Object getValue()
+		{
+			try
+			{
+				return WCore.getCore().getActiveContext().getGraph().getNode((String)super.getValue());
+			}
+			catch( Exception e )
+			{}
+			
+			return null;
+		}
+	}
+	
+	public static class WAlgorithmParametersGUIFieldEdgeId
+		extends WAlgorithmParametersGUIField
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		JComboBox value;
+		
+		public WAlgorithmParametersGUIFieldEdgeId( WAlgorithm.Parameter p )
+		{
+			WAlgorithmParametersGUIFieldElementModel model = 
+				new WAlgorithmParametersGUIFieldElementModel( WElementList.getEdgeModel() );
+			
+			value = new JComboBox(model);
+			add(value);
+		}
+		
+		public Object getValue()
+		{
+			return value.getSelectedItem();
+		}
+	}
+	
+	public static class WAlgorithmParametersGUIFieldEdge
+		extends WAlgorithmParametersGUIFieldEdgeId
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		public WAlgorithmParametersGUIFieldEdge( WAlgorithm.Parameter p )
+		{
+			super(p);
+		}
+		
+		public Object getValue()
+		{
+			try
+			{
+				return WCore.getCore().getActiveContext().getGraph().getEdge((String)super.getValue());
+			}
+			catch( Exception e )
+			{}
+			
+			return null;
+		}
+	}
+	
+	public static class WAlgorithmParametersGUIFieldEnum
+		extends WAlgorithmParametersGUIField
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		JComboBox value;
+		
+		public WAlgorithmParametersGUIFieldEnum( WAlgorithm.Parameter p )
+		{
+			setLayout( new BorderLayout() );
+			
+			DefaultComboBoxModel model = new DefaultComboBoxModel();
+			value = new JComboBox(model);
+			
+			for( java.lang.reflect.Field field : p.getTypeClass().getDeclaredFields() )
+			{
+				try
+				{
+					if( field.isEnumConstant() )
+						model.addElement(field.get(null));
+				}
+				catch( Exception e )
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			add( value, BorderLayout.CENTER );
 		}
 		
 		public Object getValue()

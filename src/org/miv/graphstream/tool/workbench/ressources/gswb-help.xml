@@ -1,28 +1,41 @@
-<gswb-help>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gswb PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "jar:org/miv/graphstream/tool/workbench/xml/graphstream-workbench.dtd">
+<gswb:help xmlns="org/miv/graphstream" xmlns:gswb="workbench">
 	<section name="Actions" lang="en">
 		<subsection name="Selection">
+			<![CDATA[
 			<h3>Tool : selection</h3><hr/>
 			This tool allows users to select nodes and edges.<br/>
 			To select a node, just left-click on it, then node should become on the <i>selected-style</i> and appear in the selection list.<br/>
 			To select an edge, press the <i>control-key</i> and left-click on one of its ends (release control-key after click). Then you can use the wheel-mouse or <i>page-up, page-down</i> keys to select edge you want. To finish selection, left-click on the same node, still pressing control.<br/>
+			]]>
 		</subsection>
 		<subsection name="Add node">
+			<![CDATA[
 			<h3>Tool : add node</h3>
+			]]>
 		</subsection>
 		<subsection name="Add edge">
+			<![CDATA[
 			<h3>Tool : add edge</h3>
+			]]>
 		</subsection>
 		<subsection name="Del node">
+			<![CDATA[
 			<h3>Tool : del node</h3>
+			]]>
 		</subsection>
 		<subsection name="Del edge">
+			<![CDATA[
 			<h3>Tool : del edge</h3>
+			]]>
 		</subsection>
 	</section>
 	<section name="Menu" lang="en">
 	</section>
 	<section name="Actions" lang="fr">
 		<subsection name="Selection">
+			<![CDATA[
 			<h3>Outils : selection</h3><hr/>
 			Cet outil permet de selectionner des noeuds et des arètes.<br/>
 			Pour selectionner un noeud, il suffit d'effectuer un clic-gauche dessus. Il prend alors le style <i>selectionné</i> et apparait dans la liste de selection.<br/>
@@ -30,20 +43,29 @@
 			<br/>
 			<i>Options de l'outil:</i><br/>
 			Vous pouvez choisir de selectionner un <i>pattern</i> d'éléments, c'est à dire des éléments dont l'id respecte une expression rationnelle.
+			]]>
 		</subsection>
 		<subsection name="Ajouter un noeud">
+			<![CDATA[
 			<h3>Outils : ajouter un noeud</h3>
+			]]>
 		</subsection>
 		<subsection name="Ajouter une arète">
+			<![CDATA[
 			<h3>Outils : ajouter une arète</h3>
+			]]>
 		</subsection>
 		<subsection name="Supprimer un noeud">
+			<![CDATA[
 			<h3>Outils : supprimer un noeud</h3>
+			]]>
 		</subsection>
 		<subsection name="Supprimer une arète">
+			<![CDATA[
 			<h3>Outils : supprimer une arète</h3>
+			]]>
 		</subsection>
 	</section>
 	<section name="Menu" lang="fr">
 	</section>
-</gswb-help>
+</gswb:help>

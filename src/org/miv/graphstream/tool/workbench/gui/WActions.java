@@ -20,7 +20,6 @@ import org.miv.graphstream.tool.workbench.WCore.ActionMode;
 import org.miv.graphstream.tool.workbench.cli.CLI;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.event.ChangeListener;
@@ -47,6 +46,73 @@ public class WActions
 	public static final String OPT_ADD_EDGE_DIRECTED = "actions.options.addedge.directed";
 	public static final String OPT_ADD_EDGE_CYCLE = "actions.options.addedge.cycle";
 	
+	static class ActionSpec
+	{
+		String name;
+		ActionMode mode;
+		String accessory;
+		String tooltip;
+		
+		public ActionSpec( String name, ActionMode mode )
+		{
+			this(name,mode,"@gettext(" + name + ")",null);
+		}
+		
+		public ActionSpec( String name, ActionMode mode, String accessory )
+		{
+			this(name,mode,"@gettext(" + name + ")",accessory);
+		}
+		
+		public ActionSpec( String name, ActionMode mode, String tooltip, String accessory )
+		{
+			this.name = name;
+			this.mode = mode;
+			this.tooltip = tooltip;
+			this.accessory = accessory;
+		}
+		
+		public void install( WActions actions )
+		{
+			JButton button = new JButton( WUtils.getImageIcon( name ) );
+				button.setBackground( WGui.background );
+				button.setToolTipText( WGetText.getTextLookup(tooltip) );
+				button.addActionListener( actions );
+			actions.actions.put( button, ActionMode.SELECT );
+			
+			if( accessory != null )
+			{
+				try
+				{
+					Class<?> clazz = Class.forName(accessory);
+					java.lang.reflect.Constructor<?> co = clazz.getConstructor(CLI.class);
+					actions.accessories.put( button, (ActionAccessory) co.newInstance(actions.cli) );
+				}
+				catch( Exception e )
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			actions.add(button);
+			WUtils.reloadOnLangChanged( button, tooltip, "setToolTipText" );
+		}
+	}
+	
+	private static final ActionSpec [] specs = {
+		new ActionSpec( "action:select", ActionMode.SELECT, 
+				"org.miv.graphstream.tool.workbench.gui.ActionAccessory$SelectAccessory" ),
+		null,
+		new ActionSpec( "action:node_info", ActionMode.NONE ),
+		new ActionSpec( "action:node_add", ActionMode.ADD_NODE,
+				"org.miv.graphstream.tool.workbench.gui.ActionAccessory$AddNodeAccessory" ),
+		new ActionSpec( "action:node_del", ActionMode.DEL_NODE ),
+		null,
+		new ActionSpec( "action:edge_info", ActionMode.NONE ),
+		new ActionSpec( "action:edge_add", ActionMode.ADD_EDGE,
+				"org.miv.graphstream.tool.workbench.gui.ActionAccessory$AddEdgeAccessory" ),
+		new ActionSpec( "action:edge_del", ActionMode.DEL_NODE )
+	};
+	
 	protected WGui gui;
 	protected CLI cli;
 	protected Map<Object,ActionMode> actions;
@@ -69,83 +135,39 @@ public class WActions
 		this.options = new WOptions(gui);
 		this.configureDialog = new JDialog();
 		configureDialog.setTitle("Configure");
+		configureDialog.setLayout(new BorderLayout());
 		configureDialog.add(accessoryPanel);
 		
-		Dimension buttonDim = new Dimension( 32,32 );
+		//Dimension buttonDim = new Dimension( 32,32 );
 		accessoryPanel.setLayout( new BorderLayout() );
-		ActionAccessory aa;
-		
-		JButton button = new JButton( WUtils.getImageIcon( "action:select" ) );
-		button.setPreferredSize( buttonDim );
-		button.setBackground( WGui.background );
-		button.setToolTipText( "selection mode" );
-		button.addActionListener( this );
-		actions.put( button, ActionMode.SELECT );
-		aa = new ActionAccessory.SelectAccessory( cli );
-		aa.setBackground( WGui.background );
-		accessories.put( button, aa );
-		add(button);
 		
 		add( new JToolBar.Separator() );
 		
-		button = new JButton( WUtils.getImageIcon( "action:add_node" ) );
-		button.setPreferredSize( buttonDim );
-		button.setBackground( WGui.background );
-		button.setToolTipText( "add nodes mode" );
-		button.addActionListener( this );
-		actions.put( button, ActionMode.ADD_NODE );
-		aa = new ActionAccessory.AddNodeAccessory( cli );
-		aa.setBackground( WGui.background );
-		accessories.put( button, aa );
-		add(button);
-		
-		button = new JButton( WUtils.getImageIcon( "action:del_node" ) );
-		button.setPreferredSize( buttonDim );
-		button.setBackground( WGui.background );
-		button.setToolTipText( "delete nodes" );
-		button.addActionListener( this );
-		actions.put( button, ActionMode.DEL_NODE );
-		add(button);
+		for( ActionSpec spec : specs )
+		{
+			if( spec == null )
+				add( new JToolBar.Separator() );
+			else
+				spec.install(this);
+		}
 		
 		add( new JToolBar.Separator() );
 		
-		button = new JButton( WUtils.getImageIcon( "action:add_edge" ) );
-		button.setPreferredSize( buttonDim );
-		button.setBackground( WGui.background );
-		button.setToolTipText( "add edges mode" );
-		button.addActionListener( this );
-		actions.put( button, ActionMode.ADD_EDGE );
-		aa = new ActionAccessory.AddEdgeAccessory( cli );
-		aa.setBackground( WGui.background );
-		accessories.put( button, aa );
-		add(button);
-		
-		button = new JButton( WUtils.getImageIcon( "action:del_edge" ) );
-		button.setPreferredSize( buttonDim );
-		button.setBackground( WGui.background );
-		button.setToolTipText( "delete edges" );
-		button.addActionListener( this );
-		actions.put( button, ActionMode.DEL_EDGE );
-		add(button);
+		JButton openTerminal = new JButton( WUtils.getImageIcon("term") );
+			openTerminal.setActionCommand("open.terminal");
+			openTerminal.addActionListener(this);
+			openTerminal.setToolTipText( WGetText.getTextLookup("@gettext(action:open_terminal)") );
+		add( openTerminal );
+		WUtils.reloadOnLangChanged(openTerminal,"@gettext(action:open_terminal","setToolTipText");
 		
 		add( new JToolBar.Separator() );
 		
-		button = new JButton( WUtils.getImageIcon( "term" ) );
-		button.setPreferredSize( buttonDim );
-		button.setBackground( WGui.background );
-		button.setActionCommand( "open.terminal" );
-		button.setToolTipText( "open a new cli-terminal" );
-		button.addActionListener( this );
-		add(button);
-		
-		add( new JToolBar.Separator() );
-		
-		button = new JButton( "configure" );
-		button.setBackground( WGui.background );
-		button.setActionCommand( "tool.configure" );
-		button.setToolTipText( "configure this tool" );
-		button.addActionListener( this );
-		add(button);
+		JButton configure = new JButton( WUtils.getImageIcon("action:configure") );
+			configure.setActionCommand("tool.configure");
+			configure.addActionListener(this);
+			configure.setToolTipText( WGetText.getTextLookup("@gettext(action:configure)") );
+		add( configure );
+		WUtils.reloadOnLangChanged(configure,"@gettext(action:configure","setToolTipText");
 	}
 	
 	public void addChangeListener( ChangeListener cl )

@@ -50,12 +50,53 @@ public class WAlgorithm
 	public static class Parameter
 	{
 		String name;
-		Class<?> type;
+		String type;
+		Class<?> clazz;
+		String def;
 		
-		public Parameter( String name, Class<?> type )
+		public Parameter( String name, String type )
 		{
-			this.name = name;
-			this.type = type;
+			this( name, type, null );
+		}
+		
+		public Parameter( String name, String type, String def )
+		{
+			this.name 	= name;
+			this.type 	= type;
+			this.def	= def;
+			
+			try
+			{
+				if( type.equals("int") )
+					clazz = Integer.TYPE;
+				else if( type.equals("float") )
+					clazz = Float.TYPE;
+				else if( type.equals("double") )
+					clazz = Double.TYPE;
+				else if( type.equals("long") )
+					clazz = Long.TYPE;
+				else if( type.equals("boolean") )
+					clazz = Boolean.TYPE;
+				else if( type.equals("char") )
+					clazz = Character.TYPE;
+				else if( type.equals("node") )
+					clazz = org.miv.graphstream.graph.Node.class;
+				else if( type.equals("nodeid") )
+					clazz = String.class;
+				else if( type.equals("edge") )
+					clazz = org.miv.graphstream.graph.Edge.class;
+				else if( type.equals("edgeid") )
+					clazz = String.class;
+				else
+					clazz = Class.forName(type);
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+			
+			if( clazz.isEnum() )
+				this.type = "enum";
 		}
 		
 		public String getName()
@@ -63,9 +104,24 @@ public class WAlgorithm
 			return name;
 		}
 		
-		public String getClassName()
+		public String getType()
 		{
-			return type.getName();
+			return type;
+		}
+		
+		public Class<?> getTypeClass()
+		{
+			return clazz;
+		}
+		
+		public String getDefaultValue()
+		{
+			return def;
+		}
+		
+		public boolean hasDefaultValue()
+		{
+			return def != null;
 		}
 	}
 	
@@ -146,9 +202,14 @@ public class WAlgorithm
 		return parameters.get(i);
 	}
 	
-	public void addParameter( String name, Class<?> type )
+	public void addParameter( String name, String type )
 	{
 		addParameter( new Parameter( name, type ) );
+	}
+	
+	public void addParameter( String name, String type, String def )
+	{
+		addParameter( new Parameter( name, type, def ) );
 	}
 	
 	public void addParameter( Parameter param )
@@ -231,7 +292,7 @@ public class WAlgorithm
 					paramsTypes [0] = Graph.class;
 					for( int i = 0; i < parameters.size(); i++ )
 					{
-						paramsTypes [i+1] = parameters.get(i).type;
+						paramsTypes [i+1] = parameters.get(i).getTypeClass();
 					}
 				
 					Object [] fullValues = new Object [paramsTypes.length];
@@ -303,7 +364,7 @@ public class WAlgorithm
 			paramsTypes [0] = Graph.class;
 			for( int i = 0; i < parameters.size(); i++ )
 			{
-				paramsTypes [i] = parameters.get(i).type;
+				paramsTypes [i] = parameters.get(i).getTypeClass();
 			}
 			
 			Constructor<? extends Generator> co = (Constructor<? extends Generator>)

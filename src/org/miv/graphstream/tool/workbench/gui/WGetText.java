@@ -1,150 +1,49 @@
 package org.miv.graphstream.tool.workbench.gui;
 
 import org.miv.graphstream.tool.workbench.event.NotificationListener.Notification;
+import org.miv.graphstream.tool.workbench.xml.WXElement;
+import org.miv.graphstream.tool.workbench.xml.WXmlConstants;
+import org.miv.graphstream.tool.workbench.xml.WXmlHandler;
+
+import java.io.InputStream;
 
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.LinkedList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
-
 public class WGetText
+	implements WXmlConstants
 {
-	private static String lang = "fr";
-	private static final String [] langs = { "en", "fr" };
+	private static final LinkedList<Locale> enabledLocales = new LinkedList<Locale>();
 	
 	public static String getLang()
 	{
-		return lang;
+		return Locale.getDefault().getLanguage();
 	}
 	
-	public static void setLang( String lang )
+	public static Locale getLocale()
 	{
-		if( ! WGetText.lang.equals(lang) )
+		return Locale.getDefault();
+	}
+	
+	public static void setLocale( Locale l )
+	{
+		if( enabledLocales.contains(l) && ! l.equals(Locale.getDefault()) )
 		{
-			WGetText.lang = lang;
+			Locale.setDefault(l);
 			load();
-			System.err.printf( "set lang \"%s\"\n", WGetText.lang );
+			
 			WNotificationServer.dispatch(Notification.langChanged);
+			
+			System.err.printf( "set lang \"%s\"\n", getLang() );
 		}
 	}
 	
-	public static int getLangCount()
+	public static java.util.Collection<Locale> getEnabledLocales()
 	{
-		return langs.length;
-	}
-	
-	public static String getLang( int i )
-	{
-		return langs [i];
-	}
-	
-	/**
-	 * An XML handler allowing to filter language of file.
-	 * 
-	 * For example, with the following part of file :
-	 * <code>
-	 * &lt;gettext lang="en"&gt;This is a test&lt;/gettext&gt;
-	 * &lt;gettext lang="fr"&gt;Ceci est un test&lt;/gettext&gt;
-	 * </code>
-	 * if the handler language is "fr", only the second block will pass
-	 * throught the filter.
-	 *
-	 */
-	public static abstract class GetTextHandler
-		extends DefaultHandler
-	{
-		/**
-		 * The GetText tag.
-		 */
-		public static final String GETTEXT_QNAME = "gettext";
-		
-		String 	lang;
-		int 	jump;
-		
-		/**
-		 * Build a new handler based on default language.
-		 */
-		public GetTextHandler()
-		{
-			this(getLang());
-		}
-		/**
-		 * Build a new handler for a specific language.
-		 * 
-		 * @param lang
-		 */
-		public GetTextHandler( String lang )
-		{
-			this.lang = lang.toLowerCase();
-			this.jump = 0;
-		}
-		
-		public void startElement (String uri, String localName,
-			      String qName, Attributes atts)
-			throws SAXException
-		{
-			if( qName.equals(GETTEXT_QNAME) )
-			{
-				if( ! lang.equals( atts.getValue("lang").toLowerCase() ) )
-					jump++;
-			}
-			else if( atts.getValue("lang") != null && 
-					! atts.getValue("lang").toLowerCase().equals(lang) )
-			{
-				jump++;
-			}
-			else if( jump == 0 )
-				startElementFiltered(uri,localName,qName,atts);
-			else
-				jump++;
-		}
-		
-		public void characters(char[] ch, int start, int length)
-		{
-			if( jump == 0 )
-				charactersFiltered(ch,start,length);
-		}
-		
-		public void endElement(String uri, String localName, String qName)
-		{
-			if( jump > 0 )
-				jump--;
-			else
-				endElementFiltered(uri,localName,qName);
-		}
-		/**
-		 * This is the filtered method link to Handler#startElement().
-		 * 
-		 * @param uri
-		 * @param localName
-		 * @param qName
-		 * @param atts
-		 */
-		abstract void startElementFiltered( String uri, String localName,
-				String qName, Attributes atts )
-			throws SAXException;	
-		/**
-		 * This is the filtered method link to Handler#characters().
-		 * 
-		 * @param ch
-		 * @param start
-		 * @param length
-		 */
-		abstract void charactersFiltered( char [] ch, int start, int length );
-		/**
-		 * This is the filtered method link to Handler#endElement().
-		 * 
-		 * @param uri
-		 * @param localName
-		 * @param qName
-		 */
-		abstract void endElementFiltered( String uri, String localName, String qName );
+		return java.util.Collections.unmodifiableCollection(enabledLocales);
 	}
 	
 	private static final HashMap<String,String> texts = new HashMap<String,String>();
@@ -182,47 +81,53 @@ public class WGetText
 		texts.put(key,text);
 	}
 	
-	static class TextEntriesHandler
-		extends GetTextHandler
+	static class GetTextChecker
+		implements WXmlHandler.WXElementChecker
 	{
-		boolean 		readingEntry;
-		String  		entryName;
-		StringBuffer 	entryText;
-		
-		public TextEntriesHandler( String lang )
+		public boolean check( WXElement wxe )
 		{
-			super(lang);
-		}
-		
-		public void startElementFiltered( String uri, String localName,
-				String qName, Attributes atts )
-			throws SAXException
-		{
-			if( qName.equals("entry") )
+			if( wxe.getAttribute(QNAME_GSWB_GETTEXT_LANG) != null )
 			{
-				readingEntry 	= true;
-				entryName		= atts.getValue("name");
-				entryText		= new StringBuffer();
-				
-				if( atts.getValue("value") != null )
-					entryText.append(atts.getValue("value"));
+				if( wxe.getAttribute(QNAME_GSWB_GETTEXT_LANG).equals(getLang()) ) 
+					return true;
+				else return false;
 			}
+			else return true;
 		}
-		
-		public void charactersFiltered( char [] ch, int start, int length )
+	}
+	
+	static class GetTextHandler
+		implements WXmlHandler.WXElementHandler
+	{
+		public void handle( WXElement wxe )
 		{
-			if( readingEntry )
-				entryText.append(ch,start,length);
-		}
-		
-		public void endElementFiltered( String uri, String localName, String qName )
-		{
-			if( qName.equals("entry") )
+			if( wxe.is( SPEC_GETTEXT_LOCALE ) )
 			{
-				readingEntry = false;
-				registerEntry(entryName,entryText.toString());
-				entryName = null;
-				entryText = null;
+				String language, country, variant;
+				Locale l;
+				
+				language = wxe.getAttribute(QNAME_GSWB_GETTEXT_LOCALE_LANGUAGE);
+				country  = wxe.getAttribute(QNAME_GSWB_GETTEXT_LOCALE_COUNTRY);
+				variant  = wxe.getAttribute(QNAME_GSWB_GETTEXT_LOCALE_VARIANT);
+				
+				if( language != null )
+				{
+					if( country != null && variant != null )
+						l = new Locale(language,country,variant);
+					else if( country != null )
+						l = new Locale(language,country);
+					else
+						l = new Locale(language);
+					
+					enabledLocales.add(l);
+				}
+			}
+			else if(( wxe.is(SPEC_GETTEXT_ENTRY)) )
+			{
+				if( wxe.getAttribute(QNAME_GSWB_GETTEXT_LANG).equals(getLang()) )
+					registerEntry( 
+						wxe.getAttribute(QNAME_GSWB_GETTEXT_ENTRY_NAME),
+						wxe.getAttribute(QNAME_GSWB_GETTEXT_ENTRY_VALUE) );
 			}
 		}
 	}
@@ -230,25 +135,23 @@ public class WGetText
 	private static final String GSWB_GETTEXT_XML = 
 		"org/miv/graphstream/tool/workbench/ressources/gswb-gettext.xml";
 	
-	static void load()
+	public static void load()
 	{
 		texts.clear();
+		enabledLocales.clear();
+		
 		load(getLang());
 	}
 	
 	static void load( String lang )
 	{
-		XMLReader rx;
-		
-		try
-		{
-			rx = XMLReaderFactory.createXMLReader();
-			rx.setContentHandler(new TextEntriesHandler(lang));
-			rx.parse(new InputSource(ClassLoader.getSystemResourceAsStream(GSWB_GETTEXT_XML)));
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
-		}
+		WXmlHandler.readXml( new GetTextHandler(), new GetTextChecker(),
+				ClassLoader.getSystemResourceAsStream(GSWB_GETTEXT_XML) );
+	}
+	
+	public static WXElement readGetTextXml( WXmlHandler.WXElementHandler wxHandler,
+			InputStream in )
+	{
+		return WXmlHandler.readXml(wxHandler,new GetTextChecker(),in);
 	}
 }

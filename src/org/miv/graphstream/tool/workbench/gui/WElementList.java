@@ -1,7 +1,6 @@
 package org.miv.graphstream.tool.workbench.gui;
 
 import org.miv.graphstream.graph.Element;
-import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.tool.workbench.Context;
 import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
@@ -95,8 +94,7 @@ public class WElementList
 	
 	public static WElementList createNodeList( WCore core )
 	{
-		WElementList wel = new WElementList( core, ElementOperation.NodeAdded, 
-				ElementOperation.NodeRemoved, NODE_MODEL );
+		WElementList wel = new WElementList( core, Type.NodeList, NODE_MODEL );
 		
 		if( NODE_MODEL == null )
 			NODE_MODEL = wel.nmodel;
@@ -106,8 +104,7 @@ public class WElementList
 	
 	public static WElementList createEdgeList( WCore core )
 	{
-		WElementList wel = new WElementList( core, ElementOperation.EdgeAdded, 
-				ElementOperation.EdgeRemoved, EDGE_MODEL );
+		WElementList wel = new WElementList( core, Type.EdgeList, EDGE_MODEL );
 		
 		if( EDGE_MODEL == null )
 			EDGE_MODEL = wel.nmodel;
@@ -115,15 +112,22 @@ public class WElementList
 		return wel;
 	}
 	
+	public static enum Type
+	{
+		NodeList,
+		EdgeList
+	}
+	
 	WCore core;
 	LinkedList<String> elements;
 	ElementsModel nmodel;
 	ElementOperation add;
 	ElementOperation del;
+	Type type;
 	
-	protected WElementList( WCore core, ElementOperation add, ElementOperation del,
-			ElementsModel nmodel )
+	protected WElementList( WCore core, Type type, ElementsModel nmodel )
 	{
+		
 		this.core = core;
 		this.elements = new LinkedList<String>();
 		
@@ -131,14 +135,25 @@ public class WElementList
 		{
 			this.nmodel = new ElementsModel();
 			core.addContextListener(this);
+			core.addContextChangeListener(this);
 		}
 		else
 		{
 			this.nmodel = nmodel;
 		}
 		
-		this.add = add;
-		this.del = del;
+		this.type = type;
+		
+		if( type == Type.NodeList )
+		{
+			this.add = ElementOperation.NodeAdded;
+			this.del = ElementOperation.NodeRemoved;
+		}
+		else if( type == Type.EdgeList )
+		{
+			this.add = ElementOperation.EdgeAdded;
+			this.del = ElementOperation.EdgeRemoved;
+		}
 		
 		setModel(this.nmodel);
 		
@@ -158,7 +173,12 @@ public class WElementList
 		
 		if( ctx != null )
 		{
-			Iterator<? extends Node> ite = ctx.getGraph().getNodeIterator();
+			Iterator<? extends Element> ite = null;
+			
+			if( type == Type.NodeList )
+				ite = ctx.getGraph().getNodeIterator();
+			else if( type == Type.EdgeList )
+				ite = ctx.getGraph().getEdgeIterator();
 			
 			while( ite.hasNext() )
 				elements.add( ite.next().getId() );

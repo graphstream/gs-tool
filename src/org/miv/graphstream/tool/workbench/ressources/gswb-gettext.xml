@@ -1,50 +1,81 @@
-<gswb-gettext>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gswb PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "jar:org/miv/graphstream/tool/workbench/xml/graphstream-workbench.dtd">
+<gswb:gettext xmlns="org/miv/graphstream" xmlns:gswb="workbench">
 	<!-- English part -->
-	<entry name="menu:file" lang="en" value="File"/>
-	<entry name="menu:new" lang="en" value="New"/>
-	<entry name="menu:open" lang="en" value="Open"/>
-	<entry name="menu:generate" lang="en" value="Generate"/>
-	<entry name="menu:save" lang="en" value="Save"/>
-	<entry name="menu:saveas" lang="en" value="Save as"/>
-	<entry name="menu:quit" lang="en" value="Exit"/>
-	<entry name="menu:edit" lang="en" value="Edit"/>
-	<entry name="menu:copy" lang="en" value="Copy"/>
-	<entry name="menu:cut" lang="en" value="Cut"/>
-	<entry name="menu:paste" lang="en" value="Paste"/>
-	<entry name="menu:select" lang="en" value="Select"/>
-	<entry name="menu:selectall" lang="en" value="All"/>
-	<entry name="menu:unselectall" lang="en" value="None"/>
-	<entry name="menu:options" lang="en" value="Options"/>
-	<entry name="menu:dialog" lang="en" value="Dialog"/>
-	<entry name="menu:algorithms" lang="en" value="Algorithms"/>
-	<entry name="menu:coloring" lang="en" value="Coloring"/>
-	<entry name="menu:measure" lang="en" value="Measure"/>
-	<entry name="menu:help" lang="en" value="Help"/>
-	<entry name="menu:about" lang="en" value="About"/>
-	<entry name="menu:manual" lang="en" value="Manual"/>
-	<entry name="menu:tutorials" lang="en" value="Tutorials"/>
+	<locale language="en" country="en"/>
+	<container name="menu" lang="en">
+		<entry name="menu:file" lang="en" value="File" />
+		<entry name="menu:new" lang="en" value="New" />
+		<entry name="menu:open" lang="en" value="Open" />
+		<entry name="menu:generate" lang="en" value="Generate" />
+		<entry name="menu:save" lang="en" value="Save" />
+		<entry name="menu:saveas" lang="en" value="Save as" />
+		<entry name="menu:quit" lang="en" value="Exit" />
+		<entry name="menu:edit" lang="en" value="Edit" />
+		<entry name="menu:copy" lang="en" value="Copy" />
+		<entry name="menu:cut" lang="en" value="Cut" />
+		<entry name="menu:paste" lang="en" value="Paste" />
+		<entry name="menu:select" lang="en" value="Select" />
+		<entry name="menu:selectall" lang="en" value="All" />
+		<entry name="menu:unselectall" lang="en" value="None" />
+		<entry name="menu:options" lang="en" value="Options" />
+		<entry name="menu:dialog" lang="en" value="Dialog" />
+		<entry name="menu:algorithms" lang="en" value="Algorithms" />
+		<entry name="menu:coloring" lang="en" value="Coloring" />
+		<entry name="menu:measure" lang="en" value="Measure" />
+		<entry name="menu:help" lang="en" value="Help" />
+		<entry name="menu:about" lang="en" value="About" />
+		<entry name="menu:manual" lang="en" value="Manual" />
+		<entry name="menu:tutorials" lang="en" value="Tutorials" />
+	</container>
+	<container name="action" lang="en">
+		<entry name="action:select" value="select nodes and edges" lang="en"></entry>
+		<entry name="action:node_add" value="add nodes" lang="en"></entry>
+		<entry name="action:node_del" value="remove nodes" lang="en"></entry>
+		<entry name="action:node_info" value="get info on nodes" lang="en"></entry>
+		<entry name="action:edge_add" value="add edges" lang="en"></entry>
+		<entry name="action:edge_del" value="remove edges" lang="en"></entry>
+		<entry name="action:edge_info" value="get info on edges" lang="en"></entry>
+		<entry name="action:open_terminal" value="open a new terminal" lang="en"></entry>
+		<entry name="action:configure" value="configure selected tool" lang="en"></entry>
+	</container>
+	
 	<!--  French part -->
-	<entry name="menu:file" lang="fr" value="Fichier"/>
-	<entry name="menu:new" lang="fr" value="Nouveau"/>
-	<entry name="menu:open" lang="fr" value="Ouvrir"/>
-	<entry name="menu:generate" lang="fr" value="Générere"/>
-	<entry name="menu:save" lang="fr" value="Enregistrer"/>
-	<entry name="menu:saveas" lang="fr" value="Enregistrer sous"/>
-	<entry name="menu:quit" lang="fr" value="Quitter"/>
-	<entry name="menu:edit" lang="fr" value="Edition"/>
-	<entry name="menu:copy" lang="fr" value="Copier"/>
-	<entry name="menu:cut" lang="fr" value="Couper"/>
-	<entry name="menu:paste" lang="fr" value="Coller"/>
-	<entry name="menu:select" lang="fr" value="Selectionner"/>
-	<entry name="menu:selectall" lang="fr" value="Tout"/>
-	<entry name="menu:unselectall" lang="fr" value="Aucune"/>
-	<entry name="menu:options" lang="fr" value="Options"/>
-	<entry name="menu:dialog" lang="fr" value="Boites de dialogue"/>
-	<entry name="menu:algorithms" lang="fr" value="Algorithmes"/>
-	<entry name="menu:coloring" lang="fr" value="Coloration"/>
-	<entry name="menu:measure" lang="fr" value="Mesure"/>
-	<entry name="menu:help" lang="fr" value="Aide"/>
-	<entry name="menu:about" lang="fr" value="A propos"/>
-	<entry name="menu:manual" lang="fr" value="Manuel"/>
-	<entry name="menu:tutorials" lang="fr" value="Tutoriels"/>
-</gswb-gettext>
+	<locale language="fr" country="fr"/>
+	<container name="menu" lang="fr">
+		<entry name="menu:file" lang="fr" value="Fichier" />
+		<entry name="menu:new" lang="fr" value="Nouveau" />
+		<entry name="menu:open" lang="fr" value="Ouvrir" />
+		<entry name="menu:generate" lang="fr" value="Générer" />
+		<entry name="menu:save" lang="fr" value="Enregistrer" />
+		<entry name="menu:saveas" lang="fr" value="Enregistrer sous" />
+		<entry name="menu:quit" lang="fr" value="Quitter" />
+		<entry name="menu:edit" lang="fr" value="Edition" />
+		<entry name="menu:copy" lang="fr" value="Copier" />
+		<entry name="menu:cut" lang="fr" value="Couper" />
+		<entry name="menu:paste" lang="fr" value="Coller" />
+		<entry name="menu:select" lang="fr" value="Selectionner" />
+		<entry name="menu:selectall" lang="fr" value="Tout" />
+		<entry name="menu:unselectall" lang="fr" value="Aucune" />
+		<entry name="menu:options" lang="fr" value="Options" />
+		<entry name="menu:dialog" lang="fr" value="Boites de dialogue" />
+		<entry name="menu:algorithms" lang="fr" value="Algorithmes" />
+		<entry name="menu:coloring" lang="fr" value="Coloration" />
+		<entry name="menu:measure" lang="fr" value="Mesure" />
+		<entry name="menu:help" lang="fr" value="Aide" />
+		<entry name="menu:about" lang="fr" value="A propos" />
+		<entry name="menu:manual" lang="fr" value="Manuel" />
+		<entry name="menu:tutorials" lang="fr" value="Tutoriels" />
+	</container>
+	<container name="action" lang="fr">
+		<entry name="action:select" value="selectionner des noeuds et des arètes" lang="fr"></entry>
+		<entry name="action:node_add" value="ajouter des noeuds" lang="fr"></entry>
+		<entry name="action:node_del" value="supprimer des noeuds" lang="fr"></entry>
+		<entry name="action:node_info" value="obtenir des infos sur les noeuds" lang="fr"></entry>
+		<entry name="action:edge_add" value="ajouter des arètes" lang="fr"></entry>
+		<entry name="action:edge_del" value="supprimer des arètes" lang="fr"></entry>
+		<entry name="action:edge_info" value="obtenir des infos sur les arètes" lang="fr"></entry>
+		<entry name="action:open_terminal" value="ouvrir un nouveau terminal" lang="fr"></entry>
+		<entry name="action:configure" value="configurer l'outil selectionné" lang="fr"></entry>
+	</container>
+</gswb:gettext>

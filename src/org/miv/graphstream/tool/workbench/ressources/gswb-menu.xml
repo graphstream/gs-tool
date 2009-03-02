@@ -1,4 +1,6 @@
-<gswb-menubar>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gswb PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "jar:org/miv/graphstream/tool/workbench/xml/graphstream-workbench.dtd">
+<gswb:menubar xmlns="org/miv/graphstream" xmlns:gswb="workbench">
 	<menu id="file" name="@gettext(menu:file)">
 		<item name="@gettext(menu:new)" command="new.graph" strokeKey="VK_N" strokeModifier="CTRL_MASK" icon="@file:new"/>
 		<item name="@gettext(menu:open)" command="open.graph" strokeKey="VK_O"
@@ -34,8 +36,7 @@
 	<menu id="dialog" name="@gettext(menu:dialog)" disableOn="fullMode" enableOn="normalMode"></menu>
 	<menu id="algorithm" name="@gettext(menu:algorithms)" disableOn="noContext"
 		enableOn="contextAdded">
-		<menu id="algorithm:coloring" name="@gettext(menu:coloring)"
-			icon="org/miv/graphstream/tool/workbench/gearscolored_32.png">
+		<menu id="algorithm:coloring" name="@gettext(menu:coloring)">
 		</menu>
 		<menu id="algorithm:measure" name="@gettext(menu:measure)"></menu>
 	</menu>
@@ -47,4 +48,4 @@
 		<item name="@gettext(menu:about)" command="menu.help.about"/>
 	</menu>
 	
-</gswb-menubar>
+</gswb:menubar>

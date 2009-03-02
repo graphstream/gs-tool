@@ -1,6 +1,9 @@
 package org.miv.graphstream.tool.workbench.gui;
 
 import org.miv.graphstream.tool.workbench.event.NotificationListener;
+import org.miv.graphstream.tool.workbench.xml.WXElement;
+import org.miv.graphstream.tool.workbench.xml.WXmlConstants;
+import org.miv.graphstream.tool.workbench.xml.WXmlHandler;
 
 import java.awt.BorderLayout;
 import java.awt.event.ItemListener;
@@ -9,6 +12,7 @@ import java.awt.event.ItemEvent;
 import java.io.StringReader;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -28,7 +32,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class WHelp
 	extends JDialog
-	implements NotificationListener
+	implements NotificationListener, WXmlConstants
 {
 	private static final long serialVersionUID = 0X0001L;
 	
@@ -45,7 +49,7 @@ public class WHelp
 		if( url != null )
 			style.importStyleSheet(url);
 	}
-	
+	/*
 	class HelpHandler
 		extends WGetText.GetTextHandler
 	{
@@ -110,6 +114,31 @@ public class WHelp
 				subsectionName = null;
 				content = null;
 				readingContent = false;
+			}
+		}
+	}
+	*/
+	class HelpHandler
+		implements WXmlHandler.WXElementHandler
+	{
+		public void handle( WXElement wxe )
+		{
+			if( wxe.is(SPEC_HELP_SECTION) )
+			{
+				SectionContent content = new SectionContent();
+				String name = wxe.getAttribute(QNAME_GSWB_HELP_SECTION_NAME);
+				
+				Iterator<WXElement> ite = wxe.iteratorOnChildren();
+				while( ite.hasNext() )
+				{
+					WXElement subsection = ite.next();
+					
+					content.newSubSection(
+							subsection.getAttribute(QNAME_GSWB_HELP_SUBSECTION_NAME),
+							subsection.getContent() );
+				}
+				
+				newSection( name, content );
 			}
 		}
 	}
@@ -201,21 +230,11 @@ public class WHelp
 	
 	private void load()
 	{
-		XMLReader rx;
-		
-		try
-		{
-			rx = XMLReaderFactory.createXMLReader();
-			rx.setContentHandler(new HelpHandler());
-			rx.parse(new InputSource(ClassLoader.getSystemResourceAsStream(GSWB_HELP_XML)));
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
-		}
+		WGetText.readGetTextXml( new HelpHandler(),
+				ClassLoader.getSystemResourceAsStream(GSWB_HELP_XML));
 	}
 	
-	public void addSection( String name, SectionContent content )
+	public void newSection( String name, SectionContent content )
 	{
 		sections.addTab( name, WUtils.getImageIcon("help"), content );
 		pack();

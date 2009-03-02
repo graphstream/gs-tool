@@ -26,6 +26,10 @@ import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.WAlgorithm;
 import org.miv.graphstream.tool.workbench.WAlgorithmLoader;
 import org.miv.graphstream.tool.workbench.event.NotificationListener.Notification;
+import org.miv.graphstream.tool.workbench.gui.WGetText.GetTextHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -75,7 +79,7 @@ public class WGui
 		WGetText.load();
 		
 		this.dialogs = new HashMap<String,WDialog>();
-		this.core    = new WCore();
+		this.core    = WCore.getCore();
 		this.core.setTerminalCloseAction( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
 		this.actionBox = new WActions( this );
 		this.menuBar = new WMenuBar( this.actionBox );
@@ -105,14 +109,14 @@ public class WGui
 		//applyBackground( infoBox, actionBox, infoBox.graphInfo, infoBox.selectionTree );
 		
 		setIconImage( WUtils.getImageIcon( "gs_logo" ).getImage() );
-	    
-		pack();
 		
 		this.core.addWorkbenchListener( this.desktop );
 		
 		loadAlgorithms();
 		WNotificationServer.init(core);
 		WHelp.init();
+	    
+		pack();
 	}
 	
 	WMenuBar getWMenuBar()

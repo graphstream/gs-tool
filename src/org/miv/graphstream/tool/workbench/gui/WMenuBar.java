@@ -23,6 +23,8 @@
 package org.miv.graphstream.tool.workbench.gui;
 
 import org.miv.graphstream.tool.workbench.event.NotificationListener;
+import org.miv.graphstream.tool.workbench.xml.WXElement;
+import org.miv.graphstream.tool.workbench.xml.WXmlConstants;
 
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -33,10 +35,10 @@ import java.io.InputStream;
 
 import java.net.URL;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.HashMap;
 
-import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -45,20 +47,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
-
 public class WMenuBar
 	extends JMenuBar
-	implements NotificationListener
+	implements NotificationListener, WXmlConstants
 {
 	public static final long serialVersionUID = 0x00A00301L;
 
-	static final String GSWB_MENUBAR_XML = "org/miv/graphstream/tool/workbench/ressources/gswb-menu.xml";
+	public static final String GSWB_MENUBAR_XML = "org/miv/graphstream/tool/workbench/ressources/gswb-menu.xml";
 	
 	/*
 	 * XML Menu Skeletton
@@ -73,124 +68,71 @@ public class WMenuBar
 
 	static String BALISE_ROOT = "gswb-menubar";
 	
-	class SkelettonHandler extends DefaultHandler
+	public void handle( JMenu parent, WXElement wxe, ActionListener listener )
 	{
-		
-		LinkedList<JMenu> queue;
-		boolean rooted;
-		ActionListener actionListener;
-		
-		public SkelettonHandler( ActionListener al )
+		if( wxe.is(SPEC_MENU_MENU) )
 		{
-			queue = new LinkedList<JMenu>();
-			rooted = false;
-			actionListener = al;
-		}
-		
-		public void startElement (String uri, String localName,
-			      String qName, Attributes atts)
-			throws SAXException
-		{
-			if( ! rooted && ! qName.equals( BALISE_ROOT ) )
-			{
-				throw new SAXException( "skeletton must start with " + BALISE_ROOT );
-			}
+			String id	= wxe.getAttribute(QNAME_GSWB_MENU_MENU_ID);
+			String name = wxe.getAttribute(QNAME_GSWB_MENU_MENU_NAME);
+			String icon = wxe.getAttribute(QNAME_GSWB_MENU_MENU_ICON);
 			
-			rooted = true;
-			AbstractButton last = null;
-			
-			if( qName.equals( "menu" ) )
+			JMenu menu = new JMenu( WGetText.getTextLookup(name) );
+
+			if( icon != null )
 			{
-				String name = atts.getValue("name");
-				JMenu menu = new JMenu( WGetText.getTextLookup(name) );
-				
-				if( atts.getValue("icon") != null )
+				if( icon.startsWith("@"))
 				{
-					if( atts.getValue("icon").startsWith("@"))
-					{
-						menu.setIcon( WUtils.getImageIcon(atts.getValue("icon").substring(1)) );
-					}
-					else
-					{
-						URL iconURL = ClassLoader.getSystemResource(atts.getValue("icon"));
-						if( iconURL != null )
-							menu.setIcon( new ImageIcon(iconURL) );
-					}
+					menu.setIcon( WUtils.getImageIcon(icon.substring(1)) );
 				}
-				
-				queue.addFirst(menu);
-				last = menu;
-			}
-			else if( qName.equals( "item" ) )
-			{
-				last = handleNewItem(atts);
-			}
-			else if( qName.equals("separator") )
-			{
-				if( queue.size() > 0 )
-					queue.getFirst().addSeparator();
-			}
-			
-			if( atts.getValue("disableOn") != null )
-			{
-				String [] notifs = atts.getValue("disableOn").split(",");
-				for( String notif : notifs )
-					WMenuBar.this.disableOn(last,notif);
-			}
-			
-			if( atts.getValue("enableOn") != null )
-			{
-				String [] notifs = atts.getValue("enableOn").split(",");
-				for( String notif : notifs )
-					WMenuBar.this.enableOn(last,notif);
-			}
-				
-			if( last != null && atts.getValue("id") != null )
-			{
-				WMenuBar.this.registerComponent(atts.getValue("id"),last);
-			}
-			
-			if( last != null )
-				WUtils.reloadOnLangChanged(last,atts.getValue("name"),"setText");
-		}
-		
-		public void endElement(String uri, String localName, String qName)
-		{
-			if( qName.equals("menu") )
-			{
-				JMenu m = queue.poll();
-				if( queue.size() > 0 )
-					queue.getFirst().add(m);
 				else
-					WMenuBar.this.add(m);
+				{
+					URL iconURL = ClassLoader.getSystemResource(icon);
+
+					if( iconURL != null )
+						menu.setIcon( new ImageIcon(iconURL) );
+				}
 			}
-		}
-		
-		protected AbstractButton handleNewItem( Attributes atts )
-		{
-			int strokeKey = 0;
-			int strokeModifier = 0;
-			boolean useStroke = false;
-			boolean useModifier = false;
-			String name = atts.getValue("name");
-			name = WGetText.getTextLookup(name);
+
+			if( id != null )
+				registerComponent(id,menu);
 			
-			if( atts.getValue("strokeKey") != null )
+			if( parent == null )
+				add( menu );
+			else
+				parent.add(menu);
+			
+			Iterator<WXElement> ite = wxe.iteratorOnChildren();
+			while( ite.hasNext() )
+				handle(menu,ite.next(),listener);
+			
+			WUtils.reloadOnLangChanged(menu,name,"setText");
+		}
+		else if( wxe.is(SPEC_MENU_ITEM) )
+		{
+			int strokeKey 		= 0;
+			int strokeModifier 	= 0;
+			boolean useStroke 	= false;
+			boolean useModifier = false;
+			String name 		= wxe.getAttribute(QNAME_GSWB_MENU_ITEM_NAME);
+			
+			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY) != null )
 			{
 				try
 				{
-					strokeKey = KeyEvent.class.getDeclaredField(atts.getValue("strokeKey")).getInt(null);
+					strokeKey = KeyEvent.class.getDeclaredField(
+							wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY)).getInt(null);
 					useStroke = true;
 				}
 				catch( Exception e )
 				{
-					System.err.printf( "unknown key : %s\n", atts.getValue("strokeKey") );
+					System.err.printf( "unknown key : %s\n",
+							wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY) );
 				}
 			}
 			
-			if( atts.getValue("strokeModifier" ) != null )
+			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEMODIFIER) != null )
 			{
-				String [] mods = atts.getValue("strokeModifier").split(",");
+				String [] mods = wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEMODIFIER).split(",");
 				if( mods != null )
 					for( String mod : mods )
 					{
@@ -208,25 +150,30 @@ public class WMenuBar
 			
 			JMenuItem item = null;
 			
-			if( atts.getValue("type") == null || atts.getValue("type").equals("menuitem") )
-				item = new JMenuItem( name );
-			else if( atts.getValue("type").equals("checkbox") )
-				item = new JCheckBoxMenuItem( name );
+			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE) == null || 
+					wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("menuitem") )
+				item = new JMenuItem( WGetText.getTextLookup(name) );
+			else if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("checkbox") )
+				item = new JCheckBoxMenuItem( WGetText.getTextLookup(name) );
 			else
 			{
 				// TODO
-				System.err.printf( "%s not yet implemented\n", atts.getValue("type") );
+				System.err.printf( "%s not yet implemented\n",
+						wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE) );
 			}
 			
-			if( atts.getValue("icon") != null )
+			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON) != null )
 			{
-				if( atts.getValue("icon").startsWith("@"))
+				if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON).startsWith("@"))
 				{
-					item.setIcon( WUtils.getImageIcon(atts.getValue("icon").substring(1)) );
+					item.setIcon( WUtils.getImageIcon(
+							wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON).substring(1)) );
 				}
 				else
 				{
-					URL iconURL = ClassLoader.getSystemResource(atts.getValue("icon"));
+					URL iconURL = ClassLoader.getSystemResource(
+							wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON));
+					
 					if( iconURL != null )
 						item.setIcon( new ImageIcon(iconURL) );
 				}
@@ -237,14 +184,26 @@ public class WMenuBar
 			else if( useStroke )
 				((JMenuItem) item).setAccelerator( KeyStroke.getKeyStroke((char)strokeKey) );
 			
-			item.addActionListener(actionListener);
-			if( atts.getValue("command") != null )
-				item.setActionCommand(atts.getValue("command"));
+			item.addActionListener(listener);
+			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND) != null )
+				item.setActionCommand(wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND));
 			
-			if( queue.size() > 0 )
-				queue.getFirst().add(item);
+			if( parent != null )
+				parent.add(item);
 			
-			return item;
+			WUtils.reloadOnLangChanged(item,name,"setText");
+		}
+		else if( wxe.is(SPEC_MENU_SEPARATOR) )
+		{
+			if( parent != null )
+				parent.addSeparator();
+		}
+		else if( wxe.is(SPEC_MENU) )
+		{
+			Iterator<WXElement> ite = wxe.iteratorOnChildren();
+			
+			while( ite.hasNext() )
+				handle( null, ite.next(), listener );
 		}
 	}
 	
@@ -296,6 +255,7 @@ public class WMenuBar
 	
 	private void loadXml( ActionListener al, InputStream in )
 	{
+		/*
 		XMLReader rx;
 		
 		try
@@ -308,6 +268,8 @@ public class WMenuBar
 		{
 			e.printStackTrace();
 		}
+		*/
+		handle( null, WGetText.readGetTextXml(null,in), al );
 	}
 	
 	public void registerComponent( String id, JComponent c )
