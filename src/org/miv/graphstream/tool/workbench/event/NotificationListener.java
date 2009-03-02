@@ -13,7 +13,20 @@ public interface NotificationListener
 		noContext,
 		fullMode,
 		normalMode,
-		langChanged
+		langChanged,
+		clipboardCopy,
+		clipboardCut,
+		clipboardPaste,
+		clipboardEmpty,
+		historyUndo,
+		historyRedo,
+		historyUndoEnable,
+		historyUndoDisable,
+		historyRedoEnable,
+		historyRedoDisable,
+		selectionEmpty,
+		selectionAdd,
+		selectionRemove
 	}
 	
 	void handleNotification( Notification notification );

@@ -111,6 +111,11 @@ public class WXmlHandler
 		return super.resolveEntity(publicId, systemId);
 	}
 	
+	public static WXElement readXml( InputStream in )
+	{
+		return readXml(null,null,in);
+	}
+	
 	public static WXElement readXml( WXElementHandler wxHandler, InputStream in )
 	{
 		return readXml( wxHandler, null, in );

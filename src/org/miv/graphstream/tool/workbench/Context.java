@@ -63,23 +63,24 @@ public interface Context
 	 * 
 	 * @param e element to add
 	 */
-	public void addElementToSelection( Element e );
+	//public void addElementToSelection( Element e );
 	/**
 	 * This will remove an element from the selection list.
 	 * 
 	 * @param e element to remove
 	 */
-	public void removeElementFromSelection( Element e );
+	//public void removeElementFromSelection( Element e );
 	/**
 	 * Get the selection list.
 	 * 
 	 * @return the selection list
 	 */
-	public List<Element> getSelection();
+	//public List<Element> getSelection();
 	/**
 	 * Clear the selection.
 	 */
-	public void clearSelection();
+	//public void clearSelection();
+	public WSelection getSelection();
 	/**
 	 * Enable or disable autolayout.
 	 * 

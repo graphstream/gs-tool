@@ -227,16 +227,13 @@ public class WDesktop
 			Element e = ctx.getGraph().getNode( id );
 			if( e == null ) return;
 			
-			if( e.hasAttribute( "ui.state" ) && 
-					e.getAttribute( "ui.state" ).equals( "selected" ) )
+			if( ctx.getSelection().contains(e) )
 			{
-				e.removeAttribute( "ui.state" );
-				ctx.removeElementFromSelection( e );
+				ctx.getSelection().unselect(e);
 			}
 			else
 			{
-				e.addAttribute( "ui.state", "selected" );
-				ctx.addElementToSelection( e );
+				ctx.getSelection().select(e);
 			}
 		}
 		
@@ -247,16 +244,13 @@ public class WDesktop
 				Element e = edgeSelectionHandler.get();
 				if( e != null )
 				{
-					if( e.hasAttribute( "ui.state" ) && 
-							e.getAttribute( "ui.state" ).equals( "selected" ) )
+					if( ctx.getSelection().contains(e) )
 					{
-						e.removeAttribute( "ui.state" );
-						ctx.removeElementFromSelection( e );
+						ctx.getSelection().unselect(e);
 					}
 					else
 					{
-						e.addAttribute( "ui.state", "selected" );
-						ctx.addElementToSelection( e );
+						ctx.getSelection().select(e);
 					}
 				}
 				edgeSelectionHandler.reset( null );
@@ -322,7 +316,10 @@ public class WDesktop
 			if( n != null )
 			{
 				if( lastNodeSelected == null )
+				{
 					lastNodeSelected = n.getId();
+					n.addAttribute( "ui.state", "addingEdge" );
+				}
 				else
 				{
 					String id = null;
@@ -330,6 +327,11 @@ public class WDesktop
 						id = env.getString( WActions.OPT_ADD_EDGE_ID );
 					if( id == null ) id = "edge#%n";
 					id = WUtils.getAutomaticEdgeId( ctx, id );
+					
+					if( ctx.getSelection().contains(ctx.getGraph().getNode(lastNodeSelected)) )
+						ctx.getSelection().selectDecoration(ctx.getGraph().getNode(lastNodeSelected));
+					else
+						ctx.getSelection().unselectDecoration(ctx.getGraph().getNode(lastNodeSelected));
 					
 					Boolean directed = env.getBoolean( WActions.OPT_ADD_EDGE_DIRECTED );
 					if( directed == null ) directed = false;
@@ -348,6 +350,8 @@ public class WDesktop
 					Boolean cycle = env.getBoolean( WActions.OPT_ADD_EDGE_CYCLE );
 					if( cycle != null && ! cycle )
 						lastNodeSelected = null;
+					else
+						n.addAttribute( "ui.state", "addingEdge" );
 				}
 			}
 		}
@@ -498,7 +502,6 @@ public class WDesktop
 		
 		public void mouseClicked(MouseEvent e)
 		{
-			System.err.printf( "%s\n", cli.getCore().getActionMode() );
 			if( cli.getCore().getActionMode() == ActionMode.SELECT )
 				actionSelection( e );
 			else if( cli.getCore().getActionMode() == ActionMode.ADD_NODE )

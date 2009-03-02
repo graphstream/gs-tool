@@ -17,6 +17,7 @@
 package org.miv.graphstream.tool.workbench.gui;
 
 import org.miv.graphstream.tool.workbench.Context;
+import org.miv.graphstream.tool.workbench.WNotificationServer;
 import org.miv.graphstream.tool.workbench.cli.CLI;
 import org.miv.graphstream.tool.workbench.cli.CLICommand;
 import org.miv.graphstream.tool.workbench.event.NotificationListener;

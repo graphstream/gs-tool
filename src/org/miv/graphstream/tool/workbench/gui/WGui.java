@@ -25,6 +25,7 @@ package org.miv.graphstream.tool.workbench.gui;
 import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.WAlgorithm;
 import org.miv.graphstream.tool.workbench.WAlgorithmLoader;
+import org.miv.graphstream.tool.workbench.WNotificationServer;
 import org.miv.graphstream.tool.workbench.event.NotificationListener.Notification;
 import org.miv.graphstream.tool.workbench.gui.WGetText.GetTextHandler;
 import org.xml.sax.InputSource;
@@ -117,6 +118,13 @@ public class WGui
 		WHelp.init();
 	    
 		pack();
+		
+		/*
+		 * Dispatch start events.
+		 */
+		WNotificationServer.dispatch( Notification.clipboardEmpty );
+		WNotificationServer.dispatch( Notification.historyUndoDisable );
+		WNotificationServer.dispatch( Notification.historyRedoDisable );
 	}
 	
 	WMenuBar getWMenuBar()
@@ -210,10 +218,10 @@ public class WGui
 	    try
 	    {
 	    	//UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-	    	UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceRavenLookAndFeel");
+	    	/*UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceRavenLookAndFeel");
 	    	
 			JFrame.setDefaultLookAndFeelDecorated(true);
-			JDialog.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true);*/
 	    }
 	    catch (Exception e)
 	    {

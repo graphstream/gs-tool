@@ -48,11 +48,11 @@ public class ClipboardOperators extends CLICommand
 		if( ! ccr.isValid() ) return usage();
 		
 		if( ccr.getAttribute( "action" ).equals( "copy" ) ) 
-			cli.core.selectionCopy();
+			cli.core.getClipboard().copy();
 		else if( ccr.getAttribute( "action" ).equals( "cut" ) ) 
-			cli.core.selectionCut();
+			cli.core.getClipboard().cut();
 		else 
-			cli.core.selectionPaste();
+			cli.core.getClipboard().paste();
 		
 		return R_OK;
 	}

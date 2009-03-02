@@ -59,8 +59,6 @@ public class NodeOperations extends CLICommand
 		else
 		{
 			Context ctx = cli.ctx;
-			if( ctx.getSelection().contains( ctx.getGraph().getNode( id ) ) )
-				ctx.removeElementFromSelection( ctx.getGraph().getNode( id ) );
 			ctx.getGraph().removeNode( id );
 		}
 		

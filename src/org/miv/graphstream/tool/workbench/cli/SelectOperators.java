@@ -17,6 +17,7 @@
 package org.miv.graphstream.tool.workbench.cli;
 
 import org.miv.graphstream.graph.Element;
+import org.miv.graphstream.tool.workbench.Context;
 
 import java.util.Iterator;
 
@@ -51,31 +52,29 @@ public class SelectOperators extends CLICommandPool
 			usage = "select [all] {node[s],edge[s]} [\"id|pattern\"]";
 		}
 		
-		protected void action( CLI cli, boolean select, 
+		protected void action( Context ctx, boolean select, 
 				Iterator<? extends Element> ite, String pattern )
 		{
-			if( ite == null ) return;
-			
-			while( ite.hasNext() )
+			if( ite == null ) 
 			{
-				Element e = ite.next();
-				if( pattern != null )
-				{
-					if( e.getId().matches( pattern ) )
-					{
-						if( select )
-							cli.core.addElementToSelection( e );
-						else
-							cli.core.removeElementFromSelection( e );
-					}
-				}
+				if( select )
+					ctx.getSelection().select();
 				else
-				{
-					if( select )
-						cli.core.addElementToSelection( e );
-					else
-						cli.core.removeElementFromSelection( e );
-				}
+					ctx.getSelection().unselect();
+			}
+			else if( pattern == null )
+			{
+				if( select )
+					ctx.getSelection().select( ite );
+				else
+					ctx.getSelection().unselect( ite );
+			}
+			else
+			{
+				if( select )
+					ctx.getSelection().select( ite, pattern );
+				else
+					ctx.getSelection().unselect( ite, pattern );
 			}
 		}
 		
@@ -83,7 +82,11 @@ public class SelectOperators extends CLICommandPool
 		{
 			CLICommandResult ccr = result( cmd );
 			if( ! ccr.isValid() ) return usage();
-			if( cli.core.getActiveContext() == null ) return "no context";
+			
+			Context ctx = cli.core.getActiveContext();
+			
+			if( ctx == null )
+				return "no context";
 			
 			if( ccr.hasAttribute( "all" ) )
 			{
@@ -91,35 +94,36 @@ public class SelectOperators extends CLICommandPool
 				String pattern = ccr.hasAttribute( "id" ) ? ccr.getAttribute( "id" ) : null;
 				
 				if( ! ccr.hasAttribute( "type" ) || ccr.getAttribute( "type" ).equals( "nodes" ) )
-					action( cli, select, 
-							cli.getCore().getActiveContext().getGraph().getNodeIterator(), 
+					action( ctx, select, 
+							ctx.getGraph().getNodeIterator(), 
 							pattern );
 				if( ! ccr.hasAttribute( "type" ) || ccr.getAttribute( "type" ).equals( "edges" ) )
-					action( cli, select, 
-							cli.getCore().getActiveContext().getGraph().getEdgeIterator(), 
+					action( ctx, select, 
+							ctx.getGraph().getEdgeIterator(), 
 							pattern );
 				
 				return R_OK;
 			}
 			
-			if( ! ccr.hasAttribute( "id" ) ) return "no id given";
+			if( ! ccr.hasAttribute( "id" ) )
+				return "no id given";
 			
 			Element e = null;
 			if( ccr.getAttribute( "type" ).equals( "node" ) )
 			{
-				e = cli.core.getActiveContext().getGraph().getNode( ccr.getAttribute( "id" ) );
+				e = ctx.getGraph().getNode( ccr.getAttribute( "id" ) );
 			}
 			else
 			{
-				e = cli.core.getActiveContext().getGraph().getEdge( ccr.getAttribute( "id" ) );
+				e = ctx.getGraph().getEdge( ccr.getAttribute( "id" ) );
 			}
 			
 			if( e == null ) return "bad id";
 			
 			if( ccr.getAttribute( "action" ).equals( "select" ) )
-				cli.core.addElementToSelection( e );
+				ctx.getSelection().select(e);
 			else
-				cli.core.removeElementFromSelection( e );
+				ctx.getSelection().unselect(e);
 			
 			return R_OK;
 		}
@@ -141,6 +145,7 @@ public class SelectOperators extends CLICommandPool
 			if( cli.core.getActiveContext() == null ) return "no context";
 			
 			StringBuffer buffer = new StringBuffer();
+			
 			for( Element e: cli.core.getActiveContext().getSelection() )
 				buffer.append( e.getId() ).append( "\n" );
 			

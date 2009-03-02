@@ -124,4 +124,18 @@ public interface WXmlConstants
 	
 	public static final WXElementSpec SPEC_HELP = new WXElementSpec(
 			QNAME_GSWB_HELP).declareChildren(SPEC_HELP_SECTION);
+	
+	public static final String QNAME_GSWB_SETTINGS							= "gswb:settings";
+	public static final String QNAME_GSWB_SETTINGS_SETTING				 	= "setting";
+	public static final String QNAME_GSWB_SETTINGS_SETTING_NAME				= "name";
+	public static final String QNAME_GSWB_SETTINGS_SETTING_VALUE			= "value";
+	
+	public static final WXElementSpec SPEC_SETTING = new WXElementSpec(
+			QNAME_GSWB_SETTINGS_SETTING).declareAttributes(
+					QNAME_GSWB_SETTINGS_SETTING_NAME,
+					QNAME_GSWB_SETTINGS_SETTING_VALUE);
+	
+	public static final WXElementSpec SPEC_SETTINGS = new WXElementSpec(
+			QNAME_GSWB_SETTINGS).declareChildren(
+					SPEC_SETTING);
 }

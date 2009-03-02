@@ -22,6 +22,7 @@
  */
 package org.miv.graphstream.tool.workbench.gui;
 
+import org.miv.graphstream.tool.workbench.WNotificationServer;
 import org.miv.graphstream.tool.workbench.event.NotificationListener;
 import org.miv.graphstream.tool.workbench.xml.WXElement;
 import org.miv.graphstream.tool.workbench.xml.WXmlConstants;

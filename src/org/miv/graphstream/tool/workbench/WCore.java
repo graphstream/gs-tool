@@ -57,21 +57,21 @@ public class WCore
 		SELECT
 	}
 	
-	private LinkedList<Context> ctxs;
-	private LinkedList<String> ctxsid;
-	
-	private int activeCtx = -1;
-	private String activeCtxId = null;
-	private int createdCtx = 0;
+	private LinkedList<Context> 				ctxs;
+	private LinkedList<String> 					ctxsid;
+	private int 								activeCtx 				= -1;
+	private String 								activeCtxId 			= null;
+	private int 								createdCtx 				= 0;
 	private LinkedList<ContextChangeListener> 	contextChangeListeners 	= new LinkedList<ContextChangeListener>();
 	private LinkedList<ContextListener> 		contextListeners 		= new LinkedList<ContextListener>();
 	private LinkedList<WorkbenchListener> 		workbenchListeners 		= new LinkedList<WorkbenchListener>();
 	private LinkedList<SelectionListener> 		selectionListeners 		= new LinkedList<SelectionListener>();
-	private CLI cli;
-	private int terminalCloseAction = javax.swing.JFrame.EXIT_ON_CLOSE;
-	private LinkedList<Element> clipboard = new LinkedList<Element>();
-	private ActionMode actionMode;
-	private WorkbenchEnvironment env;
+	private CLI 								cli;
+	private int 								terminalCloseAction 	= javax.swing.JFrame.EXIT_ON_CLOSE;
+	private ActionMode 							actionMode;
+	private WorkbenchEnvironment 				env;
+	private WClipboard							clipboard 				= new WClipboard();
+	private WHistory							history					= new WHistory();
 	
 	private WCore()
 	{
@@ -103,6 +103,11 @@ public class WCore
 	public int getActiveContextNumber()
 	{
 		return activeCtx;
+	}
+	
+	public WClipboard getClipboard()
+	{
+		return clipboard;
 	}
 	
 	public void exit()
@@ -217,11 +222,11 @@ public class WCore
 		if( activeCtxId == null || ! activeCtxId.equals(ctxsid.get(i)) )
 		{
 			ctxs.get(activeCtx).removeContextListener(this);
-			ctxs.get(activeCtx).removeSelectionListener(this);
+			ctxs.get(activeCtx).getSelection().removeSelectionListener(this);
 			activeCtx = i;
 			activeCtxId = ctxsid.get(i);
 			ctxs.get(activeCtx).addContextListener(this);
-			ctxs.get(activeCtx).addSelectionListener(this);
+			ctxs.get(activeCtx).getSelection().addSelectionListener(this);
 			fireContextChanged();
 		}
 	}
@@ -294,28 +299,17 @@ public class WCore
 	
 	public void addElementToSelection( Element e )
 	{
-		if( activeCtx >= 0 )
-		{
-			getActiveContext().addElementToSelection( e );
-			fireSelectionAdd( getActiveContext(), e );
-		}
+		getActiveContext().getSelection().select(e);
 	}
 	
 	public void removeElementFromSelection( Element e )
 	{
-		if( activeCtx >= 0 )
-		{
-			getActiveContext().removeElementFromSelection( e );
-			fireSelectionRemove( getActiveContext(), e );
-		}
+		getActiveContext().getSelection().unselect(e);
 	}
 	
 	public void clearSelection()
 	{
-		if( activeCtx >= 0 )
-		{
-			getActiveContext().clearSelection();
-		}
+		getActiveContext().getSelection().unselect();
 	}
 	
 	public void setActionMode( ActionMode am )
@@ -410,34 +404,16 @@ public class WCore
 		this.selectionListeners.remove( sl );
 	}
 	
-	protected void fireSelectionAdd( Context ctx, Element e )
-	{
-		SelectionEvent se = new SelectionEvent( this, ctx, SelectionEvent.Type.ADD, e );
-		selectionAdd(se);
-	}
-	
 	public void selectionAdd( SelectionEvent se )
 	{
 		for( SelectionListener sl: selectionListeners )
 			sl.selectionAdd( se );
 	}
 	
-	protected void fireSelectionRemove( Context ctx, Element e )
-	{
-		SelectionEvent se = new SelectionEvent( this, ctx, SelectionEvent.Type.REMOVE, e );
-		selectionRemove(se);
-	}
-	
 	public void selectionRemove( SelectionEvent se )
 	{
 		for( SelectionListener sl: selectionListeners )
 			sl.selectionRemove( se );
-	}
-	
-	protected void fireSelectionCleared( Context ctx )
-	{
-		SelectionEvent se = new SelectionEvent( this, ctx, SelectionEvent.Type.CLEAR );
-		selectionCleared( se );
 	}
 	
 	public void selectionCleared( SelectionEvent se )
@@ -451,76 +427,17 @@ public class WCore
 	
 	public void selectionCopy()
 	{
-		if( activeCtx < 0 ) return;
-		
-		clipboard.clear();
-		clipboard.addAll( getActiveContext().getSelection() );
+		clipboard.copy();
 	}
 	
 	public void selectionCut()
 	{
-		if( activeCtx < 0 ) return;
-		
-		Context c = getActiveContext();
-		clipboard.clear();
-		clipboard.addAll( c.getSelection() );
-		
-		for( Element e: clipboard )
-		{
-			if( e instanceof Node )
-				c.getGraph().removeNode( e.getId() );
-			else if( e instanceof Edge )
-				c.getGraph().removeEdge( e.getId() );
-		}
+		clipboard.cut();
 	}
 	
 	public void selectionPaste()
 	{
-		if( activeCtx < 0 ) return;
-
-		Context c = getActiveContext();
-		Element t;
-		Edge edg;
-		
-		for( Element e: clipboard )
-		{
-			t = null;
-			if( e instanceof Node )
-			{
-				t = c.getGraph().addNode( e.getId() );
-			}
-			else if( e instanceof Edge )
-			{
-				edg = (Edge) e;
-				Node src, dst;
-				src = edg.getSourceNode();
-				dst = edg.getTargetNode();
-				if( c.getGraph().getNode( src.getId() ) == null )
-					copyAttributes( src, c.getGraph().addNode( src.getId() ) );
-				if( c.getGraph().getNode( dst.getId() ) == null )
-					copyAttributes( dst, c.getGraph().addNode( dst.getId() ) );
-				
-				t = c.getGraph().addEdge( e.getId(),
-						edg.getSourceNode().getId(), edg.getTargetNode().getId(),
-						edg.isDirected() );
-			}
-			
-			copyAttributes( e, t );
-		}
-	}
-	
-	protected void copyAttributes( Element from, Element to )
-	{
-		if( to != null && from != null )
-		{
-			Iterator<String> ite = from.getAttributeKeyIterator();
-			if( ite != null )
-				while( ite.hasNext() )
-				{
-					String key = ite.next();
-					to.addAttribute( key, from.getAttribute( key ) );
-				}
-		}
+		clipboard.paste();
 	}
 	
 // Add/remove listeners
@@ -571,7 +488,7 @@ public class WCore
 		{
 			activeCtx = 0;
 			ctxs.get(activeCtx).addContextListener(this);
-			ctxs.get(activeCtx).addSelectionListener(this);
+			ctxs.get(activeCtx).getSelection().addSelectionListener(this);
 			fireContextChanged();
 		}
 	}
@@ -583,5 +500,7 @@ public class WCore
 		int id = ctxs.indexOf( ctx );
 		ctxs.remove( id );
 		ctxsid.remove( id );
+		ctx.removeContextListener(this);
+		ctx.getSelection().removeSelectionListener(this);
 	}
 }

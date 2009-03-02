@@ -19,10 +19,10 @@
 			strokeModifier="CTRL_MASK" icon="@exit" />
 	</menu><!--Edit menu-->
 	<menu id="edit" name="@gettext(menu:edit)">
-		<item name="@gettext(menu:undo)" command="@CLI:undo" strokeKey="VK_Z" strokeModifier="CTRL_MASK" icon="@edit:undo"></item>
-		<item name="@gettext(menu:redo)" command="@CLI:redo" strokeKey="VK_Z" strokeModifier="CTRL_MASK,SHIFT_MASK" icon="@edit:redo"></item>
+		<item name="@gettext(menu:undo)" command="@CLI:undo" strokeKey="VK_Z" strokeModifier="CTRL_MASK" icon="@edit:undo" disableOn="historyUndoDisable" enableOn="historyUndoEnable"></item>
+		<item name="@gettext(menu:redo)" command="@CLI:redo" strokeKey="VK_Z" strokeModifier="CTRL_MASK,SHIFT_MASK" icon="@edit:redo" enableOn="historyRedoEnable" disableOn="historyRedoDisable"></item>
 		<separator></separator>
-		<menu name="@gettext(menu:select)">
+		<menu name="@gettext(menu:select)" enableOn="contextAdded" disableOn="noContext">
 			<item name="@gettext(menu:selectall)" command="@CLI:select all" strokeKey="VK_A" strokeModifier="CTRL_MASK"/>
 			<item name="@gettext(menu:unselectall)" command="@CLI:unselect all" strokeKey="VK_A" strokeModifier="CTRL_MASK,SHIFT_MASK"/>
 		</menu>
@@ -32,7 +32,7 @@
 		<item name="@gettext(menu:cut)" command="@CLI:cut" strokeKey="VK_X"
 			strokeModifier="CTRL_MASK" icon="@edit:cut" />
 		<item name="@gettext(menu:paste)" command="@CLI:paste" strokeKey="VK_V"
-			strokeModifier="CTRL_MASK" icon="@edit:paste" />
+			strokeModifier="CTRL_MASK" icon="@edit:paste" enableOn="clipboardCopy,clipboardCut" disableOn="clipboardEmpty"/>
 		<separator/>
 		<item name="@gettext(menu:options)" command="options"/>
 	</menu><!--Dialog menu-->

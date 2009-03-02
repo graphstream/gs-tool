@@ -8,6 +8,12 @@ node:selected {
 	border-width: 2px; 
 }
 
+node:addingEdge {
+	color: blue; 
+	border-color: black; 
+	border-width: 1px; 
+}
+
 edge.preselect { 
 	color: orange; 
 	width: 3px; 

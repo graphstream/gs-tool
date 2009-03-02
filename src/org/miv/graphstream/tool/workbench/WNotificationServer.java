@@ -1,8 +1,7 @@
-package org.miv.graphstream.tool.workbench.gui;
+package org.miv.graphstream.tool.workbench;
 
 
 import org.miv.graphstream.graph.Element;
-import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.event.ContextListener;
 import org.miv.graphstream.tool.workbench.event.ContextChangeListener;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;

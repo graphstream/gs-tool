@@ -35,8 +35,6 @@ import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.LinkedList;
 
 /**
@@ -54,7 +52,8 @@ public class DefaultContext implements Context, GraphListener
 	/**
 	 * Selection list.
 	 */
-	protected LinkedList<Element> selection;
+	//protected LinkedList<Element> selection;
+	protected WSelection selection;
 	
 	protected boolean autolayout;
 	
@@ -74,7 +73,7 @@ public class DefaultContext implements Context, GraphListener
 	public DefaultContext( Graph graph )
 	{
 		this.graph = graph;
-		this.selection = new LinkedList<Element>();
+		this.selection = new WSelection(this);//new LinkedList<Element>();
 		this.autolayout = false;
 		this.path = null;
 		this.changed = false;
@@ -82,7 +81,7 @@ public class DefaultContext implements Context, GraphListener
 		if( graph != null )
 			this.graph.addGraphListener( this );
 	}
-	
+	/*
 	public void addElementToSelection(Element e)
 	{
 		if( selection.contains( e ) ) return;
@@ -96,21 +95,21 @@ public class DefaultContext implements Context, GraphListener
 		selection.remove( e );
 		fireSelectionRemoved( e );
 	}
-
+	 
 	public void clearSelection()
 	{
 		selection.clear();
 		fireSelectionCleared();
 	}
-
+	*/
 	public Graph getGraph()
 	{
 		return graph;
 	}
 
-	public List<Element> getSelection()
+	public WSelection getSelection()
 	{
-		return Collections.unmodifiableList( selection );
+		return selection;//Collections.unmodifiableList( selection );
 	}
 
 	public void setGraph(Graph graph)
@@ -125,7 +124,7 @@ public class DefaultContext implements Context, GraphListener
 		
 		changed = false;
 		
-		clearSelection();
+		selection.unselect();//clearSelection();
 	}
 
 	public void setAutolayout( boolean b )
@@ -245,23 +244,23 @@ public class DefaultContext implements Context, GraphListener
 	public void beforeEdgeRemove( Graph graph, Edge edge )
 	{
 		if( selection.contains( edge ) )
-		{
-			removeElementFromSelection( edge );
-		}
+			selection.unselect( edge );
+		
 		fireElementOperation(edge,ElementOperation.EdgeRemoved,null);
 	}
 
 	public void beforeNodeRemove( Graph graph, Node node )
 	{
 		if( selection.contains( node ) )
-		{
-			removeElementFromSelection( node );
-		}
+			selection.unselect( node );
+		
 		fireElementOperation(node,ElementOperation.NodeRemoved,null);
 	}
 	
 	public void beforeGraphClear( Graph graph )
-	{}
+	{
+		selection.unselect();
+	}
 
 	public void stepBegins(Graph graph, double time)
 	{

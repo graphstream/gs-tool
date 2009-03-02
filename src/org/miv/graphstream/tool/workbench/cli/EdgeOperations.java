@@ -16,8 +16,6 @@
 
 package org.miv.graphstream.tool.workbench.cli;
 
-import org.miv.graphstream.tool.workbench.Context;
-
 /**
  * Defines some edge operations like 'add' or 'del'.
  * 
@@ -65,9 +63,6 @@ public class EdgeOperations extends CLICommand
 		}
 		else
 		{
-			Context ctx = cli.ctx;
-			if( ctx.getSelection().contains( ctx.getGraph().getEdge( id ) ) )
-				ctx.removeElementFromSelection( ctx.getGraph().getEdge( id ) );
 			cli.ctx.getGraph().removeEdge(id);
 		}
 		
