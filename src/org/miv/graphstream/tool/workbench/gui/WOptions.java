@@ -1,3 +1,25 @@
+/*
+ * This file is part of GraphStream.
+ * 
+ * GraphStream is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * GraphStream is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright 2006 - 2009
+ * 	Julien Baudry
+ * 	Antoine Dutot
+ * 	Yoann Pigné
+ * 	Guilhelm Savin
+ */
 package org.miv.graphstream.tool.workbench.gui;
 
 import java.awt.GridBagConstraints;
@@ -7,13 +29,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-
-import java.util.Iterator;
-import java.util.Locale;
 import java.util.LinkedList;
 
 import javax.swing.ComboBoxModel;
@@ -24,15 +39,12 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
 
 import org.miv.graphstream.tool.workbench.xml.WXmlConstants;
-import org.miv.graphstream.tool.workbench.xml.WXmlHandler;
-import org.miv.graphstream.tool.workbench.xml.WXElement;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -174,7 +186,7 @@ public class WOptions
 		JLabel 		label;
 		JComboBox	comboBox;
 		JPanel		panel;
-		JCheckBox	checkBox;
+		//JCheckBox	checkBox;
 		JButton		button;
 		
 		skinModel = new SkinModel();
@@ -183,9 +195,11 @@ public class WOptions
 		
 		label = new JLabel("skin");
 			c.weightx = 1.0;
+			c.ipadx = 10;
 		bag.setConstraints(label,c);
 		add(label);
 			c.gridwidth = GridBagConstraints.REMAINDER;
+			//c.ipadx = 0;
 		bag.setConstraints(comboBox,c);
 		add(comboBox);
 		
@@ -210,6 +224,7 @@ public class WOptions
 		label = new JLabel("locale");
 			c.weightx = 1.0;
 			c.gridwidth = GridBagConstraints.RELATIVE;
+			c.ipadx = 10;
 		bag.setConstraints(label,c);
 		add(label);
 			c.fill = GridBagConstraints.BOTH;
@@ -222,21 +237,25 @@ public class WOptions
 		bag.setConstraints(fullMode,c);
 		add(fullMode);
 		
+		WUtils.reloadOnLangChanged(fullMode,"@gettext(options:fullmode)","setText");
+		
 		button = new JButton( WGetText.getText("options:save") );
 			button.addActionListener(this);
 			button.setActionCommand("options.save");
-		bag.setConstraints(button,c);
-		add(button);
+		panel = new JPanel();
+		panel.add(button);
+		bag.setConstraints(panel,c);
+		add(panel);
+		
+		WUtils.reloadOnLangChanged(button,"@gettext(options:save)","setText");
 		
 		pack();
-		
-		loadUserSettings();
 	}
 	
 	public void itemStateChanged( ItemEvent ie )
 	{
-		if( ie.getItem() instanceof String )
-			setSkin( (String) ie.getItem() );
+		//if( ie.getItem() instanceof String )
+		//	setSkin( (String) ie.getItem() );
 	}
 	
 	public void stateChanged( ChangeEvent e )
@@ -250,133 +269,6 @@ public class WOptions
 	public void actionPerformed( ActionEvent e )
 	{
 		if( e.getActionCommand().equals("options.save") )
-			saveUserSettings();
-	}
-	
-	protected void setSkin( String name )
-	{
-		try
-		{
-			gui.setVisible(false);
-			
-			if( ! gui.isDisplayable() )
-				gui.setUndecorated(true);
-			
-			UIManager.setLookAndFeel(name);
-			
-			javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);
-			javax.swing.JDialog.setDefaultLookAndFeelDecorated(true);
-			
-		    gui.getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.FRAME);
-			
-			SwingUtilities.updateComponentTreeUI(gui);
-			
-			gui.setVisible(true);
-
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
-			javax.swing.JOptionPane.showMessageDialog(null, String.format( "Can not load LookAndFeel\n" +
-					"%s\nsubstance-lite.jar is in your classpath ?", 
-					e.getMessage() == null ? e.getClass() : e.getMessage() ),
-					"Skin error", javax.swing.JOptionPane.ERROR_MESSAGE); 
-		}
-	}
-	
-	public void saveUserSettings()
-	{
-		File settings = new File(String.format( "%s/.graphstream/gswb-settings.xml",
-				System.getenv().get("HOME") ));
-		
-		try
-		{
-			if( ! settings.exists() )
-				settings.getParentFile().mkdirs();
-			
-			FileWriter out = new FileWriter(settings);
-			
-			out.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
-			out.write( "<!DOCTYPE gswb PUBLIC \"-//W3C//DTD HTML 4.01 Frameset//EN\" " +
-					"\"jar:org/miv/graphstream/tool/workbench/xml/graphstream-workbench.dtd\">\n" );
-			out.write( "<gswb:settings xmlns=\"org/miv/graphstream\" xmlns:gswb=\"workbench\">\n" );
-			
-			out.write( String.format( "\t<setting name=\"%s\" value=\"%s\"/>\n", 
-					"skin",	skinModel.getSelectedItem() ) );
-			out.write( String.format( "\t<setting name=\"%s\" value=\"%s\"/>\n",
-					"locale", WGetText.getLocale().getLanguage() + "," + 
-					WGetText.getLocale().getCountry() + "," + WGetText.getLocale().getVariant() ));
-			
-			out.write( "</gswb:settings>\n" );
-			
-			out.flush();
-			out.close();
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	public void loadUserSettings()
-	{
-		File settings = new File(String.format( "%s/.graphstream/gswb-settings.xml",
-				System.getenv().get("HOME") ));
-		
-		try
-		{
-			if( settings.exists() )
-			{
-				loadSettings( new FileInputStream(settings) );
-			}
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	public void loadSettings( InputStream in )
-	{
-		WXElement wxe = WXmlHandler.readXml(in);
-		
-		if( wxe != null && wxe.is(SPEC_SETTINGS) )
-		{
-			Iterator<WXElement> ite = wxe.iteratorOnChildren();
-			
-			while( ite.hasNext() )
-			{
-				wxe = ite.next();
-				
-				if( wxe.is(SPEC_SETTING) )
-				{
-					String name, value;
-					
-					name  = wxe.getAttribute(QNAME_GSWB_SETTINGS_SETTING_NAME);
-					value = wxe.getAttribute(QNAME_GSWB_SETTINGS_SETTING_VALUE);
-					
-					if( name.equals("skin") )
-					{
-						setSkin(value);
-						skinModel.setSelectedItem(value);
-					}
-					else if( name.equals("locale") )
-					{
-						String [] loc = value.split(",");
-						Locale locale = null;
-						
-						switch(loc.length)
-						{
-						case 1:	locale = new Locale(loc[0]); 				break;
-						case 2: locale = new Locale(loc[0],loc[1]); 		break;
-						case 3: locale = new Locale(loc[0],loc[1],loc[3]); 	break;
-						}
-						
-						if( locale != null )
-							WGetText.setLocale(locale);
-					}
-				}
-			}
-		}
+			WUserSettings.saveUserSettings();
 	}
 }

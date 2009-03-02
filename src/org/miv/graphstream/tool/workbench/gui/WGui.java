@@ -27,10 +27,6 @@ import org.miv.graphstream.tool.workbench.WAlgorithm;
 import org.miv.graphstream.tool.workbench.WAlgorithmLoader;
 import org.miv.graphstream.tool.workbench.WNotificationServer;
 import org.miv.graphstream.tool.workbench.event.NotificationListener.Notification;
-import org.miv.graphstream.tool.workbench.gui.WGetText.GetTextHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -54,30 +50,50 @@ public class WGui
 {
 	public static final long serialVersionUID = 0x00A00501L;
 	
-	private static WGui INSTANCE = null;
-	public static final void launchWorkbench()
+	private static WGui gui = null;
+	
+	public static void init()
 	{
-		if( INSTANCE == null ) INSTANCE = new WGui();
-		
-		INSTANCE.setVisible( true );
+		if( gui == null )
+			gui = new WGui();
+	}
+	
+	public static void display()
+	{
+		if( gui != null )
+			gui.setVisible(true);
+	}
+	
+	public static void setWorkbenchLookAndFeel( String name )
+	{
+		 try
+		 {
+			 UIManager.setLookAndFeel(name);
+
+			 JFrame.setDefaultLookAndFeelDecorated(true);
+			 JDialog.setDefaultLookAndFeelDecorated(true);
+		 }
+		 catch (Exception e)
+		 {
+			 System.out.println("unable to load LookAndFeel\n" +
+			 "To use substance skins, please add substance-lite.jar in\nyour classpath.");
+		 }
 	}
 	
 	protected static Color background = new Color( 238, 238, 238 );
 	
-	protected WActions actionBox;
-	protected InfoBox infoBox;
-	protected WMenuBar menuBar;
-	protected WCore core;
-	protected WDesktop desktop;
-	protected SelectionTree selectionTree;
-	protected WDialog dialogSelection;
-	protected HashMap<String,WDialog> dialogs;
+	protected WActions 					actionBox;
+	protected InfoBox 					infoBox;
+	protected WMenuBar 					menuBar;
+	protected WCore 					core;
+	protected WDesktop 					desktop;
+	protected SelectionTree 			selectionTree;
+	protected WDialog 					dialogSelection;
+	protected HashMap<String,WDialog> 	dialogs;
 	
 	private WGui()
 	{
 		super( "GraphStream" );
-		
-		WGetText.load();
 		
 		this.dialogs = new HashMap<String,WDialog>();
 		this.core    = WCore.getCore();
@@ -114,8 +130,6 @@ public class WGui
 		this.core.addWorkbenchListener( this.desktop );
 		
 		loadAlgorithms();
-		WNotificationServer.init(core);
-		WHelp.init();
 	    
 		pack();
 		
@@ -125,6 +139,12 @@ public class WGui
 		WNotificationServer.dispatch( Notification.clipboardEmpty );
 		WNotificationServer.dispatch( Notification.historyUndoDisable );
 		WNotificationServer.dispatch( Notification.historyRedoDisable );
+		WNotificationServer.dispatch( Notification.noContext );
+	}
+	
+	public void setSkin( String name )
+	{
+		
 	}
 	
 	WMenuBar getWMenuBar()
@@ -191,50 +211,5 @@ public class WGui
 		{
 			c.setBackground( background );
 		}
-	}
-	
-// Launch the workbench
-	
-	public static String licence()
-	{
-		return 
-			"This program is free software: you can redistribute it and/or modify\n" +
-			"it under the terms of the GNU General Public License as published by\n" +
-			"the Free Software Foundation, either version 3 of the License, or\n" +
-	    	"(at your option) any later version.\n\n" +
-	    	"This program is distributed in the hope that it will be useful,\n" +
-	    	"but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
-	    	"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
-	    	"GNU General Public License for more details.\n\n" +
-	    	"You should have received a copy of the GNU General Public License\n" +
-	    	"along with this program.  If not, see <http://www.gnu.org/licenses/>\n";
-
-	}
-	
-	public static void main( String [] args )
-	{
-		System.err.printf( "%s\n", licence() );
-		
-	    try
-	    {
-	    	//UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-	    	/*UIManager.setLookAndFeel("org.jvnet.substance.skin.SubstanceRavenLookAndFeel");
-	    	
-			JFrame.setDefaultLookAndFeelDecorated(true);
-			JDialog.setDefaultLookAndFeelDecorated(true);*/
-	    }
-	    catch (Exception e)
-	    {
-	    	System.out.println("unable to load LookAndFeel\n" +
-	    			"To use substance skins, please add substance-lite.jar in\nyour classpath.");
-	    }
-	    
-	    javax.swing.SwingUtilities.invokeLater( new Runnable()
-	    {
-	    	public void run()
-	    	{
-	    		launchWorkbench();
-	    	}
-	    } );
 	}
 }

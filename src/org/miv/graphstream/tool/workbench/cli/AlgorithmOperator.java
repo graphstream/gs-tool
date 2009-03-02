@@ -20,20 +20,20 @@
  * 	Yoann Pigné
  * 	Guilhelm Savin
  */
-package org.miv.graphstream.tool.workbench.event;
+package org.miv.graphstream.tool.workbench.cli;
 
-/**
- * Defines objects which are listening to context changes.
- * 
- * @author Guilhelm Savin
- *
- */
-public interface ContextChangeListener
+public class AlgorithmOperator
+	extends CLICommand
 {
-	/**
-	 * Call when the active context will change.
-	 * 
-	 * @param e event describing the change
-	 */
-	public void contextChanged( ContextEvent e );
+	public AlgorithmOperator()
+	{
+		super("^$");
+	}
+	
+	@Override
+	public String execute(CLI cli, String cmd) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

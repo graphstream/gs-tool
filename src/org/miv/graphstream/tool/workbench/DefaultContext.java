@@ -20,7 +20,6 @@
  * 	Yoann Pigné
  * 	Guilhelm Savin
  */
-
 package org.miv.graphstream.tool.workbench;
 
 import org.miv.graphstream.tool.workbench.event.ContextListener;

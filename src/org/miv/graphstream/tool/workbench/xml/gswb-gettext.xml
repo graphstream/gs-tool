@@ -40,7 +40,10 @@
 		<entry name="action:open_terminal" value="open a new terminal" lang="en"></entry>
 		<entry name="action:configure" value="configure selected tool" lang="en"></entry>
 	</container>
-	
+	<container name="dialog" lang="en">
+		<entry name="options:save" lang="en" value="Save settings"></entry>
+		<entry name="options:fullmode" lang="en" value="FullScreen mode"></entry></container>
+
 	<!--  French part -->
 	<locale language="fr" country="fr"/>
 	<container name="menu" lang="fr">
@@ -80,4 +83,7 @@
 		<entry name="action:open_terminal" value="ouvrir un nouveau terminal" lang="fr"></entry>
 		<entry name="action:configure" value="configurer l'outil selectionné" lang="fr"></entry>
 	</container>
+	<container name="dialog" lang="fr">
+		<entry name="options:save" lang="fr" value="Enregistrer les paramètres"></entry>
+		<entry name="options:fullmode" lang="fr" value="Mode plein écran"></entry></container>
 </gswb:gettext>
