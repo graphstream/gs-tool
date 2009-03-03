@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gswb:icons xmlns="org/miv/graphstream" xmlns:gswb="workbench">
-	<icon key="" ressource=""/>
 	<icon key="node" ressource="org/miv/graphstream/tool/workbench/ressources/node32.png"/>
 	<icon key="edge" ressource="org/miv/graphstream/tool/workbench/ressources/edge32.png"/>
 	<icon key="action:node_add" ressource="org/miv/graphstream/tool/workbench/ressources/nodeadd32.png"/>
@@ -30,4 +29,5 @@
 	<icon key="gears" ressource="org/miv/graphstream/tool/workbench/ressources/gears32.png"/>
 	<icon key="fullscreen" ressource="org/miv/graphstream/tool/workbench/ressources/fullscreen.png"/>
 	<icon key="nofullscreen" ressource="org/miv/graphstream/tool/workbench/ressources/nofullscreen.png"/>
+	<icon key="options" ressource="org/miv/graphstream/tool/workbench/ressources/options24.png"/>
 </gswb:icons>

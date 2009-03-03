@@ -34,7 +34,7 @@
 			strokeModifier="CTRL_MASK" icon="@edit:paste" enableOn="clipboardCopy,clipboardCut" disableOn="clipboardEmpty"/>
 		<separator/><item name="@gettext(edit:find)" command="edit.find" strokeKey="VK_F" strokeModifier="CTRL_MASK" icon="@edit:find" disableOn="noContext" enableOn="contextAdded"></item>
 		<separator></separator>
-		<item name="@gettext(menu:options)" command="options"/>
+		<item name="@gettext(menu:options)" command="options" icon="@options" />
 	</menu><!--Dialog menu-->
 	<menu id="dialog" name="@gettext(menu:dialog)" disableOn="fullMode" enableOn="normalMode"></menu><!--Algorithms menu-->
 	<menu id="algorithm" name="@gettext(menu:algorithms)" disableOn="noContext"

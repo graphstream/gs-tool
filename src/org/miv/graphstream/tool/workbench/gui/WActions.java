@@ -256,8 +256,10 @@ public class WActions
 			cli.getCore().exit();
 		else if( e.getActionCommand().equals("options") )
 			options.setVisible(true);
+		else if( e.getActionCommand().equals("edit.find") )
+			WSearch.showSearchModule();
 		else if( e.getActionCommand().equals("menu.help") )
-			WHelp.showHelp();
+			WHelp.showHelpModule();
 		else if( e.getActionCommand().equals("menu.help.about") )
 			WAbout.whatAbout();
 		else if( e.getActionCommand().equals("menu.help.manual") )

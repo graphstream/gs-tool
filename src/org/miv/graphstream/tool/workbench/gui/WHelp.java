@@ -151,7 +151,7 @@ public class WHelp
 	}
 	
 	private static final WHelp help = new WHelp();
-	public static void showHelp()
+	public static void showHelpModule()
 	{
 		help.setVisible(true);
 	}

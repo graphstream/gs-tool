@@ -43,6 +43,10 @@
 		<entry name="options:save" lang="en" value="Save settings"></entry>
 		<entry name="options:fullscreen" lang="en" value="FullScreen mode"></entry>
 		<entry name="options:nofullscreen" lang="en" value="Windowed mode"></entry></container>
+	<container name="misc" lang="en">
+		<entry name="nodes" lang="en" value="nodes"></entry>
+		<entry name="edges" lang="en" value="edges"></entry>
+		<entry name="regex" lang="en" value="regular expressions"></entry></container>
 
 	<!--  French part -->
 	<locale language="fr" country="fr"/>
@@ -87,4 +91,8 @@
 		<entry name="options:save" lang="fr" value="Enregistrer les paramètres"></entry>
 		<entry name="options:fullscreen" lang="fr" value="Mode plein écran"></entry>
 		<entry name="options:nofullscreen" lang="fr" value="Mode fenetré"></entry></container>
+	<container name="misc" lang="fr">
+		<entry name="nodes" lang="fr" value="noeuds"></entry>
+		<entry name="edges" lang="fr" value="arètes"></entry>
+		<entry name="regex" lang="fr" value="expressions rationnelles"></entry></container>
 </gswb:gettext>
