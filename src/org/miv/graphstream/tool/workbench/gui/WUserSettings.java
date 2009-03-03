@@ -81,6 +81,16 @@ public class WUserSettings
 		return locale;
 	}
 	
+	public void setLookAndFeel( String laf )
+	{
+		lookAndFeel = laf;
+	}
+	
+	public void setLocale( Locale l )
+	{
+		locale = l;
+	}
+	
 	public void load()
 	{
 		File settings = new File(String.format( "%s/.graphstream/gswb-settings.xml",

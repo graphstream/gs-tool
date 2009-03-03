@@ -22,6 +22,7 @@
  */
 package org.miv.graphstream.tool.workbench.cli;
 
+import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.tool.workbench.Context;
 
 /**
@@ -61,11 +62,15 @@ public class NodeOperations extends CLICommand
 		
 		String id = ccr.getAttribute( "id" );
 		if( ccr.getAttribute( "action" ).equals( "add" ) )
-			cli.ctx.getGraph().addNode( id );
+		{
+			Element e = cli.ctx.getGraph().addNode( id );
+			cli.ctx.getHistory().registerAddNodeAction(e);
+		}
 		else
 		{
 			Context ctx = cli.ctx;
-			ctx.getGraph().removeNode( id );
+			Element e = ctx.getGraph().removeNode( id );
+			cli.ctx.getHistory().registerDelNodeAction(e);
 		}
 		
 		if( ccr.hasAttribute( "attributes" ) )

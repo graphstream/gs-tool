@@ -62,28 +62,15 @@ public interface Context
 	 */
 	void setGraph( Graph graph );
 	/**
-	 * This will add an element to the selection list.
-	 * 
-	 * @param e element to add
+	 * Get the Selection object of this content.
+	 * @return
 	 */
-	//public void addElementToSelection( Element e );
+	WSelection getSelection();
 	/**
-	 * This will remove an element from the selection list.
-	 * 
-	 * @param e element to remove
+	 * Get the History object of this content.
+	 * @return
 	 */
-	//public void removeElementFromSelection( Element e );
-	/**
-	 * Get the selection list.
-	 * 
-	 * @return the selection list
-	 */
-	//public List<Element> getSelection();
-	/**
-	 * Clear the selection.
-	 */
-	//public void clearSelection();
-	public WSelection getSelection();
+	WHistory getHistory();
 	/**
 	 * Enable or disable autolayout.
 	 * 

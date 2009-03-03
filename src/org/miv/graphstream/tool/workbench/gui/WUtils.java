@@ -152,6 +152,17 @@ public class WUtils
 				parent, message, "warning", JOptionPane.WARNING_MESSAGE ); 
 	}
 	/**
+	 * Show an information message.
+	 * 
+	 * @param parent
+	 * @param message
+	 */
+	public static void informationMessage( Component parent, String message )
+	{
+		JOptionPane.showMessageDialog(
+				parent, message, "information", JOptionPane.INFORMATION_MESSAGE ); 
+	}
+	/**
 	 * New graph wizard.
 	 * 
 	 * @param parent parent component

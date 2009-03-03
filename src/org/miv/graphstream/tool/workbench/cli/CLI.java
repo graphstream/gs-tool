@@ -64,6 +64,7 @@ public class CLI implements ContextChangeListener
 		new ListOperators();
 		new ElementOperators();
 		new ForOperators();
+		new HistoryOperators();
 	}
 	
 	protected static final String PATTERN_ID = "[\\w\\d_-[.]]+";

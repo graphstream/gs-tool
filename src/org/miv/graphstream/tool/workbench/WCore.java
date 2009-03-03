@@ -74,7 +74,6 @@ public class WCore
 	private ActionMode 							actionMode;
 	private WorkbenchEnvironment 				env;
 	private WClipboard							clipboard 				= new WClipboard();
-	private WHistory							history					= new WHistory();
 	
 	private WCore()
 	{

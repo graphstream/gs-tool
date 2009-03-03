@@ -22,6 +22,8 @@
  */
 package org.miv.graphstream.tool.workbench.cli;
 
+import org.miv.graphstream.graph.Element;
+
 /**
  * Defines some edge operations like 'add' or 'del'.
  * 
@@ -61,15 +63,22 @@ public class EdgeOperations extends CLICommand
 		String id = ccr.getAttribute( "id" );
 		if( ccr.getAttribute( "action" ).equals( "add" ) )
 		{
-			if( ! ccr.hasAttribute( "src" ) || ! ccr.hasAttribute( "dst" ) ) return usage();
-			cli.ctx.getGraph().addEdge( id, ccr.getAttribute( "src" ), ccr.getAttribute( "dst" ), 
+			if( ! ccr.hasAttribute( "src" ) || ! ccr.hasAttribute( "dst" ) )
+				return usage();
+			
+			Element e = cli.ctx.getGraph().addEdge( id, 
+					ccr.getAttribute( "src" ), 
+					ccr.getAttribute( "dst" ), 
 					ccr.hasAttribute( "directed" ) );
+			cli.ctx.getHistory().registerAddEdgeAction(e);
+			
 			if( ccr.hasAttribute( "attributes" ) )
 				fillAttributes( cli.ctx.getGraph().getEdge(id), ccr.getAttribute( "attributes" ) );
 		}
 		else
 		{
-			cli.ctx.getGraph().removeEdge(id);
+			Element e = cli.ctx.getGraph().removeEdge(id);
+			cli.ctx.getHistory().registerDelEdgeAction(e);
 		}
 		
 		return R_OK;

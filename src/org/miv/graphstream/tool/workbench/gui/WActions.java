@@ -247,6 +247,8 @@ public class WActions
 			WUtils.openGraph( this, cli );
 		else if( e.getActionCommand().equals( "save.graph" ) )
 			cli.getCore().saveContext();
+		else if( e.getActionCommand().equals( "saveas.graph" ) )
+			WUtils.selectFile(null,cli.getCore().getActiveContext());
 		else if( e.getActionCommand().equals( "new.graph" ) )
 			WUtils.newGraph( this, cli );
 		else if( e.getActionCommand().equals( "tool.configure" ) )
@@ -259,5 +261,9 @@ public class WActions
 			WHelp.showHelp();
 		else if( e.getActionCommand().equals("menu.help.about") )
 			WAbout.whatAbout();
+		else if( e.getActionCommand().equals("menu.help.manual") )
+			WUtils.informationMessage(null, "Visit: http:/graphstream.sourceforge.net/Manual.html");
+		else if( e.getActionCommand().equals("menu.help.tutorials") )
+			WUtils.informationMessage(null, "Visit: http:/graphstream.sourceforge.net/tutorials.html");
 	}
 }

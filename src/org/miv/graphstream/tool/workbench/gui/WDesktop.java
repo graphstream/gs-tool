@@ -300,7 +300,8 @@ public class WDesktop
 			
 			try
 			{
-				Node n = ctx.getGraph().addNode( id );
+				cli.execute( String.format( "add node \"%s\"", id ) );
+				Node n = ctx.getGraph().getNode( id );
 				n.setAttribute( "x", sctx.xPixelsToGu( e.getX() ) );
 				n.setAttribute( "y", sctx.yPixelsToGu( e.getY() ) );
 			}
@@ -344,7 +345,9 @@ public class WDesktop
 					
 					try
 					{
-						ctx.getGraph().addEdge( id, lastNodeSelected, n.getId(), directed );
+						cli.execute( String.format( "add%s edge \"%s\" \"%s\" \"%s\"",
+								directed ? " directed" : "", id, lastNodeSelected, n.getId() ) );
+						//ctx.getGraph().addEdge( id, lastNodeSelected, n.getId(), directed );
 						lastNodeSelected = n.getId();
 					}
 					catch( Exception ex )
@@ -371,9 +374,7 @@ public class WDesktop
 					sctx.yPixelsToGu( e.getY() ) );
 			
 			if( n != null )
-			{
-				ctx.getGraph().removeNode( n.getId() );
-			}
+				cli.execute( String.format("del node \"%s\"",n.getId()) );
 		}
 		
 		protected void actionDelEdge( MouseEvent e )
@@ -478,6 +479,10 @@ public class WDesktop
 			}
 			
 			setVisible( false );
+			
+			if( viewer.getLayoutRemote() != null )
+				viewer.getLayoutRemote().stop();
+			
 			cli.getCore().removeContext( ctx );
 		}
 		

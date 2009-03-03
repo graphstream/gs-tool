@@ -116,14 +116,13 @@ public class WGui
 		WDialogManager.init(this);
 		dialogs.put( "selection", 	new WDialog( "Selection", tmp ) );
 		dialogs.put( "graph-infos",	new WDialog( "Graph Infos", new GraphInfo(core.getCLI()) ));
+		dialogs.put( "history",		new WDialog( "History", new WHistoryGUI() ));
 		
 		setJMenuBar( this.menuBar );
 		setDefaultCloseOperation( EXIT_ON_CLOSE );
-		
+		setResizable(false);
 		setLayout( new BorderLayout() );
 		add( actionBox, BorderLayout.NORTH );
-		
-		//applyBackground( infoBox, actionBox, infoBox.graphInfo, infoBox.selectionTree );
 		
 		setIconImage( WUtils.getImageIcon( "gs_logo" ).getImage() );
 		

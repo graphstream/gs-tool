@@ -51,8 +51,9 @@ public class DefaultContext implements Context, GraphListener
 	/**
 	 * Selection list.
 	 */
-	//protected LinkedList<Element> selection;
 	protected WSelection selection;
+	
+	protected WHistory history;
 	
 	protected boolean autolayout;
 	
@@ -72,7 +73,8 @@ public class DefaultContext implements Context, GraphListener
 	public DefaultContext( Graph graph )
 	{
 		this.graph = graph;
-		this.selection = new WSelection(this);//new LinkedList<Element>();
+		this.selection = new WSelection(this);
+		this.history = new WHistory(this);
 		this.autolayout = false;
 		this.path = null;
 		this.changed = false;
@@ -80,27 +82,7 @@ public class DefaultContext implements Context, GraphListener
 		if( graph != null )
 			this.graph.addGraphListener( this );
 	}
-	/*
-	public void addElementToSelection(Element e)
-	{
-		if( selection.contains( e ) ) return;
-		
-		selection.addLast( e );
-		fireSelectionAdded( e );
-	}
-
-	public void removeElementFromSelection(Element e)
-	{
-		selection.remove( e );
-		fireSelectionRemoved( e );
-	}
-	 
-	public void clearSelection()
-	{
-		selection.clear();
-		fireSelectionCleared();
-	}
-	*/
+	
 	public Graph getGraph()
 	{
 		return graph;
@@ -108,7 +90,12 @@ public class DefaultContext implements Context, GraphListener
 
 	public WSelection getSelection()
 	{
-		return selection;//Collections.unmodifiableList( selection );
+		return selection;
+	}
+	
+	public WHistory getHistory()
+	{
+		return history;
 	}
 
 	public void setGraph(Graph graph)

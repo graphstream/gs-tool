@@ -646,8 +646,6 @@ public class WAlgorithmGUI
 				}
 			} );
 		}
-		JOptionPane.showMessageDialog(this, error, "Algorithm error", 
-				JOptionPane.ERROR_MESSAGE );
 	}
 	
 	public void algorithmEnd( WAlgorithm algo )

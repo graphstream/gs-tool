@@ -83,6 +83,10 @@ public class WOptions
 	
 	protected static String [] skins =
 	{
+		"javax.swing.plaf.basic.BasicLookAndFeel",
+		"javax.swing.plaf.metal.MetalLookAndFeel",
+		"javax.swing.plaf.multi.MultiLookAndFeel",
+		"javax.swing.plaf.synth.SynthLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel",
@@ -217,6 +221,7 @@ public class WOptions
 			{
 				public void itemStateChanged( ItemEvent ie )
 				{
+					WUserSettings.getUserSettings().setLocale((java.util.Locale) ie.getItem());
 					WGetText.setLocale( (java.util.Locale) ie.getItem() );
 				}
 			});
@@ -254,8 +259,8 @@ public class WOptions
 	
 	public void itemStateChanged( ItemEvent ie )
 	{
-		//if( ie.getItem() instanceof String )
-		//	setSkin( (String) ie.getItem() );
+		if( ie.getItem() instanceof String )
+			WUserSettings.getUserSettings().setLookAndFeel( (String) ie.getItem() );
 	}
 	
 	public void stateChanged( ChangeEvent e )

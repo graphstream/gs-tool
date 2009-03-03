@@ -20,37 +20,43 @@
  * 	Yoann Pigné
  * 	Guilhelm Savin
  */
-package org.miv.graphstream.tool.workbench.event;
+package org.miv.graphstream.tool.workbench.cli;
 
-public interface NotificationListener
+public class HistoryOperators
+	extends CLICommand
 {
-	public static enum Notification
+	public static final String PATTERN = "^(undo|redo)$";
+	
+	static
 	{
-		contextChanged,
-		contextAdded,
-		contextRemoved,
-		contextShow,
-		contextAutolayoutChanged,
-		contextElementOperation,
-		noContext,
-		fullMode,
-		normalMode,
-		langChanged,
-		clipboardCopy,
-		clipboardCut,
-		clipboardPaste,
-		clipboardEmpty,
-		historyUndo,
-		historyRedo,
-		historyNew,
-		historyUndoEnable,
-		historyUndoDisable,
-		historyRedoEnable,
-		historyRedoDisable,
-		selectionEmpty,
-		selectionAdd,
-		selectionRemove
+		CLI.registerCommand( new HistoryOperators() );
 	}
 	
-	void handleNotification( Notification notification );
+	public HistoryOperators()
+	{
+		super(PATTERN);
+		
+		attributes.put( "action", 1 );
+		
+		usage = "undo | redo";
+	}
+	
+	@Override
+	public String execute(CLI cli, String cmd)
+	{
+		CLICommandResult ccr = result( cmd );
+		
+		if( ccr.isValid() )
+		{
+			if( ccr.getAttribute("action").equals("undo") )
+				cli.getCore().getActiveContext().getHistory().undo();
+			else
+				cli.getCore().getActiveContext().getHistory().redo();
+			
+			return R_OK;
+		}
+		
+		return "unvalid command";
+	}
+
 }
