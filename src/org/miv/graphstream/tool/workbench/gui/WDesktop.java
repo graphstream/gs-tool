@@ -222,6 +222,7 @@ public class WDesktop
 			addWindowListener( this );
 			
 			setDefaultCloseOperation( DO_NOTHING_ON_CLOSE );
+			setIconImage( WUtils.getImageIcon( "gs_logo" ).getImage() );
 			
 			this.ctx.addContextListener( this );
 			
@@ -250,13 +251,20 @@ public class WDesktop
 				Element e = edgeSelectionHandler.get();
 				if( e != null )
 				{
-					if( ctx.getSelection().contains(e) )
+					if( cli.getCore().getActionMode() == ActionMode.SELECT )
 					{
-						ctx.getSelection().unselect(e);
+						if( ctx.getSelection().contains(e) )
+						{
+							ctx.getSelection().unselect(e);
+						}
+						else
+						{
+							ctx.getSelection().select(e);
+						}
 					}
-					else
+					else if( cli.getCore().getActionMode() == ActionMode.INFO )
 					{
-						ctx.getSelection().select(e);
+						new WElementInfo(e);
 					}
 				}
 				edgeSelectionHandler.reset( null );
@@ -283,6 +291,29 @@ public class WDesktop
 						edgeSelectionMode( n.getId() );
 					else
 						nodeClicked( n.getId() );
+				}
+			}
+		}
+		
+		protected void actionInfo( MouseEvent e )
+		{
+			org.miv.graphstream.ui.swing.Context sctx = viewer.renderer.getContext();
+			
+			GraphicNode n = viewer.renderer.getGraph().findNode( 
+					sctx.xPixelsToGu( e.getX() ),
+					sctx.yPixelsToGu( e.getY() ) );
+			
+			if( n != null )
+			{
+				if( e.getButton() == MouseEvent.BUTTON1 )
+				{
+					if( e.isControlDown() )
+						edgeSelectionMode( n.getId() );
+					else
+					{
+						Node node = ctx.getGraph().getNode(n.getId());
+						new WElementInfo(node);
+					}
 				}
 			}
 		}
@@ -515,6 +546,8 @@ public class WDesktop
 		{
 			if( cli.getCore().getActionMode() == ActionMode.SELECT )
 				actionSelection( e );
+			else if( cli.getCore().getActionMode() == ActionMode.INFO )
+				actionInfo(e);
 			else if( cli.getCore().getActionMode() == ActionMode.ADD_NODE )
 				actionAddNode( e );
 			else if( cli.getCore().getActionMode() == ActionMode.ADD_EDGE )

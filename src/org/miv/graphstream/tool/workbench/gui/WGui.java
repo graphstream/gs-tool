@@ -113,11 +113,6 @@ public class WGui
 		JScrollPane scroll = new JScrollPane(selectionTree);
 		tmp.add( scroll, BorderLayout.CENTER );
 		
-		WDialogManager.init(this);
-		dialogs.put( "selection", 	new WDialog( "Selection", tmp ) );
-		dialogs.put( "graph-infos",	new WDialog( "Graph Infos", new GraphInfo(core.getCLI()) ));
-		dialogs.put( "history",		new WDialog( "History", new WHistoryGUI() ));
-		
 		setJMenuBar( this.menuBar );
 		setDefaultCloseOperation( EXIT_ON_CLOSE );
 		setResizable(false);
@@ -125,6 +120,11 @@ public class WGui
 		add( actionBox, BorderLayout.NORTH );
 		
 		setIconImage( WUtils.getImageIcon( "gs_logo" ).getImage() );
+		
+		WDialogManager.init(this);
+		dialogs.put( "selection", 	new WDialog( this, "Selection", tmp ) );
+		dialogs.put( "graph-infos",	new WDialog( this, "Graph Infos", new GraphInfo(core.getCLI()) ));
+		dialogs.put( "history",		new WDialog( this, "History", new WHistoryGUI() ));
 		
 		this.core.addWorkbenchListener( this.desktop );
 		

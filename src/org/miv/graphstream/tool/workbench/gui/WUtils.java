@@ -70,55 +70,7 @@ import javax.swing.filechooser.FileFilter;
  *
  */
 public class WUtils
-{
-	protected static final Map<String,ImageIcon> ICONS = new HashMap<String,ImageIcon>();
-	/*
-	 * Some code to load icons and store them in ICONS.
-	 */
-	static
-	{
-		String [][] iconsUrl =
-		{
-				{ "node", "org/miv/graphstream/tool/workbench/ressources/node32.png" },
-				{ "edge", "org/miv/graphstream/tool/workbench/ressources/edge32.png" },
-				{ "action:node_add", "org/miv/graphstream/tool/workbench/ressources/nodeadd32.png" },
-				{ "action:node_del", "org/miv/graphstream/tool/workbench/ressources/nodedelete32.png" },
-				{ "action:node_info", "org/miv/graphstream/tool/workbench/ressources/nodeinfo32.png" },
-				{ "action:select",  "org/miv/graphstream/tool/workbench/ressources/select32.png"  },
-				{ "action:edge_add", "org/miv/graphstream/tool/workbench/ressources/edgeadd32.png" },
-				{ "action:edge_del", "org/miv/graphstream/tool/workbench/ressources/edgedelete32.png" },
-				{ "action:edge_info", "org/miv/graphstream/tool/workbench/ressources/edgeinfo32.png" },
-				{ "action:configure", "org/miv/graphstream/tool/workbench/ressources/configure32.png" },
-				{ "term", "org/miv/graphstream/tool/workbench/ressources/term_32.png" },
-				{ "gs_logo", "org/miv/graphstream/tool/workbench/ressources/gs_logo.png" },
-				{ "key",  "org/miv/graphstream/tool/workbench/ressources/key_16.png"  },
-				{ "file:new", "org/miv/graphstream/tool/workbench/ressources/filenew.png" },
-				{ "file:open", "org/miv/graphstream/tool/workbench/ressources/fileopen.png" },
-				{ "file:save", "org/miv/graphstream/tool/workbench/ressources/filesave.png" },
-				{ "file:saveas", "org/miv/graphstream/tool/workbench/ressources/filesaveas.png" },
-				{ "exit", "org/miv/graphstream/tool/workbench/ressources/exit.png" },
-				{ "edit:undo", "org/miv/graphstream/tool/workbench/ressources/undo.png" },
-				{ "edit:redo", "org/miv/graphstream/tool/workbench/ressources/redo.png" },
-				{ "edit:copy", "org/miv/graphstream/tool/workbench/ressources/editcopy.png" },
-				{ "edit:cut", "org/miv/graphstream/tool/workbench/ressources/editcut.png" },
-				{ "edit:paste", "org/miv/graphstream/tool/workbench/ressources/editpaste.png" },
-				{ "help", "org/miv/graphstream/tool/workbench/ressources/help.png" },
-				{ "splash", "org/miv/graphstream/tool/workbench/ressources/splash.png" },
-				{ "gears", "org/miv/graphstream/tool/workbench/ressources/gears32.png" }
-		};
-		
-		for( int i = 0; i < iconsUrl.length; i++ )
-		{
-			URL url = ClassLoader.getSystemResource( iconsUrl [i][1] );
-			if( url != null )
-			{
-				ImageIcon ii = new ImageIcon( url );
-				if( ii != null )
-					ICONS.put( iconsUrl [i][0], ii );
-			}
-		}
-	}
-	
+{	
 	/**
 	 * Get a workbench icon.
 	 * 
@@ -127,7 +79,7 @@ public class WUtils
 	 */
 	public static final ImageIcon getImageIcon( String name )
 	{
-		return ICONS.get( name );
+		return WIcons.getIcon( name );
 	}
 	/**
 	 * Show an error message.
@@ -276,26 +228,9 @@ public class WUtils
 		spd.setVisible( true );
 	}
 	
-	private static Font defaultFont = null;
-	private static String defaultFontName = "org/miv/graphstream/tool/workbench/ressources/AG-Stencil.ttf";
-	
 	public static Font getDefaultFont()
 	{
-		if( defaultFont == null )
-		{
-			try
-			{
-				defaultFont = Font.createFont(
-					Font.TRUETYPE_FONT,
-					ClassLoader.getSystemResourceAsStream(defaultFontName) ).deriveFont(16.0f);
-			}
-			catch( Exception e )
-			{
-				e.printStackTrace();
-			}
-		}
-		
-		return defaultFont;
+		return WFonts.getFont("default");
 	}
 	
 // Classes declarations	

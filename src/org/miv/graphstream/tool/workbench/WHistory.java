@@ -27,6 +27,7 @@ import java.util.LinkedList;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
+import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.tool.workbench.Context;
 import org.miv.graphstream.tool.workbench.event.NotificationListener.Notification;
 
@@ -125,7 +126,10 @@ public class WHistory
 	
 	public HistoryAction getLast()
 	{
-		return history.peekFirst();
+		if( index < history.size() )
+			return history.get(index);
+		else
+			return null;
 	}
 	
 	public static abstract class AbstractAddElementHistoryAction
@@ -173,6 +177,8 @@ public class WHistory
 	public static class AddNodeHistoryAction
 		extends AbstractAddElementHistoryAction
 	{
+		LinkedList<Edge> toRestore;
+		
 		public AddNodeHistoryAction( Context ctx, Element elt )
 		{
 			super(ctx,elt);
@@ -190,7 +196,20 @@ public class WHistory
 		
 		protected Element addElement()
 		{
-			return ctx.getGraph().addNode(elt.getId());
+
+			
+			toRestore = new LinkedList<Edge>();
+			
+			Iterator<? extends Edge> ite = ((Node)elt).getEdgeIterator();
+			
+			while( ite != null && ite.hasNext() )
+				toRestore.add(ite.next());
+			
+			System.err.printf( "%d edges to restore\n", toRestore.size() );
+
+			Element e = ctx.getGraph().addNode(elt.getId());
+			
+			return e;
 		}
 	}
 	

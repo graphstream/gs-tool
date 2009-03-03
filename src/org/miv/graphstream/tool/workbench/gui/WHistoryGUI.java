@@ -25,7 +25,6 @@ package org.miv.graphstream.tool.workbench.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -48,27 +47,6 @@ public class WHistoryGUI
 {
 	private static final long serialVersionUID = 0x0001L;
 	
-	static final String TITLE_FONT_R = "org/miv/graphstream/tool/workbench/ressources/larabief.ttf";
-	static final String DESCRIPTION_FONT_R = "org/miv/graphstream/tool/workbench/ressources/larabieb.ttf";
-	
-	static Font TITLE_FONT = null;
-	static Font DESCRIPTION_FONT = null;
-	
-	static
-	{
-		try
-		{
-			TITLE_FONT = Font.createFont( Font.TRUETYPE_FONT, 
-					ClassLoader.getSystemResourceAsStream(TITLE_FONT_R)).deriveFont(Font.BOLD,16.0f);
-			DESCRIPTION_FONT = Font.createFont( Font.TRUETYPE_FONT, 
-					ClassLoader.getSystemResourceAsStream(DESCRIPTION_FONT_R)).deriveFont(16.0f);
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
-		}
-	}
-	
 	static class HistoryActionRenderer
 		extends JPanel
 		implements ListCellRenderer
@@ -85,8 +63,13 @@ public class WHistoryGUI
 			title 		= new JLabel();
 			description = new JLabel();
 			
-			title.setFont(TITLE_FONT);
-			description.setFont(DESCRIPTION_FONT);
+			if( WFonts.hasFont("dialog:title") )
+				title.setFont(WFonts.getFont("dialog:title"));
+			
+			if( WFonts.hasFont("dialog:infos") )
+				description.setFont(WFonts.getFont("dialog:infos"));
+			
+			description.setForeground(description.getForeground().brighter().brighter());
 			
 			GridBagLayout bag = new GridBagLayout();
 			GridBagConstraints c = new GridBagConstraints();
@@ -112,7 +95,7 @@ public class WHistoryGUI
 			bag.setConstraints(title,c);
 			add(title);
 			
-			c.insets = new Insets(0,10,0,0);
+			c.insets = new Insets(-10,10,0,0);
 			
 			bag.setConstraints(description,c);
 			add(description);
@@ -182,15 +165,14 @@ public class WHistoryGUI
 	{
 		if( n == Notification.historyUndo )
 		{
-			
+			model.remove(0);
 		}
 		else if( n == Notification.historyRedo )
 		{
-			
+			model.add(0,WCore.getCore().getActiveContext().getHistory().getLast());
 		}
 		else if( n == Notification.historyNew )
 		{
-			//model.addElement(WCore.getCore().getActiveContext().getHistory().getLast());
 			model.add(0,WCore.getCore().getActiveContext().getHistory().getLast());
 		}
 	}

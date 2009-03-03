@@ -57,7 +57,8 @@ public class WCore
 		ADD_EDGE,
 		DEL_NODE,
 		DEL_EDGE,
-		SELECT
+		SELECT,
+		INFO
 	}
 	
 	private LinkedList<Context> 				ctxs;

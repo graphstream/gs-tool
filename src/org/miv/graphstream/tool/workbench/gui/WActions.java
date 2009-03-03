@@ -107,13 +107,12 @@ public class WActions
 	private static final ActionSpec [] specs = {
 		new ActionSpec( "action:select", ActionMode.SELECT, 
 				"org.miv.graphstream.tool.workbench.gui.ActionAccessory$SelectAccessory" ),
+		new ActionSpec( "action:node_info", ActionMode.INFO ),
 		null,
-		new ActionSpec( "action:node_info", ActionMode.NONE ),
 		new ActionSpec( "action:node_add", ActionMode.ADD_NODE,
 				"org.miv.graphstream.tool.workbench.gui.ActionAccessory$AddNodeAccessory" ),
 		new ActionSpec( "action:node_del", ActionMode.DEL_NODE ),
 		null,
-		new ActionSpec( "action:edge_info", ActionMode.NONE ),
 		new ActionSpec( "action:edge_add", ActionMode.ADD_EDGE,
 				"org.miv.graphstream.tool.workbench.gui.ActionAccessory$AddEdgeAccessory" ),
 		new ActionSpec( "action:edge_del", ActionMode.DEL_NODE )

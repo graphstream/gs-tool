@@ -73,24 +73,33 @@ public class WLoader
 	
 	public static final void launchWorkbench()
 	{
-		splashInfo( "loading gettext...", 0 );
+		final float count = 8;
+		float current = 0;
+		
+		splashInfo( "loading fonts...", current++/count );
+		WFonts.load();
+		
+		splashInfo( "loading icons...", current++/count );
+		WIcons.load();
+		
+		splashInfo( "loading gettext...", current++/count );
 		WGetText.load();
 		
-		splashInfo( "loading user settings...", 0.2f );
+		splashInfo( "loading user settings...", current++/count );
 		WUserSettings.loadUserSettings();
 
-		splashInfo( "loading notifications server...", 0.4f );
+		splashInfo( "loading notifications server...", current++/count );
 		WNotificationServer.init(WCore.getCore());
 
-		splashInfo( "loading help...", 0.6f );
+		splashInfo( "loading help...", current++/count );
 		WHelp.init();
 
-		splashInfo( "loading gui...", 0.8f );
+		splashInfo( "loading gui...", current++/count );
 		WGui.init();
 		
 		System.gc();
 		
-		splashInfo( "load complete", 1 );
+		splashInfo( "load complete", current++/count );
 		
 		WGui.display();
 	}
