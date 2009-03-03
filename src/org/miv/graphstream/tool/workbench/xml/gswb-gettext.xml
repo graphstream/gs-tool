@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE gswb PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "jar:org/miv/graphstream/tool/workbench/xml/graphstream-workbench.dtd">
 <gswb:gettext xmlns="org/miv/graphstream" xmlns:gswb="workbench">
 	<!-- English part -->
 	<locale language="en" country="en"/>
@@ -19,7 +18,7 @@
 		<entry name="menu:select" lang="en" value="Select" />
 		<entry name="menu:selectall" lang="en" value="All" />
 		<entry name="menu:unselectall" lang="en" value="None" />
-		<entry name="menu:options" lang="en" value="Options" />
+		<entry name="menu:options" lang="en" value="Options" /><entry name="edit:find" lang="en" value="Find"></entry>
 		<entry name="menu:dialog" lang="en" value="Dialog" />
 		<entry name="menu:algorithms" lang="en" value="Algorithms" />
 		<entry name="menu:coloring" lang="en" value="Coloring" />
@@ -42,7 +41,8 @@
 	</container>
 	<container name="dialog" lang="en">
 		<entry name="options:save" lang="en" value="Save settings"></entry>
-		<entry name="options:fullmode" lang="en" value="FullScreen mode"></entry></container>
+		<entry name="options:fullscreen" lang="en" value="FullScreen mode"></entry>
+		<entry name="options:nofullscreen" lang="en" value="Windowed mode"></entry></container>
 
 	<!--  French part -->
 	<locale language="fr" country="fr"/>
@@ -62,7 +62,7 @@
 		<entry name="menu:select" lang="fr" value="Selectionner" />
 		<entry name="menu:selectall" lang="fr" value="Tout" />
 		<entry name="menu:unselectall" lang="fr" value="Aucune" />
-		<entry name="menu:options" lang="fr" value="Options" />
+		<entry name="menu:options" lang="fr" value="Options" /><entry name="edit:find" lang="fr" value="Rechercher"></entry>
 		<entry name="menu:dialog" lang="fr" value="Boites de dialogue" />
 		<entry name="menu:algorithms" lang="fr" value="Algorithmes" />
 		<entry name="menu:coloring" lang="fr" value="Coloration" />
@@ -85,5 +85,6 @@
 	</container>
 	<container name="dialog" lang="fr">
 		<entry name="options:save" lang="fr" value="Enregistrer les paramètres"></entry>
-		<entry name="options:fullmode" lang="fr" value="Mode plein écran"></entry></container>
+		<entry name="options:fullscreen" lang="fr" value="Mode plein écran"></entry>
+		<entry name="options:nofullscreen" lang="fr" value="Mode fenetré"></entry></container>
 </gswb:gettext>

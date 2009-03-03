@@ -22,8 +22,10 @@
  */
 package org.miv.graphstream.tool.workbench;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
@@ -39,7 +41,7 @@ public class WHistory
 		void undoAction();
 	}
 	
-	public static int HISTORY_MAX_SIZE = 100;
+	public static int HISTORY_MAX_SIZE = 10;
 	
 	Context ctx;
 	LinkedList<HistoryAction> history;
@@ -124,12 +126,27 @@ public class WHistory
 		register( new DelEdgeHistoryAction(ctx,edge) );
 	}
 	
+	public void registerPasteAction( WClipboard.ClipboardContent snapshot )
+	{
+		register( new PasteHistoryAction(ctx,snapshot) );
+	}
+	
 	public HistoryAction getLast()
 	{
 		if( index < history.size() )
 			return history.get(index);
 		else
 			return null;
+	}
+	
+	public List<HistoryAction> getHistory()
+	{
+		return Collections.unmodifiableList(history);
+	}
+	
+	public int getIndex()
+	{
+		return index;
 	}
 	
 	public static abstract class AbstractAddElementHistoryAction
@@ -280,6 +297,54 @@ public class WHistory
 		public void undoAction()
 		{
 			super.redoAction();
+		}
+	}
+	
+	public static class PasteHistoryAction
+		implements HistoryAction
+	{
+		WClipboard.ClipboardContent snapshot;
+		Context ctx;
+		
+		public PasteHistoryAction( Context ctx, WClipboard.ClipboardContent snapshot )
+		{
+			this.snapshot = snapshot;
+			this.ctx = ctx;
+		}
+		
+		public void undoAction()
+		{
+			for( Element e : snapshot )
+			{
+				if( e instanceof Node )
+					ctx.getGraph().removeNode(e.getId());
+				else
+					ctx.getGraph().removeEdge(e.getId());
+			}
+		}
+		
+		public void redoAction()
+		{
+			for( Element e : snapshot )
+			{
+				if( e instanceof Node )
+					ctx.getGraph().addNode(e.getId());
+			}
+			
+
+			for( Element e : snapshot )
+			{
+				if( e instanceof Edge )
+					ctx.getGraph().addEdge(e.getId(),
+							((Edge) e).getSourceNode().getId(),
+							((Edge) e).getTargetNode().getId(),
+							((Edge) e).isDirected());
+			}
+		}
+		
+		public int size()
+		{
+			return snapshot.size();
 		}
 	}
 }

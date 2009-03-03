@@ -29,6 +29,8 @@ import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
+import java.util.List;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JLabel;
@@ -39,11 +41,13 @@ import javax.swing.ListCellRenderer;
 import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.WHistory;
 import org.miv.graphstream.tool.workbench.WNotificationServer;
+import org.miv.graphstream.tool.workbench.event.ContextChangeListener;
+import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.NotificationListener;
 
 public class WHistoryGUI 
 	extends JPanel
-	implements NotificationListener
+	implements NotificationListener, ContextChangeListener
 {
 	private static final long serialVersionUID = 0x0001L;
 	
@@ -128,6 +132,13 @@ public class WHistoryGUI
 				title.setText("Add edge");
 				description.setText(((WHistory.AbstractAddElementHistoryAction)value).getId());
 			}
+			else if( value instanceof WHistory.PasteHistoryAction )
+			{
+				icon.setIcon( WUtils.getImageIcon("edit:paste") );
+				title.setText( WGetText.getText("menu:paste") );
+				description.setText( String.format( "%d elements",
+						((WHistory.PasteHistoryAction) value).size()) );
+			}
 			
 			if(isSelected)
 			{
@@ -139,19 +150,19 @@ public class WHistoryGUI
 	             setBackground(list.getBackground());
 	             setForeground(list.getForeground());
 	        }
-
 			
 			return this;
 		}
 	}
 	
 	DefaultListModel model;
+	JList list;
 	
 	public WHistoryGUI()
 	{
 		model = new DefaultListModel();
 		
-		JList list = new JList(model);
+		list = new JList(model);
 			list.setCellRenderer( new HistoryActionRenderer() );
 		
 		setPreferredSize( new Dimension( 200, 300 ) );
@@ -159,6 +170,7 @@ public class WHistoryGUI
 		add( new JScrollPane(list), BorderLayout.CENTER );
 		
 		WNotificationServer.connect(this);
+		WCore.getCore().addContextChangeListener(this);
 	}
 	
 	public void handleNotification( Notification n )
@@ -175,5 +187,19 @@ public class WHistoryGUI
 		{
 			model.add(0,WCore.getCore().getActiveContext().getHistory().getLast());
 		}
+	}
+	
+	public void contextChanged( ContextEvent ce )
+	{
+		model.clear();
+		
+		if( ce.getContext() == null )
+			return;
+		
+		WHistory history = ce.getContext().getHistory();
+		List<WHistory.HistoryAction> list = history.getHistory();
+		
+		for( int i = history.getIndex(); i < list.size(); i++ )
+			model.addElement(list.get(i));
 	}
 }

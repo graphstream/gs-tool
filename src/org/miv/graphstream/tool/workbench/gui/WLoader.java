@@ -49,7 +49,7 @@ public class WLoader
 	private static void splashInfo( String info, float percent )
 	{
 		SplashScreen ss = SplashScreen.getSplashScreen();
-		
+
 		if( ss == null )
 		{
 			System.err.printf( " * %s\n", info );
@@ -58,7 +58,7 @@ public class WLoader
 		{
 			Graphics2D g = ss.createGraphics();
 			Dimension d = ss.getSize();
-		
+
 			g.setColor( java.awt.Color.black );
 			g.fillRect( 0, d.height - 20, d.width, 20 );
 			g.setColor( java.awt.Color.white );
@@ -66,25 +66,25 @@ public class WLoader
 			g.fillRect( d.width / 2, d.height - 10, d.width / 2 - 15, 5 );
 			g.setColor( java.awt.Color.red );
 			g.fillRect( d.width / 2, d.height - 10, (int) ( percent * ( d.width / 2 - 15) ), 5 );
-			
+
 			ss.update();
 		}
 	}
-	
+
 	public static final void launchWorkbench()
 	{
-		final float count = 8;
+		final float count = 7;
 		float current = 0;
-		
+
 		splashInfo( "loading fonts...", current++/count );
 		WFonts.load();
-		
+
 		splashInfo( "loading icons...", current++/count );
 		WIcons.load();
-		
+
 		splashInfo( "loading gettext...", current++/count );
 		WGetText.load();
-		
+
 		splashInfo( "loading user settings...", current++/count );
 		WUserSettings.loadUserSettings();
 
@@ -96,11 +96,11 @@ public class WLoader
 
 		splashInfo( "loading gui...", current++/count );
 		WGui.init();
-		
+
 		System.gc();
-		
+
 		splashInfo( "load complete", current++/count );
-		
+
 		WGui.display();
 	}
 

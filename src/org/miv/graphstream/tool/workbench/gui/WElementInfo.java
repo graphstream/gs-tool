@@ -40,6 +40,7 @@ public class WElementInfo
 		c.insets = labelInsets;
 		c.weightx = 1.0;
 		c.gridwidth = 1;
+		c.fill = GridBagConstraints.BOTH;
 		label = new JLabel("type");
 		label.setFont( WFonts.getFont("dialog:title") );
 		bag.setConstraints(label,c);
@@ -128,6 +129,7 @@ public class WElementInfo
 		
 		DefaultTableModel model = new DefaultTableModel();
 		JTable attsTable = new JTable(model);
+		attsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		
 		model.addColumn("key");
 		model.addColumn("value");
@@ -147,6 +149,7 @@ public class WElementInfo
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridheight = 3;
 		c.weightx = 0.0;
+		c.fill = GridBagConstraints.BOTH;
 		bag.setConstraints(attsPanel,c);
 		add(attsPanel);
 		

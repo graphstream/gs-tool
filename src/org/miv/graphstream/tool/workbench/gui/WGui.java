@@ -100,7 +100,7 @@ public class WGui
 		this.core.setTerminalCloseAction( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
 		this.actionBox = new WActions( this );
 		this.menuBar = new WMenuBar( this.actionBox );
-		this.desktop = new WDesktop( core.getCLI() );
+		this.desktop = new WDesktop( this, core.getCLI() );
 		this.infoBox = new InfoBox( core.getCLI() );
 		actionBox.addChangeListener( this );
 		

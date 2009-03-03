@@ -237,12 +237,13 @@ public class WOptions
 		bag.setConstraints(comboBox,c);
 		add(comboBox);
 		
-		fullMode = new JCheckBox("Full mode");
+		fullMode = new JCheckBox(WGetText.getText("options:fullscreen"),WIcons.getIcon("fullscreen"));
+		updateFullscreenCheckBox();
 		fullMode.addChangeListener(this);
 		bag.setConstraints(fullMode,c);
 		add(fullMode);
 		
-		WUtils.reloadOnLangChanged(fullMode,"@gettext(options:fullmode)","setText");
+		WUtils.reloadOnLangChanged(fullMode,"@gettext(options:fullscreen)","setText");
 		
 		button = new JButton( WGetText.getText("options:save") );
 			button.addActionListener(this);
@@ -267,6 +268,7 @@ public class WOptions
 	{
 		if( e.getSource() == fullMode )
 		{
+			updateFullscreenCheckBox();
 			gui.setFullMode(fullMode.isSelected());
 		}
 	}
@@ -275,5 +277,19 @@ public class WOptions
 	{
 		if( e.getActionCommand().equals("options.save") )
 			WUserSettings.saveUserSettings();
+	}
+	
+	protected void updateFullscreenCheckBox()
+	{
+		if( fullMode.isSelected() )
+		{
+			fullMode.setIcon( WIcons.getIcon("nofullscreen") );
+			fullMode.setText( WGetText.getText(WGetText.getText("options:nofullscreen")) );
+		}
+		else
+		{
+			fullMode.setIcon( WIcons.getIcon("fullscreen") );
+			fullMode.setText( WGetText.getText(WGetText.getText("options:fullscreen")) );
+		}
 	}
 }

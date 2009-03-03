@@ -48,6 +48,7 @@ public class WAbout
 		setTitle( "About" );
 		setLayout( new BorderLayout() );
 		setResizable(false);
+		setUndecorated(true);
 		
 		Icon splash = WUtils.getImageIcon("splash");
 		JLabel splashLabel = new JLabel(splash);

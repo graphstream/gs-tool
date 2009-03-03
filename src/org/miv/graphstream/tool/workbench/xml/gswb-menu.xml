@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE gswb PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "jar:org/miv/graphstream/tool/workbench/xml/graphstream-workbench.dtd">
 <gswb:menubar xmlns="org/miv/graphstream" xmlns:gswb="workbench">
 	<!--File menu--><menu id="file" name="@gettext(menu:file)">
 		<item name="@gettext(menu:new)" command="new.graph" strokeKey="VK_N" strokeModifier="CTRL_MASK" icon="@file:new"/>
@@ -33,7 +32,8 @@
 			strokeModifier="CTRL_MASK" icon="@edit:cut" />
 		<item name="@gettext(menu:paste)" command="@CLI:paste" strokeKey="VK_V"
 			strokeModifier="CTRL_MASK" icon="@edit:paste" enableOn="clipboardCopy,clipboardCut" disableOn="clipboardEmpty"/>
-		<separator/>
+		<separator/><item name="@gettext(edit:find)" command="edit.find" strokeKey="VK_F" strokeModifier="CTRL_MASK" icon="@edit:find" disableOn="noContext" enableOn="contextAdded"></item>
+		<separator></separator>
 		<item name="@gettext(menu:options)" command="options"/>
 	</menu><!--Dialog menu-->
 	<menu id="dialog" name="@gettext(menu:dialog)" disableOn="fullMode" enableOn="normalMode"></menu><!--Algorithms menu-->

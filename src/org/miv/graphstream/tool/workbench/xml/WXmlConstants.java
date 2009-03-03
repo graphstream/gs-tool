@@ -138,4 +138,18 @@ public interface WXmlConstants
 	public static final WXElementSpec SPEC_SETTINGS = new WXElementSpec(
 			QNAME_GSWB_SETTINGS).declareChildren(
 					SPEC_SETTING);
+	
+	public static final String GSWB_ICONS_XML = "org/miv/graphstream/tool/workbench/xml/gswb-icons.xml";
+	
+	public static final String QNAME_GSWB_ICONS								= "gswb:icons";
+	public static final String QNAME_GSWB_ICONS_ICON						= "icon";
+	public static final String QNAME_GSWB_ICONS_ICON_KEY					= "key";
+	public static final String QNAME_GSWB_ICONS_ICON_RESSOURCE				= "ressource";
+	
+	public static final WXElementSpec SPEC_ICON = new WXElementSpec(
+			QNAME_GSWB_ICONS_ICON).declareAttributes(
+					QNAME_GSWB_ICONS_ICON_KEY,
+					QNAME_GSWB_ICONS_ICON_RESSOURCE);
+	public static final WXElementSpec SPEC_ICONS = new WXElementSpec(
+			QNAME_GSWB_ICONS).declareChildren(SPEC_ICON);
 }

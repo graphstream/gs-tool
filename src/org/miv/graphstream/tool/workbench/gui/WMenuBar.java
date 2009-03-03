@@ -164,7 +164,9 @@ public class WMenuBar
 					wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("menuitem") )
 				item = new JMenuItem( WGetText.getTextLookup(name) );
 			else if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("checkbox") )
+			{
 				item = new JCheckBoxMenuItem( WGetText.getTextLookup(name) );
+			}
 			else
 			{
 				// TODO

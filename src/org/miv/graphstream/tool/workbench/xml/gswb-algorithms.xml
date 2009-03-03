@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE gswb PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "jar:org/miv/graphstream/tool/workbench/xml/graphstream-workbench.dtd">
 <gswb:algorithms xmlns="org/miv/graphstream" xmlns:gswb="workbench">
 	<algorithm name="APSP" class="org.miv.graphstream.algorithm.APSP" category="default">
 		<description>

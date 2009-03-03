@@ -58,9 +58,10 @@ import java.util.ListIterator;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.MenuSelectionManager;
 
 public class WDesktop
 	extends JPanel
@@ -73,11 +74,13 @@ public class WDesktop
 	
 	protected Map<Context,ContextFrame> iframes = new HashMap<Context,ContextFrame>();
 	protected CLI cli;
+	protected WGui gui;
 	protected boolean fullMode = false;
 	
-	public WDesktop( CLI cli )
+	public WDesktop( WGui gui, CLI cli )
 	{
 		this.cli = cli;
+		this.gui = gui;
 		setLayout( new BorderLayout() );
 		setBorder( BorderFactory.createLoweredBevelBorder() );
 	}
@@ -132,11 +135,6 @@ public class WDesktop
 		}
 	}
 	
-	protected WDesktop _this_()
-	{
-		return this;
-	}
-	
 // WorkbenchListener implementation
 	
 	public void contextAdded( ContextEvent ce )
@@ -188,7 +186,7 @@ public class WDesktop
 	
 // Stuff
 	
-	class ContextFrame extends JFrame 
+	class ContextFrame extends JDialog
 		implements ContextListener, WindowListener, MouseListener, MouseWheelListener, KeyListener
 	{
 		public static final long serialVersionUID = 0x00A00801L;
@@ -203,7 +201,9 @@ public class WDesktop
 		
 		public ContextFrame( Context ctx )
 		{
-			super( ctx.getGraph().getId() );
+			super( gui );
+			
+			setTitle(ctx.getGraph().getId());
 			
 			edgeSelectionHandler = new EdgeSelectionHandler();
 			
@@ -218,7 +218,7 @@ public class WDesktop
 			pack();
 			
 			addKeyListener( this );
-			addWindowFocusListener( _this_() );
+			addWindowFocusListener( WDesktop.this );
 			addWindowListener( this );
 			
 			setDefaultCloseOperation( DO_NOTHING_ON_CLOSE );
@@ -582,6 +582,7 @@ public class WDesktop
 			{
 			case KeyEvent.VK_PAGE_UP: 	edgeSelectionHandler.next(); 		break;
 			case KeyEvent.VK_PAGE_DOWN: edgeSelectionHandler.previous();	break;
+			default: gui.menuBar.processKeyEvent(e,null,MenuSelectionManager.defaultManager()); break;
 			}
 		}
 		

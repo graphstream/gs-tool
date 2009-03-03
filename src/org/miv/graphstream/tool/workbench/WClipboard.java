@@ -32,11 +32,32 @@ import java.util.LinkedList;
 
 public class WClipboard
 {
-	LinkedList<Element> clipboard;
+	public static class ClipboardContent
+		extends LinkedList<Element>
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		public ClipboardContent()
+		{
+			
+		}
+		
+		public ClipboardContent( ClipboardContent content )
+		{
+			super(content);
+		}
+		
+		public Object clone()
+		{
+			return new ClipboardContent(this);
+		}
+	}
+	
+	ClipboardContent clipboard;
 	
 	public WClipboard()
 	{
-		clipboard = new LinkedList<Element>();
+		clipboard = new ClipboardContent();
 	}
 	
 	protected void internalCopy()
@@ -123,6 +144,12 @@ public class WClipboard
 			}
 		}
 		
+		ctx.getHistory().registerPasteAction(getContentCopy());
 		WNotificationServer.dispatch( Notification.clipboardPaste );
+	}
+	
+	public ClipboardContent getContentCopy()
+	{
+		return (ClipboardContent) clipboard.clone();
 	}
 }
