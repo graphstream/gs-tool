@@ -10,9 +10,9 @@ public class WCss
 	public static void load()
 	{
 		String [][] toLoad = {
-				{ "cliterm", "org/miv/graphstream/tool/workbench/cliterm.css" },
-				{ "help", "org/miv/graphstream/tool/workbench/ressources/gswb-help.css" },
-				{ "algorithm", "org/miv/graphstream/tool/workbench/ressources/gswb-algorithms.css" }
+				{ "cliterm", "org/miv/graphstream/tool/workbench/ressources/css/cliterm.css" },
+				{ "help", "org/miv/graphstream/tool/workbench/ressources/css/gswb-help.css" },
+				{ "algorithm", "org/miv/graphstream/tool/workbench/ressources/css/gswb-algorithms.css" }
 		};
 		
 		for( String [] entry : toLoad )

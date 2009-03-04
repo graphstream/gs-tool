@@ -72,11 +72,11 @@ public final class WFonts
 	static void load()
 	{
 		FontEntry [] entries = {
-			new FontEntry( "dialog:title", "org/miv/graphstream/tool/workbench/ressources/Gputeks-Bold.ttf", 
+			new FontEntry( "dialog:title", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Bold.ttf", 
 					Font.BOLD, 14.0f ),
-			new FontEntry( "dialog:infos", "org/miv/graphstream/tool/workbench/ressources/Gputeks-Regular.ttf",
+			new FontEntry( "dialog:infos", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Regular.ttf",
 					Font.PLAIN, 14.0f ),
-			new FontEntry( "default", "org/miv/graphstream/tool/workbench/ressources/AG-Stencil.ttf",
+			new FontEntry( "default", "org/miv/graphstream/tool/workbench/ressources/fonts/AG-Stencil.ttf",
 					Font.PLAIN, 16.0f )
 		};
 		

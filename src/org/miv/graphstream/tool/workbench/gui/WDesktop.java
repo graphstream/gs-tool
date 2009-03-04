@@ -70,7 +70,7 @@ public class WDesktop
 	public static final long serialVersionUID = 0x00A00701L;
 	
 	public static final String styleSheet = 
-		"url('org/miv/graphstream/tool/workbench/gui/workbenchgui.css')";
+		"url('org/miv/graphstream/tool/workbench/ressources/css/gswb-desktop.css')";
 	
 	protected Map<Context,ContextFrame> iframes = new HashMap<Context,ContextFrame>();
 	protected CLI cli;
