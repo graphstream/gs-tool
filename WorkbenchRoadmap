@@ -1,0 +1,14 @@
+Workbench current version 0.9b
+------------------------------
+
+	1.0  :
+	- do tests on differents platform, by differents people for differents uses.
+	- full source-doc
+	- manual
+	- history fully functionnal
+	
+	0.91 :
+	- Refactoring of "About" panel
+	- Refresh action TEXT on langChanged
+	- Refactoring ot accessories
+	- doc
