@@ -12,3 +12,4 @@ Workbench current version 0.9b
 	- Refresh action TEXT on langChanged
 	- Refactoring ot accessories
 	- doc
+	- improve user-settings load/store
