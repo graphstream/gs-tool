@@ -47,6 +47,7 @@
 		<entry name="nodes" lang="en" value="nodes"></entry>
 		<entry name="edges" lang="en" value="edges"></entry>
 		<entry name="regex" lang="en" value="regular expressions"></entry></container>
+	<container name="tooltips" lang="en"></container>
 
 	<!--  French part -->
 	<locale language="fr" country="fr"/>
@@ -95,4 +96,5 @@
 		<entry name="nodes" lang="fr" value="noeuds"></entry>
 		<entry name="edges" lang="fr" value="arètes"></entry>
 		<entry name="regex" lang="fr" value="expressions rationnelles"></entry></container>
+	<container name="tooltips" lang="fr"></container>
 </gswb:gettext>

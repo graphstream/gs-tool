@@ -120,108 +120,116 @@ public class WMenuBar
 		}
 		else if( wxe.is(SPEC_MENU_ITEM) )
 		{
-			int strokeKey 		= 0;
-			int strokeModifier 	= 0;
-			boolean useStroke 	= false;
-			boolean useModifier = false;
-			String name 		= wxe.getAttribute(QNAME_GSWB_MENU_ITEM_NAME);
-			
+			String command = wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND);
+			Matcher m;
+
 			String disableOn = wxe.getAttribute(QNAME_GSWB_MENU_ITEM_DISABLEON);
 			String enableOn  = wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ENABLEON);
-			
-			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY) != null )
-			{
-				try
-				{
-					strokeKey = KeyEvent.class.getDeclaredField(
-							wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY)).getInt(null);
-					useStroke = true;
-				}
-				catch( Exception e )
-				{
-					System.err.printf( "unknown key : %s\n",
-							wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY) );
-				}
-			}
-			
-			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEMODIFIER) != null )
-			{
-				String [] mods = wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEMODIFIER).split(",");
-				if( mods != null )
-					for( String mod : mods )
-					{
-						try
-						{
-							strokeModifier |= InputEvent.class.getDeclaredField(mod).getInt(null);
-							useModifier = true;
-						}
-						catch( Exception e )
-						{
-							System.err.printf( "unknown modifier : \"%s\"\n", mod );
-						}
-					}
-			}
-			
+
 			JMenuItem item = null;
 			
-			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE) == null || 
-					wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("menuitem") )
-				item = new JMenuItem();
-			else if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("checkbox") )
+			if( command == null )
 			{
-				item = new JCheckBoxMenuItem();
+				m = null;
 			}
 			else
 			{
-				// TODO
-				System.err.printf( "%s not yet implemented\n",
-						wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE) );
+				m = getaction.matcher(wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND));
 			}
 			
-			if( name != null )
+			if( m != null && m.matches() && WActions.hasAction(m.group(1)) )
 			{
-				item.setText( WGetText.getTextLookup(name) );
+				item = parent.add( WActions.getAction(m.group(1)));
 			}
 			
-			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON) != null )
+			else
 			{
-				if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON).startsWith("@"))
-				{
-					item.setIcon( WUtils.getImageIcon(
-							wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON).substring(1)) );
-				}
-				else
-				{
-					URL iconURL = ClassLoader.getSystemResource(
-							wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON));
-					
-					if( iconURL != null )
-						item.setIcon( new ImageIcon(iconURL) );
-				}
-			}
+				int strokeKey 		= 0;
+				int strokeModifier 	= 0;
+				boolean useStroke 	= false;
+				boolean useModifier = false;
+				String name 		= wxe.getAttribute(QNAME_GSWB_MENU_ITEM_NAME);
 
-			if( useStroke && useModifier )
-				((JMenuItem) item).setAccelerator( KeyStroke.getKeyStroke(strokeKey,strokeModifier) );
-			else if( useStroke )
-				((JMenuItem) item).setAccelerator( KeyStroke.getKeyStroke((char)strokeKey) );
-			
-			item.addActionListener(listener);
-			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND) != null )
-			{
-				Matcher m = getaction.matcher(wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND));
-				
-				if( m.matches() && WActions.hasAction(m.group(1)) )
+				if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY) != null )
 				{
-					item.setAction(WActions.getAction(m.group(1)));
+					try
+					{
+						strokeKey = KeyEvent.class.getDeclaredField(
+								wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY)).getInt(null);
+						useStroke = true;
+					}
+					catch( Exception e )
+					{
+						System.err.printf( "unknown key : %s\n",
+								wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEKEY) );
+					}
 				}
+
+				if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEMODIFIER) != null )
+				{
+					String [] mods = wxe.getAttribute(QNAME_GSWB_MENU_ITEM_STROKEMODIFIER).split(",");
+					if( mods != null )
+						for( String mod : mods )
+						{
+							try
+							{
+								strokeModifier |= InputEvent.class.getDeclaredField(mod).getInt(null);
+								useModifier = true;
+							}
+							catch( Exception e )
+							{
+								System.err.printf( "unknown modifier : \"%s\"\n", mod );
+							}
+						}
+				}
+
+				if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE) == null || 
+						wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("menuitem") )
+					item = new JMenuItem();
+				else if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("checkbox") )
+					item = new JCheckBoxMenuItem();
 				else
 				{
-					item.setActionCommand(wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND));
+					// TODO
+					System.err.printf( "%s not yet implemented\n",
+							wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE) );
 				}
+
+				if( name != null )
+					item.setText( WGetText.getTextLookup(name) );
+
+				if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON) != null )
+				{
+					if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON).startsWith("@"))
+					{
+						item.setIcon( WUtils.getImageIcon(
+								wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON).substring(1)) );
+					}
+					else
+					{
+						URL iconURL = ClassLoader.getSystemResource(
+								wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON));
+
+						if( iconURL != null )
+							item.setIcon( new ImageIcon(iconURL) );
+					}
+				}
+
+				if( useStroke && useModifier )
+					((JMenuItem) item).setAccelerator( KeyStroke.getKeyStroke(strokeKey,strokeModifier) );
+				else if( useStroke )
+					((JMenuItem) item).setAccelerator( KeyStroke.getKeyStroke((char)strokeKey) );
+
+				item.addActionListener(listener);
+				
+				if( command != null )
+					item.setActionCommand(wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND));
+
+				if( parent != null )
+					parent.add(item);
+				
+				WUtils.reloadOnLangChanged(item,name,"setText");
 			}
-			
-			if( parent != null )
-				parent.add(item);
 			
 			if( disableOn != null )
 			{
@@ -238,8 +246,6 @@ public class WMenuBar
 				for( String event : events )
 					enableOn(item,event);
 			}
-			
-			WUtils.reloadOnLangChanged(item,name,"setText");
 		}
 		else if( wxe.is(SPEC_MENU_SEPARATOR) )
 		{
