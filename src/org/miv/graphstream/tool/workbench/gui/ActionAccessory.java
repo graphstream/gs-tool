@@ -23,7 +23,8 @@
 package org.miv.graphstream.tool.workbench.gui;
 
 import org.miv.graphstream.tool.workbench.Context;
-import org.miv.graphstream.tool.workbench.cli.CLI;
+import org.miv.graphstream.tool.workbench.WCore;
+import org.miv.graphstream.tool.workbench.WCore.ActionMode;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.ContextChangeListener;
 
@@ -38,6 +39,7 @@ import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JPanel;
@@ -47,27 +49,46 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-public class ActionAccessory extends JPanel 
+public class ActionAccessory
+	extends JDialog 
 {
 	public static final long serialVersionUID = 0x00A01401L;
 	
-	protected GridLayout layout;
-	protected Map<String,Component> components;
-	protected CLI cli;
+	private static final HashMap<ActionMode,ActionAccessory> accessories = new HashMap<ActionMode,ActionAccessory>();
 	
-	public ActionAccessory( CLI cli )
+	static void load()
 	{
-		this( cli, "Accessory" );
+		accessories.put( ActionMode.ADD_NODE, 	new AddNodeAccessory() );
+		accessories.put( ActionMode.ADD_EDGE, 	new AddEdgeAccessory() );
+		accessories.put( ActionMode.SELECT, 	new SelectAccessory() );
 	}
 	
-	public ActionAccessory( CLI cli, String title )
+	public static void showAccessory()
 	{
-		this.cli = cli;
+		ActionMode current = WCore.getCore().getActionMode();
+		
+		if( accessories.containsKey(current) )
+			accessories.get(current).setVisible(true);
+	}
+	
+	protected GridLayout layout;
+	protected Map<String,Component> components;
+	
+	public ActionAccessory()
+	{
+		this( "Accessory" );
+	}
+	
+	public ActionAccessory( String title )
+	{
+		setTitle(title);
+		
 		components = new HashMap<String,Component>();
 		
 		layout = new GridLayout();
 		setLayout( layout );
-		setBorder( javax.swing.BorderFactory.createTitledBorder(title) );
+		//setBorder( javax.swing.BorderFactory.createTitledBorder(title) );
+		pack();
 	}
 	
 	protected synchronized void registerComponent( String id, Component c, int elements )
@@ -87,7 +108,8 @@ public class ActionAccessory extends JPanel
 		registerComponent( id, box, 1 );
 		add( box );
 		setPreferredSize( layout.preferredLayoutSize( this ) );
-		revalidate();
+		//revalidate();
+		pack();
 		
 		return box;
 	}
@@ -102,7 +124,8 @@ public class ActionAccessory extends JPanel
 		registerComponent( id, jtf, 2 );
 		add( tmp );
 		setPreferredSize( layout.preferredLayoutSize( this ) );
-		revalidate();
+		//revalidate();
+		pack();
 		
 		return jtf;
 	}
@@ -117,7 +140,8 @@ public class ActionAccessory extends JPanel
 		registerComponent( id, slider, 2 );
 		add( tmp );
 		setPreferredSize( layout.preferredLayoutSize( this ) );
-		revalidate();
+		//revalidate();
+		pack();
 		
 		return slider;
 	}
@@ -128,7 +152,8 @@ public class ActionAccessory extends JPanel
 		registerComponent( id, button, 1 );
 		add( button );
 		setPreferredSize( layout.preferredLayoutSize( this ) );
-		revalidate();
+		//revalidate();
+		pack();
 		
 		return button;
 	}
@@ -140,9 +165,9 @@ public class ActionAccessory extends JPanel
 		
 		protected JTextField nodeIdFormat = new JTextField( 15 );
 		
-		public AddNodeAccessory( CLI cli )
+		public AddNodeAccessory()
 		{
-			super( cli, "Add node options" );
+			super( "Add node options" );
 			
 			nodeIdFormat = addTextOption( "id ", "id", "node#%n" );
 			
@@ -151,16 +176,16 @@ public class ActionAccessory extends JPanel
 					" an automatic numbering in the id." );
 			insertUpdate( null );
 			
-			cli.getCore().addContextChangeListener( this );
+			WCore.getCore().addContextChangeListener( this );
 		}
 		
 		protected void checkId()
 		{
 			if( nodeIdFormat.getText().contains( "%n" ) )
 				nodeIdFormat.setForeground( Color.BLACK );
-			if( cli.getCore().getActiveContext() != null )
+			if( WCore.getCore().getActiveContext() != null )
 			{
-				Context ctx = cli.getCore().getActiveContext(); 
+				Context ctx = WCore.getCore().getActiveContext(); 
 				if( ctx.getGraph().getNode( nodeIdFormat.getText() ) != null )
 					nodeIdFormat.setForeground( Color.RED );
 				else
@@ -177,15 +202,15 @@ public class ActionAccessory extends JPanel
 			
 		public void insertUpdate(DocumentEvent e)
 		{
-			cli.getCore().getEnvironment().put( 
-					WActions.OPT_ADD_NODE_ID, nodeIdFormat.getText() );
+			WCore.getCore().getEnvironment().put( 
+					WToolBar.OPT_ADD_NODE_ID, nodeIdFormat.getText() );
 			checkId();
 		}
 			
 		public void removeUpdate(DocumentEvent e) 
 		{
-			cli.getCore().getEnvironment().put( 
-					WActions.OPT_ADD_NODE_ID, nodeIdFormat.getText() );
+			WCore.getCore().getEnvironment().put( 
+					WToolBar.OPT_ADD_NODE_ID, nodeIdFormat.getText() );
 			checkId();
 		}
 		
@@ -205,9 +230,9 @@ public class ActionAccessory extends JPanel
 		protected JCheckBox cycle, directed;
 		protected JTextField edgeIdFormat;
 		
-		public AddEdgeAccessory( CLI cli )
+		public AddEdgeAccessory()
 		{
-			super( cli, "Add edge options" );
+			super( "Add edge options" );
 			
 			cycle = addBooleanOption( "Cycle ?", "cycle", false );
 			directed = addBooleanOption( "Directed ?", "directed", false );
@@ -219,16 +244,16 @@ public class ActionAccessory extends JPanel
 			insertUpdate( null );
 			stateChanged( null );
 			
-			cli.getCore().addContextChangeListener( this );
+			WCore.getCore().addContextChangeListener( this );
 		}
 		
 		protected void checkId()
 		{
 			if( edgeIdFormat.getText().contains( "%n" ) )
 				edgeIdFormat.setForeground( Color.BLACK );
-			if( cli.getCore().getActiveContext() != null )
+			if( WCore.getCore().getActiveContext() != null )
 			{
-				Context ctx = cli.getCore().getActiveContext(); 
+				Context ctx = WCore.getCore().getActiveContext(); 
 				if( ctx.getGraph().getEdge( edgeIdFormat.getText() ) != null )
 					edgeIdFormat.setForeground( Color.RED );
 				else
@@ -242,10 +267,10 @@ public class ActionAccessory extends JPanel
 		
 		public void stateChanged( ChangeEvent e )
 		{
-			cli.getCore().getEnvironment().put( 
-					WActions.OPT_ADD_EDGE_CYCLE, cycle.isSelected() );
-			cli.getCore().getEnvironment().put( 
-					WActions.OPT_ADD_EDGE_DIRECTED, directed.isSelected() );
+			WCore.getCore().getEnvironment().put( 
+					WToolBar.OPT_ADD_EDGE_CYCLE, cycle.isSelected() );
+			WCore.getCore().getEnvironment().put( 
+					WToolBar.OPT_ADD_EDGE_DIRECTED, directed.isSelected() );
 		}
 		
 	// DocumentListener implementation
@@ -255,15 +280,15 @@ public class ActionAccessory extends JPanel
 		
 		public void insertUpdate(DocumentEvent e)
 		{
-			cli.getCore().getEnvironment().put( 
-					WActions.OPT_ADD_EDGE_ID, edgeIdFormat.getText() );
+			WCore.getCore().getEnvironment().put( 
+					WToolBar.OPT_ADD_EDGE_ID, edgeIdFormat.getText() );
 			checkId();
 		}
 		
 		public void removeUpdate(DocumentEvent e) 
 		{
-			cli.getCore().getEnvironment().put( 
-					WActions.OPT_ADD_EDGE_ID, edgeIdFormat.getText() );
+			WCore.getCore().getEnvironment().put( 
+					WToolBar.OPT_ADD_EDGE_ID, edgeIdFormat.getText() );
 			checkId();
 		}
 		
@@ -282,9 +307,9 @@ public class ActionAccessory extends JPanel
 		
 		protected JButton pattern;
 		
-		public SelectAccessory( CLI cli )
+		public SelectAccessory()
 		{
-			super( cli, "Selection options" );
+			super( "Selection options" );
 			
 			pattern = addButton( "select pattern", "pattern" );
 			pattern.addActionListener( this );
@@ -293,7 +318,7 @@ public class ActionAccessory extends JPanel
 		public void actionPerformed( ActionEvent e )
 		{
 			if( e != null && e.getSource() == pattern )
-				WUtils.selectPattern( this, cli );
+				WUtils.selectPattern( this, WCore.getCore().getCLI() );
 		}
 	}
 }

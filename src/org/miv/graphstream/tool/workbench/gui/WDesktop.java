@@ -324,8 +324,8 @@ public class WDesktop
 			WorkbenchEnvironment env = cli.getCore().getEnvironment();
 			
 			String id = null;
-			if( env.containsKey( WActions.OPT_ADD_NODE_ID ) )
-				id = env.getString( WActions.OPT_ADD_NODE_ID );
+			if( env.containsKey( WToolBar.OPT_ADD_NODE_ID ) )
+				id = env.getString( WToolBar.OPT_ADD_NODE_ID );
 			if( id == null ) id = "node#%n";
 			id = WUtils.getAutomaticNodeId( ctx, id );
 			
@@ -361,8 +361,8 @@ public class WDesktop
 				else
 				{
 					String id = null;
-					if( env.containsKey( WActions.OPT_ADD_EDGE_ID ) )
-						id = env.getString( WActions.OPT_ADD_EDGE_ID );
+					if( env.containsKey( WToolBar.OPT_ADD_EDGE_ID ) )
+						id = env.getString( WToolBar.OPT_ADD_EDGE_ID );
 					if( id == null ) id = "edge#%n";
 					id = WUtils.getAutomaticEdgeId( ctx, id );
 					
@@ -371,7 +371,7 @@ public class WDesktop
 					else
 						ctx.getSelection().unselectDecoration(ctx.getGraph().getNode(lastNodeSelected));
 					
-					Boolean directed = env.getBoolean( WActions.OPT_ADD_EDGE_DIRECTED );
+					Boolean directed = env.getBoolean( WToolBar.OPT_ADD_EDGE_DIRECTED );
 					if( directed == null ) directed = false;
 					
 					try
@@ -387,7 +387,7 @@ public class WDesktop
 								"cannot create edge\n" + ex.getMessage() );
 					}
 					
-					Boolean cycle = env.getBoolean( WActions.OPT_ADD_EDGE_CYCLE );
+					Boolean cycle = env.getBoolean( WToolBar.OPT_ADD_EDGE_CYCLE );
 					if( cycle != null && ! cycle )
 						lastNodeSelected = null;
 					else

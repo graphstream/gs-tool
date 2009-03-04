@@ -41,12 +41,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class WGui 
 	extends JFrame
-	implements ChangeListener
 {
 	public static final long serialVersionUID = 0x00A00501L;
 	
@@ -56,6 +53,11 @@ public class WGui
 	{
 		if( gui == null )
 			gui = new WGui();
+	}
+	
+	public static void loadOptions()
+	{
+		WOptions.init(gui);
 	}
 	
 	public static void display()
@@ -82,7 +84,7 @@ public class WGui
 	
 	protected static Color background = new Color( 238, 238, 238 );
 	
-	protected WActions 					actionBox;
+	protected WToolBar 					actionBox;
 	protected InfoBox 					infoBox;
 	protected WMenuBar 					menuBar;
 	protected WCore 					core;
@@ -98,11 +100,10 @@ public class WGui
 		this.dialogs = new HashMap<String,WDialog>();
 		this.core    = WCore.getCore();
 		this.core.setTerminalCloseAction( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
-		this.actionBox = new WActions( this );
+		this.actionBox = new WToolBar( this );
 		this.menuBar = new WMenuBar( this.actionBox );
 		this.desktop = new WDesktop( this, core.getCLI() );
 		this.infoBox = new InfoBox( core.getCLI() );
-		actionBox.addChangeListener( this );
 		
 		this.selectionTree = new SelectionTree( core.getCLI() );
 		core.addSelectionListener( this.selectionTree );
@@ -197,10 +198,6 @@ public class WGui
 		
 		while( ite.hasNext() )
 			WAlgorithmManager.registerAlgorithm( new WAlgorithmGUI(core.getCLI(),ite.next()) );
-	}
-	
-	public void stateChanged( ChangeEvent e )
-	{
 	}
 	
 	protected void applyBackground( Component ... carray )

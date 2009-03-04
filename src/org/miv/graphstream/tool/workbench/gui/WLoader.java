@@ -73,7 +73,7 @@ public class WLoader
 
 	public static final void launchWorkbench()
 	{
-		final float count = 9;
+		final float count = 11;
 		float current = 0;
 
 		splashInfo( "loading ressources : fonts...", current++/count );
@@ -99,9 +99,16 @@ public class WLoader
 		
 		splashInfo( "loading module : search...", current++/count );
 		WSearch.init();
+		
+		splashInfo( "loading module : actions...", current++/count );
+		WActions.load();
+		ActionAccessory.load();
 
 		splashInfo( "loading gui...", current++/count );
 		WGui.init();
+		
+		splashInfo( "loading module : options...", current++/count );
+		WGui.loadOptions();
 
 		System.gc();
 

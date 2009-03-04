@@ -2,32 +2,32 @@
 <gswb:icons xmlns="org/miv/graphstream" xmlns:gswb="workbench">
 	<icon key="node" ressource="org/miv/graphstream/tool/workbench/ressources/node32.png"/>
 	<icon key="edge" ressource="org/miv/graphstream/tool/workbench/ressources/edge32.png"/>
-	<icon key="action:node_add" ressource="org/miv/graphstream/tool/workbench/ressources/nodeadd32.png"/>
-	<icon key="action:node_del" ressource="org/miv/graphstream/tool/workbench/ressources/nodedelete32.png"/>
-	<icon key="action:node_info" ressource="org/miv/graphstream/tool/workbench/ressources/nodeinfo32.png"/>
+	<icon key="action:nodeadd" ressource="org/miv/graphstream/tool/workbench/ressources/nodeadd32.png"/>
+	<icon key="action:nodedel" ressource="org/miv/graphstream/tool/workbench/ressources/nodedelete32.png"/>
+	<icon key="action:info" ressource="org/miv/graphstream/tool/workbench/ressources/nodeinfo32.png"/>
 	<icon key="action:select" ressource="org/miv/graphstream/tool/workbench/ressources/select32.png"/>
-	<icon key="action:edge_add" ressource="org/miv/graphstream/tool/workbench/ressources/edgeadd32.png"/>
-	<icon key="action:edge_del" ressource="org/miv/graphstream/tool/workbench/ressources/edgedelete32.png"/>
-	<icon key="action:edge_info" ressource="org/miv/graphstream/tool/workbench/ressources/edgeinfo32.png"/>
+	<icon key="action:edgeadd" ressource="org/miv/graphstream/tool/workbench/ressources/edgeadd32.png"/>
+	<icon key="action:edgedel" ressource="org/miv/graphstream/tool/workbench/ressources/edgedelete32.png"/>
+	<icon key="action:edgeinfo" ressource="org/miv/graphstream/tool/workbench/ressources/edgeinfo32.png"/>
 	<icon key="action:configure" ressource="org/miv/graphstream/tool/workbench/ressources/configure32.png"/>
-	<icon key="term" ressource="org/miv/graphstream/tool/workbench/ressources/term_32.png"/>
+	<icon key="system:terminal" ressource="org/miv/graphstream/tool/workbench/ressources/term_32.png"/>
 	<icon key="gs_logo" ressource="org/miv/graphstream/tool/workbench/ressources/gs_logo.png"/>
 	<icon key="key" ressource="org/miv/graphstream/tool/workbench/ressources/key_16.png"/>
 	<icon key="file:new" ressource="org/miv/graphstream/tool/workbench/ressources/filenew24.png"/>
 	<icon key="file:open" ressource="org/miv/graphstream/tool/workbench/ressources/fileopen24.png"/>
 	<icon key="file:save" ressource="org/miv/graphstream/tool/workbench/ressources/filesave24.png"/>
 	<icon key="file:saveas" ressource="org/miv/graphstream/tool/workbench/ressources/filesaveas24.png"/>
-	<icon key="exit" ressource="org/miv/graphstream/tool/workbench/ressources/exit24.png"/>
+	<icon key="system:exit" ressource="org/miv/graphstream/tool/workbench/ressources/exit24.png"/>
 	<icon key="edit:undo" ressource="org/miv/graphstream/tool/workbench/ressources/undo24.png"/>
 	<icon key="edit:redo" ressource="org/miv/graphstream/tool/workbench/ressources/redo24.png"/>
 	<icon key="edit:copy" ressource="org/miv/graphstream/tool/workbench/ressources/editcopy24.png"/>
 	<icon key="edit:cut" ressource="org/miv/graphstream/tool/workbench/ressources/editcut24.png"/>
 	<icon key="edit:paste" ressource="org/miv/graphstream/tool/workbench/ressources/editpaste24.png"/>
 	<icon key="edit:find" ressource="org/miv/graphstream/tool/workbench/ressources/editfind24.png"/>
-	<icon key="help" ressource="org/miv/graphstream/tool/workbench/ressources/help24.png"/>
+	<icon key="system:help" ressource="org/miv/graphstream/tool/workbench/ressources/help24.png"/>
 	<icon key="splash" ressource="org/miv/graphstream/tool/workbench/ressources/splash.png"/>
 	<icon key="gears" ressource="org/miv/graphstream/tool/workbench/ressources/gears32.png"/>
 	<icon key="fullscreen" ressource="org/miv/graphstream/tool/workbench/ressources/fullscreen.png"/>
 	<icon key="nofullscreen" ressource="org/miv/graphstream/tool/workbench/ressources/nofullscreen.png"/>
-	<icon key="options" ressource="org/miv/graphstream/tool/workbench/ressources/options24.png"/>
+	<icon key="system:options" ressource="org/miv/graphstream/tool/workbench/ressources/options24.png"/>
 </gswb:icons>

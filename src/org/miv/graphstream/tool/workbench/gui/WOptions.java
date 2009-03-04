@@ -173,11 +173,23 @@ public class WOptions
         }
 	}
 	
+	private static WOptions options = null;
+	
+	public static void init( WGui gui )
+	{
+		options = new WOptions(gui);
+	}
+	
+	public static void showOptionsModule()
+	{
+		options.setVisible(true);
+	}
+	
 	protected WGui gui;
 	protected JCheckBox fullMode;
 	protected SkinModel	skinModel;
 	
-	public WOptions( WGui gui )
+	private WOptions( WGui gui )
 	{
 		GridBagLayout 		bag = new GridBagLayout();
 		GridBagConstraints	c	= new GridBagConstraints();

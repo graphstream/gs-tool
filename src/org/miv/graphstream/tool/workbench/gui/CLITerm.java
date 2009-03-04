@@ -218,7 +218,7 @@ public class CLITerm extends JPanel
 	        frame = new JFrame( "GraphStream CLI Terminal" );
 			frame.add( this );
 			frame.pack();
-			frame.setIconImage( WUtils.getImageIcon( "term" ).getImage() );
+			frame.setIconImage( WUtils.getImageIcon( "system:terminal" ).getImage() );
 			frame.setDefaultCloseOperation( closeAction );
 			frame.addWindowFocusListener( this );
 		}

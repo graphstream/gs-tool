@@ -39,6 +39,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -54,6 +56,8 @@ public class WMenuBar
 {
 	public static final long serialVersionUID = 0x00A00301L;
 
+	private static final Pattern getaction = Pattern.compile("^@getaction\\((.*)\\)$");
+	
 	public static final String GSWB_MENUBAR_XML = "org/miv/graphstream/tool/workbench/xml/gswb-menu.xml";
 	
 	public void handle( JMenu parent, WXElement wxe, ActionListener listener )
@@ -162,16 +166,21 @@ public class WMenuBar
 			
 			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE) == null || 
 					wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("menuitem") )
-				item = new JMenuItem( WGetText.getTextLookup(name) );
+				item = new JMenuItem();
 			else if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE).equals("checkbox") )
 			{
-				item = new JCheckBoxMenuItem( WGetText.getTextLookup(name) );
+				item = new JCheckBoxMenuItem();
 			}
 			else
 			{
 				// TODO
 				System.err.printf( "%s not yet implemented\n",
 						wxe.getAttribute(QNAME_GSWB_MENU_ITEM_TYPE) );
+			}
+			
+			if( name != null )
+			{
+				item.setText( WGetText.getTextLookup(name) );
 			}
 			
 			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_ICON) != null )
@@ -198,7 +207,18 @@ public class WMenuBar
 			
 			item.addActionListener(listener);
 			if( wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND) != null )
-				item.setActionCommand(wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND));
+			{
+				Matcher m = getaction.matcher(wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND));
+				
+				if( m.matches() && WActions.hasAction(m.group(1)) )
+				{
+					item.setAction(WActions.getAction(m.group(1)));
+				}
+				else
+				{
+					item.setActionCommand(wxe.getAttribute(QNAME_GSWB_MENU_ITEM_COMMAND));
+				}
+			}
 			
 			if( parent != null )
 				parent.add(item);
