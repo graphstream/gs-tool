@@ -207,7 +207,7 @@ public class WDesktop
 			
 			edgeSelectionHandler = new EdgeSelectionHandler();
 			
-			this.viewer = new SwingGraphViewer( ctx.getGraph(), ctx.getAutolayout(), true );
+			this.viewer = new SwingGraphViewer( ctx.getGraph(), ctx.isAutolayout(), true );
 			this.ctx = ctx;
 			
 			Component c = this.viewer.getSwingComponent();
@@ -439,9 +439,9 @@ public class WDesktop
 		{
 			if( ce.getContext() != ctx ) return;
 			
-			if( ( viewer.getLayoutRemote() != null ) != ctx.getAutolayout() )
+			if( ( viewer.getLayoutRemote() != null ) != ctx.isAutolayout() )
 			{
-				if( ! ctx.getAutolayout() )
+				if( ! ctx.isAutolayout() )
 					viewer.setLayout( (Layout) null );
 				else
 					viewer.setLayout( LayoutRunner.newDefaultLayout() );

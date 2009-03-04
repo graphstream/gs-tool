@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.HashMap;
 
 import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
@@ -111,9 +112,9 @@ public class WHistory
 		register( new AddNodeHistoryAction(ctx,node) );
 	}
 	
-	public void registerDelNodeAction( Element node )
+	public void registerDelNodeAction( Element node, LinkedList<Edge> edges )
 	{
-		register( new DelNodeHistoryAction(ctx,node) );
+		register( new DelNodeHistoryAction(ctx,node,edges) );
 	}
 	
 	public void registerAddEdgeAction( Element edge )
@@ -149,16 +150,29 @@ public class WHistory
 		return index;
 	}
 	
+	protected static void copyAttributes( HashMap<String,Object> map, Element trg )
+	{
+		Iterator<String> ite = map.keySet().iterator();
+		
+		while( ite != null && ite.hasNext() )
+		{
+			String key = ite.next();
+			trg.addAttribute(key,map.get(key));
+		}
+	}
+	
 	public static abstract class AbstractAddElementHistoryAction
 		implements HistoryAction
 	{
 		Context ctx;
-		Element elt;
+		String id;
+		HashMap<String,Object> attributes;
 		
 		public AbstractAddElementHistoryAction( Context ctx, Element elt )
 		{
 			this.ctx = ctx;
-			this.elt = elt;
+			this.id = elt.getId();
+			this.attributes = new HashMap<String,Object>();
 		}
 		
 		public void redoAction()
@@ -166,13 +180,7 @@ public class WHistory
 			if( ! graphContains() )
 			{
 				Element 			tmp = addElement();
-				Iterator<String> 	ite = elt.getAttributeKeyIterator();
-				
-				while( ite != null && ite.hasNext() )
-				{
-					String key = ite.next();
-					tmp.addAttribute(key,elt.getAttribute(key));
-				}
+				copyAttributes(attributes,tmp);
 			}
 		}
 		
@@ -183,7 +191,7 @@ public class WHistory
 		
 		public String getId()
 		{
-			return elt.getId();
+			return id;
 		}
 		
 		protected abstract boolean graphContains();
@@ -203,44 +211,41 @@ public class WHistory
 		
 		protected boolean graphContains()
 		{
-			return ctx.getGraph().getNode(elt.getId()) != null;
+			return ctx.getGraph().getNode(id) != null;
 		}
 		
 		protected void delElement()
 		{
-			ctx.getGraph().removeNode(elt.getId());
+			ctx.getGraph().removeNode(id);
 		}
 		
 		protected Element addElement()
 		{
-
-			
-			toRestore = new LinkedList<Edge>();
-			
-			Iterator<? extends Edge> ite = ((Node)elt).getEdgeIterator();
-			
-			while( ite != null && ite.hasNext() )
-				toRestore.add(ite.next());
-			
-			System.err.printf( "%d edges to restore\n", toRestore.size() );
-
-			Element e = ctx.getGraph().addNode(elt.getId());
-			
-			return e;
+			return ctx.getGraph().addNode(id);
 		}
 	}
 	
 	public static class DelNodeHistoryAction
 		extends AddNodeHistoryAction
 	{
-		public DelNodeHistoryAction( Context ctx, Element node )
+		LinkedList<DelEdgeHistoryAction> edges;
+		
+		public DelNodeHistoryAction( Context ctx, Element node, LinkedList<Edge> edges )
 		{
 			super(ctx,node);
+			
+			this.edges = new LinkedList<DelEdgeHistoryAction>();
+			
+			for( Edge e : edges )
+				this.edges.add( new DelEdgeHistoryAction(ctx,e) );
 		}
 		
 		public void undoAction()
 		{
 			super.redoAction();
+			
+			for( DelEdgeHistoryAction deha : edges )
+				deha.undoAction();
 		}
 		
 		public void redoAction()
@@ -267,17 +272,17 @@ public class WHistory
 		
 		protected boolean graphContains()
 		{
-			return ctx.getGraph().getEdge(elt.getId()) != null;
+			return ctx.getGraph().getEdge(id) != null;
 		}
 		
 		protected void delElement()
 		{
-			ctx.getGraph().removeEdge(elt.getId());
+			ctx.getGraph().removeEdge(id);
 		}
 		
 		protected Element addElement()
 		{
-			return ctx.getGraph().addEdge(elt.getId(),src,trg,directed);
+			return ctx.getGraph().addEdge(id,src,trg,directed);
 		}
 	}
 	

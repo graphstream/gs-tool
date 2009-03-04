@@ -73,7 +73,7 @@ public class WLoader
 
 	public static final void launchWorkbench()
 	{
-		final float count = 8;
+		final float count = 9;
 		float current = 0;
 
 		splashInfo( "loading ressources : fonts...", current++/count );
@@ -84,6 +84,9 @@ public class WLoader
 
 		splashInfo( "loading ressources : gettext...", current++/count );
 		WGetText.load();
+
+		splashInfo( "loading ressources : css...", current++/count );
+		WCss.load();
 
 		splashInfo( "loading user settings...", current++/count );
 		WUserSettings.loadUserSettings();

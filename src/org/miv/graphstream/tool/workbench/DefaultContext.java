@@ -52,24 +52,45 @@ public class DefaultContext implements Context, GraphListener
 	 * Selection list.
 	 */
 	protected WSelection selection;
-	
+	/**
+	 * History of this context.
+	 */
 	protected WHistory history;
-	
+	/**
+	 * Autolayout flag.
+	 */
 	protected boolean autolayout;
-	
+	/**
+	 * The ContextListener listenning to this context.
+	 */
 	protected LinkedList<ContextListener> contextListeners = new LinkedList<ContextListener>();
-	
+	/**
+	 * The SelectionListener listenning to the selection list of this
+	 * context.
+	 */
 	protected LinkedList<SelectionListener> selectionListeners = new LinkedList<SelectionListener>();
-	
+	/**
+	 * The path of the file storing the graph.
+	 */
 	protected String path;
-	
+	/**
+	 * The change flag.
+	 */
 	protected boolean changed;
 	
+	/**
+	 * Default constructor.
+	 * Should not be used.
+	 */
 	public DefaultContext()
 	{
 		this( null );
 	}
-	
+	/**
+	 * Build a context from a given graph.
+	 * 
+	 * @param graph the grpah wrapped by this context.
+	 */
 	public DefaultContext( Graph graph )
 	{
 		this.graph = graph;
@@ -82,22 +103,30 @@ public class DefaultContext implements Context, GraphListener
 		if( graph != null )
 			this.graph.addGraphListener( this );
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#getGraph()
+	 */
 	public Graph getGraph()
 	{
 		return graph;
 	}
-
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#getSelection()
+	 */
 	public WSelection getSelection()
 	{
 		return selection;
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#getHistory()
+	 */
 	public WHistory getHistory()
 	{
 		return history;
 	}
-
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#setGraph(Graph)
+	 */
 	public void setGraph(Graph graph)
 	{
 		if( graph == null ) return;
@@ -112,53 +141,73 @@ public class DefaultContext implements Context, GraphListener
 		
 		selection.unselect();//clearSelection();
 	}
-
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#setAutolayout(boolean)
+	 */
 	public void setAutolayout( boolean b )
 	{
 		this.autolayout = b;
 		fireAutolayoutChanged();
 	}
-	
-	public boolean getAutolayout()
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#isAutolayout()
+	 */
+	public boolean isAutolayout()
 	{
 		return this.autolayout;
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#setDefaultFile(String)
+	 */
 	public void setDefaultFile( String path )
 	{
 		this.path = path;
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#getDefaultFile()
+	 */
 	public String getDefaultFile()
 	{
 		return path;
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#addContextListener(ContextListener)
+	 */
 	public void addContextListener( ContextListener cl )
 	{
 		contextListeners.add( cl );
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#removeContextListener(ContextListener)
+	 */
 	public void removeContextListener( ContextListener cl )
 	{
 		contextListeners.remove( cl );
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#addSelectionListener(SelectionListener)
+	 */
 	public void addSelectionListener( SelectionListener sl )
 	{
 		selectionListeners.add(sl);
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#removeSelectionListener(SelectionListener)
+	 */
 	public void removeSelectionListener( SelectionListener sl )
 	{
 		selectionListeners.remove(sl);
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#hasChanged()
+	 */
 	public boolean hasChanged()
 	{
 		return changed;
 	}
-	
+	/**
+	 * @see org.miv.graphstream.tool.workbench.Context#resetChanged()
+	 */
 	public void resetChanged()
 	{
 		changed = false;
@@ -166,6 +215,9 @@ public class DefaultContext implements Context, GraphListener
 	
 // Fire methods for ContextListener
 	
+	/**
+	 * Fire listeners that autolayout has changed.
+	 */
 	protected void fireAutolayoutChanged()
 	{
 		ContextEvent ce = new ContextEvent( this, this );
@@ -173,7 +225,13 @@ public class DefaultContext implements Context, GraphListener
 		for( ContextListener cl: contextListeners )
 			cl.contextAutolayoutChanged( ce );
 	}
-	
+	/**
+	 * Fire listeners that an operation has be done on the graph.
+	 * 
+	 * @param e source element
+	 * @param op operation type
+	 * @param data data relative to the operation
+	 */
 	protected void fireElementOperation( Element e, ElementOperation op, Object data )
 	{
 		ContextEvent ce = new ContextEvent( this, this );
@@ -181,7 +239,11 @@ public class DefaultContext implements Context, GraphListener
 		for( ContextListener cl: contextListeners )
 			cl.contextElementOperation(ce,e,op,data);
 	}
-	
+	/**
+	 * Fire listeners that an element has been added to the selection list.
+	 * 
+	 * @param elt element added
+	 */
 	protected void fireSelectionAdded( Element elt )
 	{
 		SelectionEvent e = new SelectionEvent( this, this, SelectionEvent.Type.ADD, elt );
@@ -189,7 +251,11 @@ public class DefaultContext implements Context, GraphListener
 		for( SelectionListener sl: selectionListeners )
 			sl.selectionAdd(e);
 	}
-	
+	/**
+	 * Fire listeners that an element has been removed to the selection list.
+	 * 
+	 * @param elt element removed
+	 */
 	protected void fireSelectionRemoved( Element elt )
 	{
 		SelectionEvent e = new SelectionEvent( this, this, SelectionEvent.Type.REMOVE, elt );
@@ -197,7 +263,9 @@ public class DefaultContext implements Context, GraphListener
 		for( SelectionListener sl: selectionListeners )
 			sl.selectionRemove(e);
 	}
-	
+	/**
+	 * Fire listeners that selection list has been cleared.
+	 */
 	protected void fireSelectionCleared()
 	{
 		SelectionEvent e = new SelectionEvent( this, this, SelectionEvent.Type.CLEAR );
@@ -209,24 +277,33 @@ public class DefaultContext implements Context, GraphListener
 	
 // GraphListener implementation
 
+	/**
+	 * @see org.miv.graphstream.graph.GraphListener
+	 */
 	public void afterNodeAdd( Graph graph, Node node )
 	{
 		changed = true;
 		fireElementOperation(node,ElementOperation.NodeAdded,null);
 	}
-
+	/**
+	 * @see org.miv.graphstream.graph.GraphListener
+	 */
 	public void afterEdgeAdd( Graph graph, Edge edge )
 	{
 		changed = true;
 		fireElementOperation(edge,ElementOperation.EdgeAdded,null);
 	}
-
+	/**
+	 * @see org.miv.graphstream.graph.GraphListener
+	 */
 	public void attributeChanged( Element element, String attribute,
 			Object oldValue, Object newValue )
 	{
 		changed = true;
 	}
-
+	/**
+	 * @see org.miv.graphstream.graph.GraphListener
+	 */
 	public void beforeEdgeRemove( Graph graph, Edge edge )
 	{
 		if( selection.contains( edge ) )
@@ -234,7 +311,9 @@ public class DefaultContext implements Context, GraphListener
 		
 		fireElementOperation(edge,ElementOperation.EdgeRemoved,null);
 	}
-
+	/**
+	 * @see org.miv.graphstream.graph.GraphListener
+	 */
 	public void beforeNodeRemove( Graph graph, Node node )
 	{
 		if( selection.contains( node ) )
@@ -242,12 +321,16 @@ public class DefaultContext implements Context, GraphListener
 		
 		fireElementOperation(node,ElementOperation.NodeRemoved,null);
 	}
-	
+	/**
+	 * @see org.miv.graphstream.graph.GraphListener
+	 */
 	public void beforeGraphClear( Graph graph )
 	{
 		selection.unselect();
 	}
-
+	/**
+	 * @see org.miv.graphstream.graph.GraphListener
+	 */
 	public void stepBegins(Graph graph, double time)
 	{
 	}

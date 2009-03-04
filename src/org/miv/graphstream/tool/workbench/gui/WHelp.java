@@ -45,7 +45,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 
 public class WHelp
 	extends JDialog
@@ -56,16 +55,6 @@ public class WHelp
 	static void init() {}
 	
 	private static final String GSWB_HELP_XML = "org/miv/graphstream/tool/workbench/xml/gswb-help.xml";
-	private static final String GSWB_HELP_CSS = "org/miv/graphstream/tool/workbench/ressources/gswb-help.css";
-	
-	private static final StyleSheet style = new StyleSheet();
-	static
-	{
-		java.net.URL url = ClassLoader.getSystemResource(GSWB_HELP_CSS);
-		
-		if( url != null )
-			style.importStyleSheet(url);
-	}
 	
 	class HelpHandler
 		implements WXmlHandler.WXElementHandler
@@ -114,7 +103,8 @@ public class WHelp
 			content.setPreferredSize(new java.awt.Dimension(400,300));
 			content.setEditorKit(editor);
 			
-			editor.setStyleSheet(style);
+			if( WCss.hasStyleSheet("help") )
+				editor.setStyleSheet(WCss.getStyleSheet("help"));
 			
 			JComboBox box = new JComboBox(subsections);
 			box.addItemListener(this);

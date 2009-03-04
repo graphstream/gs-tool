@@ -23,6 +23,7 @@
 package org.miv.graphstream.tool.workbench.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 
 import javax.swing.Icon;
@@ -60,9 +61,10 @@ public class WAbout
 		
 		JLabel institute = new JLabel( "LITIS, University of Le Havre (FR)" );
 		institute.setFont( WUtils.getDefaultFont() );
-		institute.setBounds( 15, 15, 
-				(int) institute.getPreferredSize().getWidth(),
-				(int) institute.getPreferredSize().getHeight() );
+		institute.setForeground( Color.WHITE );
+		institute.setBounds( splash.getIconWidth() - 15 - institute.getPreferredSize().width, 15,
+				institute.getPreferredSize().width,
+				institute.getPreferredSize().height );
 		
 		layers.add( institute, new Integer(1) );
 		
@@ -72,18 +74,20 @@ public class WAbout
 		autors.setOpaque(false);
 		for( String a : autorsData )
 		{
-			JLabel al = new JLabel(a,JLabel.RIGHT);
+			JLabel al = new JLabel(a,JLabel.LEFT);
 			al.setFont( WUtils.getDefaultFont() );
+			al.setForeground( Color.WHITE );
 			autors.add(al);
 		}
-		autors.setBounds( splash.getIconWidth() - 15 - autors.getPreferredSize().width, 15,
-				 autors.getPreferredSize().width,
-				 autors.getPreferredSize().height );
+		autors.setBounds( 15, 15, 
+				(int) autors.getPreferredSize().getWidth(),
+				(int) autors.getPreferredSize().getHeight() );
 		
 		layers.add( autors, new Integer(1) );
 		
 		JLabel copyrights = new JLabel( "Copyright (c) 2006 - 2009" );
 		copyrights.setFont(WUtils.getDefaultFont());
+		copyrights.setForeground( Color.WHITE );
 		copyrights.setBounds( 15, splash.getIconHeight() - 15 - copyrights.getPreferredSize().height,
 				copyrights.getPreferredSize().width, copyrights.getPreferredSize().height );
 		layers.add( copyrights, new Integer(1) );

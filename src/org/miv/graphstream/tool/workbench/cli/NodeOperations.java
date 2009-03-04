@@ -23,7 +23,12 @@
 package org.miv.graphstream.tool.workbench.cli;
 
 import org.miv.graphstream.graph.Element;
+import org.miv.graphstream.graph.Edge;
+import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.tool.workbench.Context;
+
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Defines some node operations like 'add' or 'del'.
@@ -68,9 +73,17 @@ public class NodeOperations extends CLICommand
 		}
 		else
 		{
+			LinkedList<Edge> edges = new LinkedList<Edge>();
 			Context ctx = cli.ctx;
-			Element e = ctx.getGraph().removeNode( id );
-			cli.ctx.getHistory().registerDelNodeAction(e);
+			
+			Node n = ctx.getGraph().getNode(id);
+			Iterator<? extends Edge> ite = n.getEdgeIterator();
+			
+			while( ite.hasNext() )
+				edges.add(ite.next());
+			
+			cli.ctx.getHistory().registerDelNodeAction(ctx.getGraph().getNode(id),edges);
+			ctx.getGraph().removeNode( id );
 		}
 		
 		if( ccr.hasAttribute( "attributes" ) )

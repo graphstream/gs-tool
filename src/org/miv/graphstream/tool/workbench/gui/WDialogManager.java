@@ -24,11 +24,18 @@ package org.miv.graphstream.tool.workbench.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.KeyStroke;
 
+/**
+ * WDialogManager is a bridge between the WDialog object
+ * and an associated menu entry.
+ * 
+ */
 public final class WDialogManager
 	implements ActionListener
 {
@@ -69,6 +76,19 @@ public final class WDialogManager
 		dialogMenu.add(associatedMenuEntry);
 		
 		actionPerformed(null);
+		
+		wd.addWindowListener( new WindowAdapter()
+		{
+			public void windowClosing( WindowEvent we )
+			{
+				associatedMenuEntry.setSelected(false);
+			}
+			
+			public void windowOpened( WindowEvent we )
+			{
+				associatedMenuEntry.setSelected(true);
+			}
+		});
 	}
 	
 	public void actionPerformed( ActionEvent e )

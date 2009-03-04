@@ -25,6 +25,7 @@ package org.miv.graphstream.tool.workbench;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.tool.workbench.cli.CLI;
 import org.miv.graphstream.tool.workbench.event.*;
+import org.miv.graphstream.tool.workbench.gui.CLITerm;
 
 import java.io.IOException;
 

@@ -27,7 +27,8 @@ import javax.swing.JDialog;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-public class WDialog extends JDialog
+public class WDialog
+	extends JDialog
 {
 	private static final long serialVersionUID = 0x0001L;
 	

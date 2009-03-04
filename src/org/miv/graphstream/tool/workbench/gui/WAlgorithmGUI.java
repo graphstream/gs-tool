@@ -55,7 +55,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataListener;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 
 public class WAlgorithmGUI
 	extends JDialog
@@ -493,16 +492,6 @@ public class WAlgorithmGUI
         }
 	}
 	
-	private static final String DESCRIPTION_STYLE = "org/miv/graphstream/tool/workbench/ressources/gswb-algorithms.css";
-	private static final StyleSheet style = new StyleSheet();
-	static
-	{
-		java.net.URL url = ClassLoader.getSystemResource(DESCRIPTION_STYLE);
-		
-		if( url != null )
-			style.importStyleSheet(url);
-	}
-	
 	private WAlgorithm algorithm;
 	private WAlgorithmParametersGUI params;
 	private CLI cli;
@@ -520,7 +509,10 @@ public class WAlgorithmGUI
 		setTitle( "Algorithm : " + algorithm.getName() );
 		
 		HTMLEditorKit editor = new HTMLEditorKit();
-			editor.setStyleSheet(style);
+		
+		if( WCss.hasStyleSheet("algorithm") )
+			editor.setStyleSheet(WCss.getStyleSheet("algorithm"));
+		
 		HTMLDocument doc = (HTMLDocument) editor.createDefaultDocument();
 		StringReader in = new StringReader( 
 				"<html>" +

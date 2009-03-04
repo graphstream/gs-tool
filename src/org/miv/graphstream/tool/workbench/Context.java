@@ -41,20 +41,41 @@ import org.miv.graphstream.graph.Graph;
  */
 public interface Context
 {
-	public void addContextListener( ContextListener ce );
-	
-	public void removeContextListener( ContextListener ce );
-	
-	public void addSelectionListener( SelectionListener sl );
-	
-	public void removeSelectionListener( SelectionListener sl );
-	
+	/**
+	 * Add a ContextListener to this context.
+	 * 
+	 * @param ce the listener
+	 * @see org.miv.graphstream.tool.workbench.event.ContextListener
+	 */
+	void addContextListener( ContextListener ce );
+	/**
+	 * Remove a ContextListener.
+	 * 
+	 * @param ce the listener
+	 * @see org.miv.graphstream.tool.workbench.event.ContextListener
+	 */
+	void removeContextListener( ContextListener ce );
+	/**
+	 * Add a SelectionListener listening to the selection list of
+	 * this context.
+	 * 
+	 * @param sl the listener
+	 * @see org.miv.graphstream.tool.workbench.event.SelectionListener
+	 */
+	void addSelectionListener( SelectionListener sl );
+	/**
+	 * Remove a SelectionListener.
+	 * 
+	 * @param sl the listener
+	 * @see org.miv.graphstream.tool.workbench.event.SelectionListener
+	 */
+	void removeSelectionListener( SelectionListener sl );
 	/**
 	 * Get the graph which defines this context.
 	 * 
 	 * @return a graph
 	 */
-	public Graph getGraph();
+	Graph getGraph();
 	/**
 	 * Set the graph which defines this context.
 	 * 
@@ -63,12 +84,12 @@ public interface Context
 	void setGraph( Graph graph );
 	/**
 	 * Get the Selection object of this content.
-	 * @return
+	 * @return the selection list
 	 */
 	WSelection getSelection();
 	/**
 	 * Get the History object of this content.
-	 * @return
+	 * @return the history
 	 */
 	WHistory getHistory();
 	/**
@@ -76,23 +97,34 @@ public interface Context
 	 * 
 	 * @param b
 	 */
-	public void setAutolayout( boolean b );
+	void setAutolayout( boolean b );
 	/**
 	 * Is autolayout enabled ?
 	 * 
 	 * @return true is autolayout on this context
 	 */
-	public boolean getAutolayout();
+	boolean isAutolayout();
 	/**
 	 * Set the default file for reading or writing this context.
 	 * 
 	 * @param path
 	 */
-	public void setDefaultFile( String path );
-	
-	public String getDefaultFile();
-	
-	public boolean hasChanged();
-	
-	public void resetChanged();
+	void setDefaultFile( String path );
+	/**
+	 * Return the default pathname of the file in which the graph
+	 * of this context will be stored.
+	 * 
+	 * @return pathname of the graph-file
+	 */
+	String getDefaultFile();
+	/**
+	 * Used to know if there are modifications on the graph.
+	 * 
+	 * @return true if graph has changed
+	 */
+	boolean hasChanged();
+	/**
+	 * Reset graph modification flag.
+	 */
+	void resetChanged();
 }

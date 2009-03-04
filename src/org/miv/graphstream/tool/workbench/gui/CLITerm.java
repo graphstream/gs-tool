@@ -20,9 +20,8 @@
  * 	Yoann Pigné
  * 	Guilhelm Savin
  */
-package org.miv.graphstream.tool.workbench;
+package org.miv.graphstream.tool.workbench.gui;
 
-import org.miv.graphstream.tool.workbench.gui.WUtils;
 
 import java.awt.Dimension;
 import java.awt.BorderLayout;
@@ -70,8 +69,6 @@ public class CLITerm extends JPanel
 	 * Serial version UID.
 	 */
 	public static final long serialVersionUID = 0x00A002L;
-	
-	public static final String DEFAULT_STYLE = "org/miv/graphstream/tool/workbench/cliterm.css";
 	/**
 	 * CLI object to send command.
 	 */
@@ -151,16 +148,11 @@ public class CLITerm extends JPanel
 		textField.setFont( font );
 		caretUpdate( null );
 		
+		if( WCss.hasStyleSheet("cliterm") )
+			editor.setStyleSheet(WCss.getStyleSheet("cliterm"));
+		
 		doc = (HTMLDocument) editor.createDefaultDocument();
-		try
-		{
-			//URL url = ClassLoader.getSystemResource( DEFAULT_STYLE );
-			//doc.getStyleSheet().loadRules( new InputStreamReader( url.openStream() ), null );
-		}
-		catch( Exception e )
-		{
-			System.err.println( "cannot load css\n" + e.getMessage() );
-		}
+		
 		textPanel.setEditorKit( editor );
 		textPanel.setDocument( doc );
 		StringReader in = new StringReader( 

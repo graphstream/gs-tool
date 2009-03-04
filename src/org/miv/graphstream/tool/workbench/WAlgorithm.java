@@ -32,21 +32,62 @@ import java.lang.reflect.Constructor;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+/**
+ * WAlgorithm is an object making a bridge between GraphStream Algorithm
+ * and the workbench. It proposes features to easily manage algorithm's launch.
+ *
+ * It is composed of a name, a class, a category, a description and some parameters.
+ * Category is used to release a classification (coloring,generator,measure,...).
+ * Class is the class of the object to instantiate to create the algorithm.
+ * Paremeters describe objects to give to the Algorithm constructor.
+ * 
+ * WAlgorithm provides a method to launch the algorithm. This execution depends of
+ * if the algorithm is dynamic ( @link org.mv.graphstream.algorithm.DynamicAlgorithm )
+ * or if it is a generator ( @link org.mv.graphstream.algorithm.generator.Generator )
+ * or if it is simply an algorithm ( @link org.mv.graphstream.algorithm.Algorithm ).
+ * 
+ * @see org.miv.graphstream.tool.workbench.AlgorithmLoader
+ */
 public class WAlgorithm
 {	
-	public static final LinkedList<WAlgorithm> ALGORITHMS = 
+	/**
+	 * Collection containing all loaded algorithms.
+	 */
+	static final LinkedList<WAlgorithm> ALGORITHMS = 
 		new LinkedList<WAlgorithm>();
-	
+	/**
+	 * Register a new algorithm.
+	 * 
+	 * @param wa the algorithm
+	 */
 	public static synchronized void register( WAlgorithm wa )
 	{
 		ALGORITHMS.add(wa);
 	}
-	
+	/**
+	 * Iterate on loaded algorithms.
+	 * 
+	 * @return an iterator
+	 */
 	public static Iterator<WAlgorithm> algorithms()
 	{
 		return ALGORITHMS.iterator();
 	}
-	
+	/**
+	 * Describe an algorithm's parameter.
+	 * 
+	 * A parameter is composed of some elements :
+	 * <ul>
+	 * <li>name : name of the parameter</li>
+	 * <li>type : describe the type of the parameter</li>
+	 * <li>clazz: describe the class of the parameter</li>
+	 * <li>def  : default value</li>
+	 * </ul>
+	 * 
+	 * Type can be the class name of clazz, or a special value.
+	 * For example : int, boolean, (all primitive types), node, edge
+	 * nodeid, edgeid.
+	 */
 	public static class Parameter
 	{
 		String name;
@@ -54,11 +95,24 @@ public class WAlgorithm
 		Class<?> clazz;
 		String def;
 		
+		/**
+		 * Build a new parameter from a name and a type.
+		 * 
+		 * @param name
+		 * @param type
+		 */
 		public Parameter( String name, String type )
 		{
 			this( name, type, null );
 		}
-		
+		/**
+		 * Build a new parameter from a name, a type and a 
+		 * default value.
+		 * 
+		 * @param name
+		 * @param type
+		 * @param def
+		 */
 		public Parameter( String name, String type, String def )
 		{
 			this.name 	= name;
@@ -98,27 +152,39 @@ public class WAlgorithm
 			if( clazz.isEnum() )
 				this.type = "enum";
 		}
-		
+		/**
+		 * Getter for the parameter's name.
+		 */
 		public String getName()
 		{
 			return name;
 		}
-		
+		/**
+		 * Getter for the parameter's type.
+		 */
 		public String getType()
 		{
 			return type;
 		}
-		
+		/**
+		 * Getter for the parameter's class.
+		 */
 		public Class<?> getTypeClass()
 		{
 			return clazz;
 		}
-		
+		/**
+		 * Getter for the parameter's default value.
+		 */
 		public String getDefaultValue()
 		{
 			return def;
 		}
-		
+		/**
+		 * Used to know is this parameter has a default value.
+		 * 
+		 * @return true is there is a default value.
+		 */
 		public boolean hasDefaultValue()
 		{
 			return def != null;
