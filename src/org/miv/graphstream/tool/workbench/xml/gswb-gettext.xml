@@ -25,8 +25,8 @@
 		<entry name="menu:measure" lang="en" value="Measure" />
 		<entry name="system:help" lang="en" value="Help" />
 		<entry name="menu:about" lang="en" value="About" />
-		<entry name="menu:manual" lang="en" value="Manual" />
-		<entry name="menu:tutorials" lang="en" value="Tutorials" />
+		<entry name="help:manual" lang="en" value="Manual" />
+		<entry name="help:tutorials" lang="en" value="Tutorials" />
 	</container>
 	<container name="action" lang="en">
 		<entry name="action:select" value="select nodes and edges" lang="en"></entry>
@@ -42,11 +42,15 @@
 	<container name="dialog" lang="en">
 		<entry name="options:save" lang="en" value="Save settings"></entry>
 		<entry name="options:fullscreen" lang="en" value="FullScreen mode"></entry>
-		<entry name="options:nofullscreen" lang="en" value="Windowed mode"></entry></container>
+		<entry name="options:nofullscreen" lang="en" value="Windowed mode"></entry>
+		<entry name="system:externallink" lang="en" value="External link"></entry>
+		<entry name="system:saveus" lang="en" value="Save settings"></entry>
+		<entry name="system:deleteus" lang="en" value="Delete settings"></entry></container>
 	<container name="misc" lang="en">
 		<entry name="nodes" lang="en" value="nodes"></entry>
 		<entry name="edges" lang="en" value="edges"></entry>
-		<entry name="regex" lang="en" value="regular expressions"></entry></container>
+		<entry name="regex" lang="en" value="regular expressions"></entry>
+		<entry name="content:visitlink" lang="en" value="Please visit"></entry></container>
 	<container name="tooltips" lang="en"></container>
 
 	<!--  French part -->
@@ -74,8 +78,8 @@
 		<entry name="menu:measure" lang="fr" value="Mesure" />
 		<entry name="system:help" lang="fr" value="Aide" />
 		<entry name="menu:about" lang="fr" value="A propos" />
-		<entry name="menu:manual" lang="fr" value="Manuel" />
-		<entry name="menu:tutorials" lang="fr" value="Tutoriels" />
+		<entry name="help:manual" lang="fr" value="Manuel" />
+		<entry name="help:tutorials" lang="fr" value="Tutoriels" />
 	</container>
 	<container name="action" lang="fr">
 		<entry name="action:select" value="selectionner des noeuds et des arètes" lang="fr"></entry>
@@ -91,10 +95,14 @@
 	<container name="dialog" lang="fr">
 		<entry name="options:save" lang="fr" value="Enregistrer les paramètres"></entry>
 		<entry name="options:fullscreen" lang="fr" value="Mode plein écran"></entry>
-		<entry name="options:nofullscreen" lang="fr" value="Mode fenetré"></entry></container>
+		<entry name="options:nofullscreen" lang="fr" value="Mode fenetré"></entry>
+		<entry name="system:externallink" lang="fr" value="Lien externe"></entry>
+		<entry name="system:saveus" lang="fr" value="Sauvegarder les paramètres"></entry>
+		<entry name="system:deleteus" lang="fr" value="Supprimer les paramètres"></entry></container>
 	<container name="misc" lang="fr">
 		<entry name="nodes" lang="fr" value="noeuds"></entry>
 		<entry name="edges" lang="fr" value="arètes"></entry>
-		<entry name="regex" lang="fr" value="expressions rationnelles"></entry></container>
+		<entry name="regex" lang="fr" value="expressions rationnelles"></entry>
+		<entry name="content:visitlink" lang="fr" value="Visiter le lien"></entry></container>
 	<container name="tooltips" lang="fr"></container>
 </gswb:gettext>

@@ -223,6 +223,8 @@ public class WCore
 		if( i<0 || i>=ctxs.size() )
 			return;
 		
+		System.err.printf( "select context %d\n", i );
+		
 		if( activeCtxId == null || ! activeCtxId.equals(ctxsid.get(i)) )
 		{
 			ctxs.get(activeCtx).removeContextListener(this);

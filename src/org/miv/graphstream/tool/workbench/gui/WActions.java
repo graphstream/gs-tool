@@ -55,6 +55,8 @@ public class WActions
 		actions.put( "system:options", 	new OptionsAction() );
 		actions.put( "system:terminal", new OpenTerminalAction() );
 		actions.put( "system:exit", 	new ExitAction() );
+		actions.put( "system:saveus", 	new SaveUserSettingsAction() );
+		actions.put( "system:deleteus", new DeleteUserSettingsAction() );
 		
 		actions.put( "edit:copy", 		new CopyAction() );
 		actions.put( "edit:cut", 		new CutAction() );
@@ -421,10 +423,47 @@ public class WActions
 		{
 			JOptionPane.showMessageDialog(
 					null, 
-					"Please visit :\n" + link, 
-					"External link", 
+					WGetText.getText("content:visitlink") + " :\n" + link, 
+					WGetText.getText("system:externallink"), 
 					JOptionPane.INFORMATION_MESSAGE,
 					WIcons.getIcon("system:link") );
+		}
+	}
+	
+	static class SaveUserSettingsAction
+		extends BaseAction
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		public SaveUserSettingsAction()
+		{
+			super("system:saveus");
+		}
+		
+		public void actionPerformed( ActionEvent e )
+		{
+			WUserSettings.saveUserSettings();
+		}
+	}
+	
+	static class DeleteUserSettingsAction
+		extends BaseAction
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		public DeleteUserSettingsAction()
+		{
+			super("system:deleteus");
+		}
+		
+		public void actionPerformed( ActionEvent e )
+		{
+			int r = JOptionPane.showConfirmDialog(
+					null,
+					"Delete user settings ?" );
+			
+			if( r == JOptionPane.YES_OPTION )
+				WUserSettings.deleteUserSettigns();
 		}
 	}
 }

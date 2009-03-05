@@ -85,7 +85,6 @@ public class WOptions
 	{
 		"javax.swing.plaf.basic.BasicLookAndFeel",
 		"javax.swing.plaf.metal.MetalLookAndFeel",
-		"javax.swing.plaf.multi.MultiLookAndFeel",
 		"javax.swing.plaf.synth.SynthLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessLookAndFeel",
 		"org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel",
@@ -202,7 +201,6 @@ public class WOptions
 		JLabel 		label;
 		JComboBox	comboBox;
 		JPanel		panel;
-		//JCheckBox	checkBox;
 		JButton		button;
 		
 		skinModel = new SkinModel();
@@ -256,16 +254,14 @@ public class WOptions
 		add(fullMode);
 		
 		WUtils.reloadOnLangChanged(fullMode,"@gettext(options:fullscreen)","setText");
-		
-		button = new JButton( WGetText.getText("options:save") );
-			button.addActionListener(this);
-			button.setActionCommand("options.save");
+
 		panel = new JPanel();
+		button = new JButton( WActions.getAction("system:saveus") );
+		panel.add(button);
+		button = new JButton( WActions.getAction("system:deleteus") );
 		panel.add(button);
 		bag.setConstraints(panel,c);
 		add(panel);
-		
-		WUtils.reloadOnLangChanged(button,"@gettext(options:save)","setText");
 		
 		pack();
 	}

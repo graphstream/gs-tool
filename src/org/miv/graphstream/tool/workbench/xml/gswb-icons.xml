@@ -32,4 +32,6 @@
 	<icon key="system:options" ressource="org/miv/graphstream/tool/workbench/ressources/options24.png"/><icon
 		key="system:link" ressource="org/miv/graphstream/tool/workbench/ressources/ilink.png">
 </icon>
+	<icon key="system:saveus" ressource="org/miv/graphstream/tool/workbench/ressources/filesave24.png"></icon>
+	<icon key="system:deleteus" ressource="org/miv/graphstream/tool/workbench/ressources/filedelete24.png"></icon>
 </gswb:icons>

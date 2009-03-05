@@ -46,13 +46,20 @@ public class WUserSettings
 	
 	public static void loadUserSettings()
 	{
-		wus.load();
+		try
+		{
+			wus.load();
 
-		if( wus.getLookAndFeel() != null )
-			WGui.setWorkbenchLookAndFeel( wus.getLookAndFeel() );
+			if( wus.getLookAndFeel() != null )
+				WGui.setWorkbenchLookAndFeel( wus.getLookAndFeel() );
 		
-		if( wus.getLocale() != null )
-			WGetText.setLocale(wus.getLocale());
+			if( wus.getLocale() != null )
+				WGetText.setLocale(wus.getLocale());
+		}
+		catch( Exception e )
+		{
+			System.err.printf( "failed to load user settings\n" );
+		}
 	}
 	
 	public static void saveUserSettings()

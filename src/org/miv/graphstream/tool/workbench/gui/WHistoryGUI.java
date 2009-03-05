@@ -110,32 +110,32 @@ public class WHistoryGUI
 		{
 			if( value instanceof WHistory.DelNodeHistoryAction )
 			{
-				icon.setIcon( WUtils.getImageIcon("action:node_del") );
+				icon.setIcon( WUtils.getImageIcon("action:nodedel") );
 				title.setText("Del node");
 				description.setText(((WHistory.AbstractAddElementHistoryAction)value).getId());
 			}
 			else if( value instanceof WHistory.AddNodeHistoryAction )
 			{
-				icon.setIcon( WUtils.getImageIcon("action:node_add") );
+				icon.setIcon( WUtils.getImageIcon("action:nodeadd") );
 				title.setText("Add node");
 				description.setText(((WHistory.AbstractAddElementHistoryAction)value).getId());
 			}
 			else if( value instanceof WHistory.DelEdgeHistoryAction )
 			{
-				icon.setIcon( WUtils.getImageIcon("action:edge_del") );
+				icon.setIcon( WUtils.getImageIcon("action:edgedel") );
 				title.setText("Del edge");
 				description.setText(((WHistory.AbstractAddElementHistoryAction)value).getId());
 			}
 			else if( value instanceof WHistory.AddEdgeHistoryAction )
 			{
-				icon.setIcon( WUtils.getImageIcon("action:edge_add") );
+				icon.setIcon( WUtils.getImageIcon("action:edgeadd") );
 				title.setText("Add edge");
 				description.setText(((WHistory.AbstractAddElementHistoryAction)value).getId());
 			}
 			else if( value instanceof WHistory.PasteHistoryAction )
 			{
 				icon.setIcon( WUtils.getImageIcon("edit:paste") );
-				title.setText( WGetText.getText("menu:paste") );
+				title.setText( WGetText.getText("edit:paste") );
 				description.setText( String.format( "%d elements",
 						((WHistory.PasteHistoryAction) value).size()) );
 			}
