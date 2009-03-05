@@ -37,8 +37,8 @@
 	</menu><!--Help menu-->
 	<menu id="help" name="@gettext(system:help)">
 		<item command="@getaction(system:help)"></item>
-		<separator></separator><item name="@gettext(menu:manual)" command="menu.help.manual"/>
-		<item name="@gettext(menu:tutorials)" command="menu.help.tutorials"/>
+		<separator></separator><item name="@gettext(menu:manual)" command="@getaction(help:manual)"/>
+		<item name="@gettext(menu:tutorials)" command="@getaction(help:tutorials)"/>
 		<separator/>
 		<item name="@gettext(menu:about)" command="menu.help.about"/>
 	</menu>

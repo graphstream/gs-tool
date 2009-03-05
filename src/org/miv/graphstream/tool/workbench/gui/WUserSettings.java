@@ -60,6 +60,15 @@ public class WUserSettings
 		wus.save();
 	}
 	
+	public static void deleteUserSettigns()
+	{
+		File settings = new File(String.format( "%s/.graphstream/gswb-settings.xml",
+				System.getenv().get("HOME") ));
+		
+		if( settings.exists() )
+			settings.delete();
+	}
+	
 	String 					lookAndFeel;
 	Locale 					locale;
 	HashMap<String,String>	settings;

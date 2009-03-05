@@ -30,9 +30,12 @@ import java.awt.event.KeyEvent;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.miv.graphstream.tool.workbench.WCore;
+import org.miv.graphstream.tool.workbench.WNotificationServer;
+import org.miv.graphstream.tool.workbench.event.NotificationListener;
 
 /**
  *
@@ -67,6 +70,26 @@ public class WActions
 		actions.put( "action:select", 	new CoreAction("action:select",	ActionMode.SELECT) );
 		actions.put( "action:info", 	new CoreAction("action:info",	ActionMode.INFO) );
 		actions.put( "action:configure",new ConfigureAction() );
+		
+		actions.put( "help:manual",		new OpenLinkAction("help:manual","http:/graphstream.sourceforge.net/Manual.html") );
+		actions.put( "help:tutorials",	new OpenLinkAction("help:tutorials","http:/graphstream.sourceforge.net/tutorials.html") );
+		
+		WNotificationServer.connect( new NotificationListener()
+		{
+			public void handleNotification( Notification n )
+			{
+				if( n == Notification.langChanged )
+				{
+					for( Object key : actions.keys() )
+					{
+						Action a = actions.get(key);
+						
+						if( a instanceof BaseAction )
+							( (BaseAction) a ).init();
+					}
+				}
+			}
+		});
 	}
 	
 	public static boolean hasAction( String key )
@@ -378,6 +401,30 @@ public class WActions
 		public void actionPerformed( ActionEvent e )
 		{
 			WCore.getCore().openTerminal();
+		}
+	}
+	
+	static class OpenLinkAction
+		extends BaseAction
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		String link;
+		
+		public OpenLinkAction( String key, String link )
+		{
+			super(key);
+			this.link = link;
+		}
+		
+		public void actionPerformed( ActionEvent e )
+		{
+			JOptionPane.showMessageDialog(
+					null, 
+					"Please visit :\n" + link, 
+					"External link", 
+					JOptionPane.INFORMATION_MESSAGE,
+					WIcons.getIcon("system:link") );
 		}
 	}
 }

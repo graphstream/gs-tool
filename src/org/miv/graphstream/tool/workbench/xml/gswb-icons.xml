@@ -29,5 +29,7 @@
 	<icon key="gears" ressource="org/miv/graphstream/tool/workbench/ressources/gears32.png"/>
 	<icon key="fullscreen" ressource="org/miv/graphstream/tool/workbench/ressources/fullscreen.png"/>
 	<icon key="nofullscreen" ressource="org/miv/graphstream/tool/workbench/ressources/nofullscreen.png"/>
-	<icon key="system:options" ressource="org/miv/graphstream/tool/workbench/ressources/options24.png"/>
+	<icon key="system:options" ressource="org/miv/graphstream/tool/workbench/ressources/options24.png"/><icon
+		key="system:link" ressource="org/miv/graphstream/tool/workbench/ressources/ilink.png">
+</icon>
 </gswb:icons>

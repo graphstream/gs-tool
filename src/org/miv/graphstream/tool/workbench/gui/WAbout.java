@@ -26,10 +26,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 public class WAbout
@@ -49,48 +49,52 @@ public class WAbout
 		setTitle( "About" );
 		setLayout( new BorderLayout() );
 		setResizable(false);
-		setUndecorated(true);
+		setBackground(new Color(0,0,0));
 		
 		Icon splash = WUtils.getImageIcon("splash");
 		JLabel splashLabel = new JLabel(splash);
 		splashLabel.setBounds(0,0,splash.getIconWidth(),splash.getIconHeight());
 		
-		JLayeredPane layers = new JLayeredPane();
-		layers.setPreferredSize(splashLabel.getPreferredSize());
-		layers.add( splashLabel, new Integer(0) );
+		JPanel layers = new JPanel();
+		layers.setLayout( new BorderLayout() );
+		layers.setUI(null);
 		
+		layers.add( splashLabel, BorderLayout.CENTER );
+		
+		JPanel infos = new JPanel();
+		infos.setOpaque(true);
+		infos.setBackground(Color.BLACK);
+		infos.setUI(null);
+		infos.setLayout( new BorderLayout() );
+		infos.setBorder( BorderFactory.createMatteBorder(0,10,10,10,Color.BLACK) );
 		JLabel institute = new JLabel( "LITIS, University of Le Havre (FR)" );
-		institute.setFont( WUtils.getDefaultFont() );
-		institute.setForeground( Color.WHITE );
-		institute.setBounds( splash.getIconWidth() - 15 - institute.getPreferredSize().width, 15,
-				institute.getPreferredSize().width,
-				institute.getPreferredSize().height );
+		institute.setFont( WFonts.getFont("dialog:infos") );
+		institute.setForeground(Color.GRAY);
 		
-		layers.add( institute, new Integer(1) );
+		infos.add( institute, BorderLayout.NORTH );
 		
 		JPanel autors = new JPanel();
+		autors.setUI(null);
+		autors.setOpaque(true);
+		autors.setBackground(new Color(0,0,0));
 		String [] autorsData = getAutors();
 		autors.setLayout(new GridLayout(autorsData.length,1));
-		autors.setOpaque(false);
 		for( String a : autorsData )
 		{
-			JLabel al = new JLabel(a,JLabel.LEFT);
-			al.setFont( WUtils.getDefaultFont() );
+			JLabel al = new JLabel(a,JLabel.CENTER);
+			al.setFont( WFonts.getFont("dialog:title") );
 			al.setForeground( Color.WHITE );
 			autors.add(al);
 		}
-		autors.setBounds( 15, 15, 
-				(int) autors.getPreferredSize().getWidth(),
-				(int) autors.getPreferredSize().getHeight() );
 		
-		layers.add( autors, new Integer(1) );
+		infos.add( autors, BorderLayout.CENTER );
 		
-		JLabel copyrights = new JLabel( "Copyright (c) 2006 - 2009" );
-		copyrights.setFont(WUtils.getDefaultFont());
-		copyrights.setForeground( Color.WHITE );
-		copyrights.setBounds( 15, splash.getIconHeight() - 15 - copyrights.getPreferredSize().height,
-				copyrights.getPreferredSize().width, copyrights.getPreferredSize().height );
-		layers.add( copyrights, new Integer(1) );
+		JLabel copyrights = new JLabel( "Copyright (c) 2006 - 2009", JLabel.RIGHT );
+		copyrights.setFont(WFonts.getFont("dialog:infos"));
+		copyrights.setForeground(Color.GRAY);
+		infos.add( copyrights, BorderLayout.SOUTH);
+		
+		layers.add(infos,BorderLayout.SOUTH);
 		
 		add(layers,BorderLayout.CENTER);
 		

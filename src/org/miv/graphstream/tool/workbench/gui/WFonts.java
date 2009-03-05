@@ -76,8 +76,10 @@ public final class WFonts
 					Font.BOLD, 14.0f ),
 			new FontEntry( "dialog:infos", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Regular.ttf",
 					Font.PLAIN, 14.0f ),
-			new FontEntry( "default", "org/miv/graphstream/tool/workbench/ressources/fonts/AG-Stencil.ttf",
-					Font.PLAIN, 16.0f )
+			new FontEntry( "default", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Regular.ttf",
+					Font.PLAIN, 14.0f )
+			//new FontEntry( "default", "org/miv/graphstream/tool/workbench/ressources/fonts/AG-Stencil.ttf",
+			//		Font.PLAIN, 16.0f )
 		};
 		
 		for( FontEntry entry : entries )
