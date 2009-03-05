@@ -22,110 +22,168 @@
  */
 package org.miv.graphstream.tool.workbench.gui;
 
+import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Node;
 
 import org.miv.graphstream.tool.workbench.Context;
+import org.miv.graphstream.tool.workbench.WCore;
+import org.miv.graphstream.tool.workbench.WSelection;
 import org.miv.graphstream.tool.workbench.cli.CLI;
 import org.miv.graphstream.tool.workbench.event.ContextChangeListener;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.SelectionListener;
 import org.miv.graphstream.tool.workbench.event.SelectionEvent;
 
-import java.util.Map;
-import java.util.Hashtable;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
-import javax.swing.JTree;
-import javax.swing.SwingConstants;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeCellRenderer;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 
-public class SelectionTree extends JTree 
+public class SelectionTree extends JList 
 	implements ContextChangeListener, SelectionListener
 {
 	public static final long serialVersionUID = 0x00A00C01L;
 	
+	static class ElementRenderer
+		extends JPanel
+		implements ListCellRenderer
+	{
+		private static final long serialVersionUID = 0x0001L;
+
+		JLabel 	icon;
+		JLabel	title;
+		JLabel	description;
+
+		public ElementRenderer()
+		{
+			icon 		= new JLabel();
+			title 		= new JLabel();
+			description = new JLabel();
+
+			if( WFonts.hasFont("dialog:title") )
+				title.setFont(WFonts.getFont("dialog:title"));
+
+			if( WFonts.hasFont("dialog:infos") )
+				description.setFont(WFonts.getFont("dialog:infos"));
+
+			description.setForeground(description.getForeground().brighter().brighter());
+
+			GridBagLayout bag = new GridBagLayout();
+			GridBagConstraints c = new GridBagConstraints();
+
+			setLayout( bag );
+
+			c.anchor = GridBagConstraints.WEST;
+			c.gridwidth = 1;
+			c.gridheight = 2;
+			c.weighty = 1.0;
+
+			icon.setPreferredSize( new Dimension(32,32) );
+			bag.setConstraints(icon,c);
+			add(icon);
+
+			c.fill = GridBagConstraints.BOTH;
+
+			c.gridwidth = GridBagConstraints.REMAINDER;
+			c.gridheight = 1;
+			c.weighty = 0.0;
+			c.weightx = 3.0;
+
+			bag.setConstraints(title,c);
+			add(title);
+
+			c.insets = new Insets(-10,10,0,0);
+
+			bag.setConstraints(description,c);
+			add(description);
+		}
+
+		public Component getListCellRendererComponent( JList list, Object value,
+				int index, boolean isSelected, boolean hasFocus )
+		{
+			description.setText(value.getClass().getCanonicalName());
+
+			if( value instanceof Element )
+				title.setText(((Element)value).getId());
+
+			if( value instanceof Node )
+				icon.setIcon( WUtils.getImageIcon("node") );
+			else if( value instanceof Edge )
+				icon.setIcon( WUtils.getImageIcon("edge") );
+
+			if(isSelected)
+			{
+				setBackground(list.getSelectionBackground());
+				setForeground(list.getSelectionForeground());
+			}
+			else
+			{
+				setBackground(list.getBackground());
+				setForeground(list.getForeground());
+			}
+
+			return this;
+		}
+	}
+	
 	protected CLI cli;
-	protected SelectionTreeNode selection;
-	protected SelectionTreeModel model;
 	protected Context ctx;
-	protected Map<String,SelectionTreeNode> nodes;
+	DefaultListModel 	model;
 	
 	public SelectionTree( CLI cli )
 	{
 		this.cli = cli;
 		this.ctx = null;
-		this.selection = new SelectionTreeNode( "selection", false );
-		this.model = new SelectionTreeModel( this.selection );
-		this.nodes = new HashMap<String,SelectionTreeNode>();
+		this.model = new DefaultListModel();
 		
 		cli.getCore().addContextChangeListener( this );
 		
 		setModel( this.model );
-		setRootVisible( false );
-		setCellRenderer( new SelectionTreeRenderer() );
+		setCellRenderer( new ElementRenderer() );
+		
+		addMouseListener( new MouseAdapter()
+		{
+			public void mouseClicked( MouseEvent e )
+			{
+				if( e.getClickCount() == 2 )
+				{
+					new WElementInfo( (Element) getSelectedValue() );
+				}
+			}
+		});
 	}
 	
 	public void contextChanged( ContextEvent e )
 	{
-		updateSelectionTree();
-	}
-	
-	protected void updateSelectionTree()
-	{
-		if( cli.getCore().getActiveContext() == null )
-		{
-			selection.removeAllChildren();
-			model.reload(selection);
-			return;
-		}
-		if( ctx == cli.getCore().getActiveContext() ) return;
+		WSelection s = WCore.getCore().getActiveContext().getSelection();
 		
-		if( ctx != null )
-			selection.removeAllChildren();
+		Iterator<Element> ite = s.iterator();
 		
-		ctx = cli.getCore().getActiveContext();
-		nodes.clear();
-		
-		for( Element e: ctx.getSelection() )
-			addElement( e );
-		
-		model.reload( selection );
+		while( ite.hasNext() )
+			addElement(ite.next());
 	}
 	
 	protected void addElement( Element e )
 	{
-		if( nodes.containsKey( e.getId() ) ) return;
-		
-		SelectionTreeNode node = new SelectionTreeNode( e, false );
-		selection.add( node );
-		nodes.put( e.getId(), node );
-		
-		Iterator<String> ite = e.getAttributeKeyIterator();
-		if( ite != null )
-		while( ite.hasNext() )
-		{
-			String key = ite.next();
-			node.add( new SelectionTreeNode( 
-					String.format( "%s = %s", key, e.getAttribute( key ) ), true ) );
-		}
-		
-		model.reload( selection );
+		if( ! model.contains(e) )
+			model.addElement(e);
 	}
 	
 	protected void removeElement( Element e )
 	{
-		if( ! nodes.containsKey( e.getId() ) ) return;
-		
-		selection.remove( nodes.get( e.getId() ) );
-		nodes.remove( e.getId() );
-		
-		model.reload( selection );
+		model.removeElement(e);
 	}
 	
 // SelectionListener implementation
@@ -144,70 +202,6 @@ public class SelectionTree extends JTree
 	
 	public void selectionCleared( SelectionEvent e )
 	{
-		updateSelectionTree();
-	}
-	
-// Stuff needed to work !
-	
-	class SelectionTreeModel extends DefaultTreeModel
-	{
-		public static final long serialVersionUID = 0x00A00D01L;
-		
-		public SelectionTreeModel( SelectionTreeNode root )
-		{
-			super( root );
-		}
-	}
-	
-	class SelectionTreeNode extends JTree.DynamicUtilTreeNode
-	{
-		public static final long serialVersionUID = 0x00A00E01L;
-		
-		@SuppressWarnings("unchecked")
-		public SelectionTreeNode( Object val, boolean isLeaf )
-		{
-			super( val, isLeaf ? null : new Hashtable() );
-		}
-		
-		public boolean isNode()
-		{
-			return this.userObject instanceof Node;
-		}
-		
-		public String getId()
-		{
-			if( userObject instanceof Element )
-			{
-				return ((Element) userObject).getId();
-			}
-			
-			return "";
-		}
-	}
-	
-	class SelectionTreeRenderer implements TreeCellRenderer
-	{
-		 public Component getTreeCellRendererComponent(
-				 JTree tree, Object value, boolean selected, boolean expanded, 
-				 boolean leaf, int row, boolean hasFocus ) 
-		 {
-			 if( leaf )
-				 return new JLabel( 
-						 value.toString(), 
-						 WUtils.getImageIcon( "key_16" ), 
-						 SwingConstants.LEFT );
-			 
-			 if( value instanceof SelectionTreeNode )
-			 {
-				 SelectionTreeNode stn = (SelectionTreeNode) value;
-				 if( stn.isNode() )
-					 return new JLabel( stn.getId(), 
-							 WUtils.getImageIcon( "action:add_node" ), SwingConstants.LEFT );
-				 else
-					 return new JLabel( stn.getId(), 
-							 WUtils.getImageIcon( "action:add_edge" ), SwingConstants.LEFT );
-			 }
-			 return new JLabel( value.toString() );
-		 }
+		model.clear();
 	}
 }
