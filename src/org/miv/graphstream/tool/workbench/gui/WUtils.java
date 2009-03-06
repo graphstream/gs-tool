@@ -224,7 +224,7 @@ public class WUtils
 	static class NewGraphDialog extends JDialog 
 		implements ChangeListener, ActionListener
 	{
-		public static final long serialVersionUID = 0x00A01301L;
+		public static final long serialVersionUID = 0x040220020001L;
 		
 		protected Component parent;
 		protected CLI cli;
@@ -435,7 +435,7 @@ public class WUtils
 	
 	static class OpenGraphFileChooser extends JFileChooser
 	{
-		public static final long serialVersionUID = 0x00A01101L;
+		public static final long serialVersionUID = 0x040220040001L;
 		
 		protected OpenGraphAccessory accessory;
 		protected CLI cli;
@@ -514,7 +514,7 @@ public class WUtils
 	
 	static class OpenGraphAccessory extends JPanel implements ChangeListener
 	{
-		public static final long serialVersionUID = 0x00A01001L;
+		public static final long serialVersionUID = 0x040220030001L;
 		
 		protected JTextField graphId;
 		protected JTextField readerClass;
@@ -589,7 +589,7 @@ public class WUtils
 	
 	static class SaveGraphFileChooser extends JFileChooser
 	{
-		public static final long serialVersionUID = 0x00101201L;
+		public static final long serialVersionUID = 0x040220070001L;
 		
 		protected CLI cli;
 		protected Component parent;
@@ -700,7 +700,7 @@ public class WUtils
 		extends LinkedList<ReloadField>
 		implements NotificationListener
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040220060001L;
 		
 		public ReloadPool()
 		{

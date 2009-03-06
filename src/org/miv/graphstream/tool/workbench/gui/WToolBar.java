@@ -33,7 +33,7 @@ public class WToolBar
 	extends JToolBar
 	implements ActionListener
 {
-	public static final long serialVersionUID = 0x00A00401L;
+	public static final long serialVersionUID = 0x040200000001L;
 	
 	public static final String OPT_ADD_NODE_ID = "actions.options.addnode.id";
 	public static final String OPT_ADD_EDGE_ID = "actions.options.addedge.id";

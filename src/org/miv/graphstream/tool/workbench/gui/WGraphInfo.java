@@ -49,10 +49,10 @@ import javax.swing.DefaultComboBoxModel;
  * @author Guilhelm Savin
  *
  */
-public class GraphInfo extends JPanel 
+public class WGraphInfo extends JPanel 
 	implements ContextChangeListener, GraphListener, ItemListener
 {
-	public static final long serialVersionUID = 0x00A00A01L;
+	public static final long serialVersionUID = 0x040100000001L;
 	
 	protected WCore core;
 	protected CLI			cli;
@@ -63,12 +63,12 @@ public class GraphInfo extends JPanel
 	protected GraphsModel	graphsModel;
 	
 	@SuppressWarnings("unused")
-	private GraphInfo()
+	private WGraphInfo()
 	{
 		throw new Error( "bad way" );
 	}
 	
-	public GraphInfo( CLI cli )
+	public WGraphInfo( CLI cli )
 	{
 		this.cli = cli;
 		this.core = cli.getCore();
@@ -228,7 +228,7 @@ public class GraphInfo extends JPanel
 	class GraphsModel extends DefaultComboBoxModel
 		implements WorkbenchListener
 	{
-		public static final long serialVersionUID = 0x00A00B01L;
+		public static final long serialVersionUID = 0x040100010001L;
 		
 		public void contextAdded( ContextEvent ce )
 		{

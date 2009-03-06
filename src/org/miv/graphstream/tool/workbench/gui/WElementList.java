@@ -41,7 +41,7 @@ public class WElementList
 	extends JList
 	implements ContextChangeListener, ContextListener
 {
-	private static final long serialVersionUID = 0x0001L;
+	private static final long serialVersionUID = 0x0400D0000001L;
 	
 	private static ElementsModel NODE_MODEL = null;
 	private static ElementsModel EDGE_MODEL = null;

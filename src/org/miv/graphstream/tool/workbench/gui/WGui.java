@@ -45,7 +45,7 @@ import javax.swing.UIManager;
 public class WGui 
 	extends JFrame
 {
-	public static final long serialVersionUID = 0x00A00501L;
+	public static final long serialVersionUID = 0x040110000001L;
 	
 	private static WGui gui = null;
 	
@@ -121,7 +121,7 @@ public class WGui
 		
 		WDialogManager.init(this);
 		dialogs.put( "selection", 	new WDialog( this, "Selection", tmp ) );
-		dialogs.put( "graph-infos",	new WDialog( this, "Graph Infos", new GraphInfo(core.getCLI()) ));
+		dialogs.put( "graph-infos",	new WDialog( this, "Graph Infos", new WGraphInfo(core.getCLI()) ));
 		dialogs.put( "history",		new WDialog( this, "History", new WHistoryGUI() ));
 		
 		this.core.addWorkbenchListener( this.desktop );

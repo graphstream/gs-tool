@@ -30,7 +30,7 @@ import javax.swing.JFrame;
 public class WDialog
 	extends JDialog
 {
-	private static final long serialVersionUID = 0x0001L;
+	private static final long serialVersionUID = 0x0400A0000001L;
 	
 	private JComponent content;
 	

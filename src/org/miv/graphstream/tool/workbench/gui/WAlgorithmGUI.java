@@ -60,7 +60,7 @@ public class WAlgorithmGUI
 	extends JDialog
 	implements ActionListener, AlgorithmListener
 {
-	private static final long serialVersionUID = 0x0001L;
+	private static final long serialVersionUID = 0x040050000001L;
 	
 	public static ImageIcon ALGORITHM_ICON = null;
 	static
@@ -94,7 +94,7 @@ public class WAlgorithmGUI
 		extends JDialog
 		implements ActionListener
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040050010001L;
 		
 		LinkedList<WAlgorithmParametersGUIField> params = new LinkedList<WAlgorithmParametersGUIField>();
 		
@@ -184,7 +184,7 @@ public class WAlgorithmGUI
 	public static abstract class WAlgorithmParametersGUIField
 		extends JPanel
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040050020001L;
 		
 		public abstract Object getValue();
 	}
@@ -192,7 +192,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldString
 		extends WAlgorithmParametersGUIField
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400500D0001L;
 
 		JTextField value;
 		
@@ -217,7 +217,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldBoolean
 		extends WAlgorithmParametersGUIField
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040050030001L;
 		
 		JCheckBox value;
 		
@@ -242,7 +242,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldInteger
 		extends WAlgorithmParametersGUIField
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400500A0001L;
 		
 		JSpinner value;
 		SpinnerNumberModel model;
@@ -269,7 +269,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldFloat
 		extends WAlgorithmParametersGUIField
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040050090001L;
 		
 		JSpinner value;
 		SpinnerNumberModel model;
@@ -296,7 +296,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldDouble
 		extends WAlgorithmParametersGUIField
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040050040001L;
 		
 		JSpinner value;
 		SpinnerNumberModel model;
@@ -323,7 +323,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldNodeId
 		extends WAlgorithmParametersGUIField
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400500C0001L;
 		
 		JComboBox value;
 		
@@ -345,7 +345,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldNode
 		extends WAlgorithmParametersGUIFieldNodeId
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400500B0001L;
 		
 		public WAlgorithmParametersGUIFieldNode( WAlgorithm.Parameter p )
 		{
@@ -368,7 +368,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldEdgeId
 		extends WAlgorithmParametersGUIField
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040050060001L;
 		
 		JComboBox value;
 		
@@ -390,7 +390,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldEdge
 		extends WAlgorithmParametersGUIFieldEdgeId
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040050050001L;
 		
 		public WAlgorithmParametersGUIFieldEdge( WAlgorithm.Parameter p )
 		{
@@ -413,7 +413,7 @@ public class WAlgorithmGUI
 	public static class WAlgorithmParametersGUIFieldEnum
 		extends WAlgorithmParametersGUIField
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040050080001L;
 		
 		JComboBox value;
 		

@@ -68,7 +68,7 @@ public class CLITerm extends JPanel
 	/**
 	 * Serial version UID.
 	 */
-	public static final long serialVersionUID = 0x00A002L;
+	public static final long serialVersionUID = 0x040010000001L;
 	/**
 	 * CLI object to send command.
 	 */
@@ -287,9 +287,10 @@ public class CLITerm extends JPanel
 	 * 
 	 * @author Guilhelm Savin
 	 */
-	class PromptDocument extends PlainDocument
+	class PromptDocument 
+		extends PlainDocument
 	{
-		public static final long serialVersionUID = 0x00A003L;
+		public static final long serialVersionUID = 0x040010010001L;
 		
 		public void remove( int off, int len ) throws BadLocationException
 		{
@@ -303,7 +304,8 @@ public class CLITerm extends JPanel
 	 * @author Guilhelm Savin
 	 *
 	 */
-	class UpDownPromptListener extends KeyAdapter
+	class UpDownPromptListener
+		extends KeyAdapter
 	{
 		public UpDownPromptListener()
 		{

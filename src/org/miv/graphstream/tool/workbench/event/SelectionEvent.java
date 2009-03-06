@@ -27,7 +27,7 @@ import org.miv.graphstream.tool.workbench.Context;
 
 public class SelectionEvent extends ContextEvent
 {
-	public static final long serialVersionUID = 0x00A00F01L;
+	public static final long serialVersionUID = 0x030060000001L;
 	
 	public static enum Type
 	{

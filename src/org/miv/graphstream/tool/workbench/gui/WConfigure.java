@@ -30,5 +30,5 @@ import javax.swing.JFrame;
 public class WConfigure
 	extends JFrame
 {
-	private static final long serialVersionUID = 0x0001L;
+	private static final long serialVersionUID = 0x040070000001L;
 }

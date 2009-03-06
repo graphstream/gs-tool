@@ -113,7 +113,7 @@ public class WActions
 	static abstract class BaseAction
 		extends AbstractAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040010001L;
 		
 		String key;
 		
@@ -135,7 +135,7 @@ public class WActions
 	static class CLIAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040020001L;
 		
 		String cmd;
 		
@@ -155,7 +155,7 @@ public class WActions
 	static class NewFileAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400400B0001L;
 		
 		public NewFileAction()
 		{
@@ -172,7 +172,7 @@ public class WActions
 	static class OpenFileAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400400C0001L;
 		
 		public OpenFileAction()
 		{
@@ -189,7 +189,7 @@ public class WActions
 	static class SaveFileAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040140001L;
 		
 		public SaveFileAction()
 		{
@@ -210,7 +210,7 @@ public class WActions
 	static class SaveAsFileAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040130001L;
 		
 		public SaveAsFileAction()
 		{
@@ -228,7 +228,7 @@ public class WActions
 	static class RestoreFileAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040120001L;
 		
 		public RestoreFileAction()
 		{
@@ -247,7 +247,7 @@ public class WActions
 	static class ExitAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040080001L;
 		
 		public ExitAction()
 		{
@@ -264,7 +264,7 @@ public class WActions
 	static class UndoAction
 		extends CLIAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040160001L;
 		
 		public UndoAction()
 		{
@@ -276,7 +276,7 @@ public class WActions
 	static class RedoAction
 		extends CLIAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040110001L;
 		
 		public RedoAction()
 		{
@@ -288,7 +288,7 @@ public class WActions
 	static class CopyAction
 		extends CLIAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040040001L;
 		
 		public CopyAction()
 		{
@@ -300,7 +300,7 @@ public class WActions
 	static class CutAction
 		extends CLIAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040060001L;
 		
 		public CutAction()
 		{
@@ -312,7 +312,7 @@ public class WActions
 	static class PasteAction
 		extends CLIAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040100001L;
 		
 		public PasteAction()
 		{
@@ -324,7 +324,7 @@ public class WActions
 	static class FindAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040090001L;
 		
 		public FindAction()
 		{
@@ -341,7 +341,7 @@ public class WActions
 	static class OptionsAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400400F0001L;
 		
 		public OptionsAction()
 		{
@@ -357,7 +357,7 @@ public class WActions
 	static class HelpAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400400A0001L;
 
 		public HelpAction()
 		{
@@ -373,7 +373,7 @@ public class WActions
 	static class CoreAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040050001L;
 		
 		ActionMode mode;
 		
@@ -402,7 +402,7 @@ public class WActions
 	static class ConfigureAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040030001L;
 		
 		public ConfigureAction()
 		{
@@ -418,7 +418,7 @@ public class WActions
 	static class OpenTerminalAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400400E0001L;
 		
 		public OpenTerminalAction()
 		{
@@ -434,7 +434,7 @@ public class WActions
 	static class OpenLinkAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x0400400D0001L;
 		
 		String link;
 		
@@ -458,7 +458,7 @@ public class WActions
 	static class SaveUserSettingsAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040150001L;
 		
 		public SaveUserSettingsAction()
 		{
@@ -474,7 +474,7 @@ public class WActions
 	static class DeleteUserSettingsAction
 		extends BaseAction
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040040070001L;
 		
 		public DeleteUserSettingsAction()
 		{

@@ -1,0 +1,211 @@
+Shape:
+	xx:xxx:xxx:xxxx
+	^   ^   ^   ^
+	|   |   |   |
+	Package |   Version numbering
+	    |   |   
+	    Class ID
+	        |   
+	        Internal class ID
+
+Package numbering :
+------------------
+
+	      org.miv.graphstream.tool.workbench : 0x01
+	  org.miv.graphstream.tool.workbench.cli : 0x02
+	org.miv.graphstream.tool.workbench.event : 0x03
+	  org.miv.graphstream.tool.workbench.gui : 0x04
+	  org.miv.graphstream.tool.workbench.xml : 0x05
+	  
+Class numbering :
+----------------
+
+	             Context : 0x01001
+	      ContextFactory : 0x01002
+	      DefaultContext : 0x01003
+	          WAlgorithm : 0x01004
+	    WAlgorithmLoader : 0x01005
+	          WClipboard : 0x01006
+	               WCore : 0x01007
+	        WGraphReader : 0x01008
+	            WHistory : 0x01009
+	 WNotificationServer : 0x0100A
+	WorkbenchEnvironment : 0x0100B
+	          WSelection : 0x0100C
+	
+	   AlgorithmOperator : 0x02001
+	                 CLI : 0x02002
+	          CLICommand : 0x02003
+	      CLICommandPool : 0x02004
+	  ClipboardOperators : 0x02005
+	      EdgeOperations : 0x02006
+	    ElementOperators : 0x02007
+	        ForOperators : 0x02008
+	     GraphOperations : 0x02009
+	    HistoryOperators : 0x0200A
+	       ListOperators : 0x0200B
+	      NodeOperations : 0x0200C
+	     SelectOperators : 0x0200D
+	     
+	   AlgorithmListener : 0x03001
+   ContextChangeListener : 0x03002
+            ContextEvent : 0x03003
+         ContextListener : 0x03004
+    NotificationListener : 0x03005
+          SelectionEvent : 0x03006
+       SelectionListener : 0x03007
+          WorkbenchEvent : 0x03008
+       WorkbenchListener : 0x03009
+       
+                 CLITerm : 0x04001
+                  WAbout : 0x04002
+        WActionAccessory : 0x04003
+                WActions : 0x04004
+           WAlgorithmGUI : 0x04005
+       WAlgorithmManager : 0x04006
+              WConfigure : 0x04007
+                    WCss : 0x04008
+                WDesktop : 0x04009
+                 WDialog : 0x0400A
+          WDialogManager : 0x0400B
+            WElementInfo : 0x0400C
+            WElementList : 0x0400D
+                  WFonts : 0x0400E
+                WGetText : 0x0400F
+             WGraphInfos : 0x04010
+                    WGui : 0x04011
+                   WHelp : 0x04012
+             WHistoryGUI : 0x04013
+                  WIcons : 0x04014
+                 WLoader : 0x04015
+                WMenuBar : 0x04016
+                WOptions : 0x04017
+                 WSearch : 0x04018
+           WSelectionGUI : 0x04019
+                WToolBar : 0x04020
+           WUserSettings : 0x04021
+                  WUtils : 0x04022
+                  
+               WXElement : 0x05001
+           WXElementSpec : 0x05002
+           WXmlConstants : 0x05003
+             WXmlHandler : 0x05004
+
+Internal class numbering :
+-------------------------
+
+	                      WClipboard$ClipboardContent : 0x01006001
+	             
+	         WHistory$AbstractAddElementHistoryAction : 0x01009001
+	                    WHistory$AddNodeHistoryAction : 0x01009002
+	                    WHistory$DelNodeHistoryAction : 0x01009003
+	                    WHistory$AddEdgeHistoryAction : 0x01009004
+	                    WHistory$DelEdgeHistoryAction : 0x01009005
+	                      WHistory$PasteHistoryAction : 0x01009006
+	             
+	                                  CLI$HelpCommand : 0x02002001
+	                         
+                          CLICommand$CLICommandResult : 0x02003001
+                          
+	             ElementOperators$SetAttributeCommand : 0x02007001
+	           ElementOperators$UnsetAttributeCommand : 0x02007002
+	  
+	                      ForOperators$ForEachCommand : 0x02008001
+	                          ForOperators$ForCommand : 0x02008002
+	                 
+	                    GraphOperations$CreateCommand : 0x02009001
+	                      GraphOperations$OpenCommand : 0x02009002
+	                   GraphOperations$DisplayCommand : 0x02009003
+	                      GraphOperations$ListCommand : 0x02009004
+	                    GraphOperations$SelectCommand : 0x02009005
+	                      GraphOperations$SaveCommand : 0x02009006
+	                GraphOperations$AutoLayoutCommand : 0x02009007
+	       
+	                           SelectOperators$Select : 0x0200D001
+	                             SelectOperators$Show : 0x0200D002
+	                    
+                               CLITerm$PromptDocument : 0x04001001
+                         CLITerm$UpDownPromptListener : 0x04001002
+                
+                    WActionAccessory$AddNodeAccessory : 0x04003001
+                    WActionAccessory$AddEdgeAccessory : 0x04003002
+                     WActionAccessory$SelectAccessory : 0x04003003
+
+                                  WActions$BaseAction : 0x04004001
+                                   WActions$CLIAction : 0x04004002
+                             WActions$ConfigureAction : 0x04004003
+                                  WActions$CopyAction : 0x04004004
+                                  WActions$CoreAction : 0x04004005
+                                   WActions$CutAction : 0x04004006
+                    WActions$DeleteUserSettingsAction : 0x04004007
+                                  WActions$ExitAction : 0x04004008
+                                  WActions$FindAction : 0x04004009
+                                  WActions$HelpAction : 0x0400400A
+                               WActions$NewFileAction : 0x0400400B
+                              WActions$OpenFileAction : 0x0400400C
+                              WActions$OpenLinkAction : 0x0400400D
+                          WActions$OpenTerminalAction : 0x0400400E
+                               WActions$OptionsAction : 0x0400400F
+                                 WActions$PasteAction : 0x04004010
+                                  WActions$RedoAction : 0x04004011
+                           WActions$RestoreFileAction : 0x04004012
+                            WActions$SaveAsFileAction : 0x04004013
+                              WActions$SaveFileAction : 0x04004014
+                      WActions$SaveUserSettingsAction : 0x04004015
+                                  WActions$UndoAction : 0x04004016
+ 
+                 WAlgorithmGUI$WAlgorithmParameterGUI : 0x04005001
+            WAlgorithmGUI$WAlgorithmParameterGUIField : 0x04005002
+     WAlgorithmGUI$WAlgorithmParameterGUIFieldBoolean : 0x04005003
+      WAlgorithmGUI$WAlgorithmParameterGUIFieldDouble : 0x04005004
+        WAlgorithmGUI$WAlgorithmParameterGUIFieldEdge : 0x04005005
+      WAlgorithmGUI$WAlgorithmParameterGUIFieldEdgeId : 0x04005006
+WAlgorithmGUI$WAlgorithmParameterGUIFieldElementModel : 0x04005007
+        WAlgorithmGUI$WAlgorithmParameterGUIFieldEnum : 0x04005008
+       WAlgorithmGUI$WAlgorithmParameterGUIFieldFloat : 0x04005009
+     WAlgorithmGUI$WAlgorithmParameterGUIFieldInteger : 0x0400500A
+        WAlgorithmGUI$WAlgorithmParameterGUIFieldNode : 0x0400500B
+      WAlgorithmGUI$WAlgorithmParameterGUIFieldNodeId : 0x0400500C
+      WAlgorithmGUI$WAlgorithmParameterGUIFieldString : 0x0400500D
+      
+                                WDesktop$ContextFrame : 0x04009001
+           WDesktop$ContextFrame$EdgeSelectionHandler : 0x04009002
+
+                            WElementList$ElementModel : 0x0400D001
+
+                              WGetText$GetTextChecker : 0x0400F001
+                              WGetText$GetTextHandler : 0x0400F002
+
+                               WGraphInfo$GraphsModel : 0x04010001
+
+                                    WHelp$HelpHandler : 0x04012001
+                                 WHelp$SectionContent : 0x04012002
+
+                    WHistoryGUI$HistoryActionRenderer : 0x04013001
+
+                                   WIcons$IconHandler : 0x04014001
+
+                               WMenuBar$ComponentPool : 0x04016001
+
+                             WOptions$SettingsHandler : 0x04017001
+                                   WOptions$SkinModel : 0x04017002
+
+                         WSearch$SearchResultRenderer : 0x04018001
+
+                        WSelectionGUI$ElementRenderer : 0x04019001
+
+                            WUserSettings$FileHistory : 0x04021001
+
+                                 WUtils$ExtFileFilter : 0x04022001
+                                WUtils$NewGraphDialog : 0x04022002
+                            WUtils$OpenGraphAccessory : 0x04022003
+                          WUtils$OpenGraphFileChooser : 0x04022004
+                                   WUtils$ReloadField : 0x04022005
+                                    WUtils$ReloadPool : 0x04022006
+                          WUtils$SaveGraphFileChooser : 0x04022007
+
+                                  WXElement$Attribute : WXElement001
+                          WXElement$WXElementIterator : WXElement002
+
+                         WXmlHandler$WXElementChecker : 0x05004001
+                         WXmlHandler$WXElementHandler : 0x05004002

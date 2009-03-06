@@ -53,7 +53,7 @@ import javax.swing.event.DocumentListener;
 public class WActionAccessory
 	extends JDialog 
 {
-	public static final long serialVersionUID = 0x00A01401L;
+	public static final long serialVersionUID = 0x040030000001L;
 	
 	static void load()
 	{
@@ -189,7 +189,7 @@ public class WActionAccessory
 		extends JPanel
 		implements DocumentListener, ContextChangeListener
 	{
-		public static final long serialVersionUID = 0x00A01501L;
+		public static final long serialVersionUID = 0x040030010001L;
 		
 		protected JTextField nodeIdFormat = new JTextField( 15 );
 		
@@ -271,7 +271,7 @@ public class WActionAccessory
 		extends JPanel
 		implements ChangeListener, DocumentListener, ContextChangeListener
 	{
-		public static final long serialVersionUID = 0x00A01601L;
+		public static final long serialVersionUID = 0x040030020001L;
 		
 		protected JCheckBox cycle, directed;
 		protected JTextField edgeIdFormat;
@@ -374,7 +374,7 @@ public class WActionAccessory
 		extends JPanel
 		implements ActionListener
 	{
-		public static final long serialVersionUID = 0x00A01801L;
+		public static final long serialVersionUID = 0x040030030001L;
 		
 		//protected JButton pattern;
 		protected JTextField pattern;

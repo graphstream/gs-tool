@@ -49,13 +49,13 @@ public class WHistoryGUI
 	extends JPanel
 	implements NotificationListener, ContextChangeListener
 {
-	private static final long serialVersionUID = 0x0001L;
+	private static final long serialVersionUID = 0x040130000001L;
 	
 	static class HistoryActionRenderer
 		extends JPanel
 		implements ListCellRenderer
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040130010001L;
 		
 		JLabel 	icon;
 		JLabel	title;

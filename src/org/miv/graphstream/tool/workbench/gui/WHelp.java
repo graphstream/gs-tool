@@ -50,7 +50,7 @@ public class WHelp
 	extends JDialog
 	implements NotificationListener, WXmlConstants
 {
-	private static final long serialVersionUID = 0X0001L;
+	private static final long serialVersionUID = 0x040120000001L;
 	
 	static void init() {}
 	
@@ -85,7 +85,7 @@ public class WHelp
 		extends JPanel
 		implements ItemListener
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040120020001L;
 		
 		private HashMap<String,Document> 	contents;
 		private DefaultComboBoxModel		subsections;

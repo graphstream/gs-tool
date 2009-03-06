@@ -60,7 +60,7 @@ public class WSearch
 	extends JDialog
 	implements ActionListener
 {
-	private static final long serialVersionUID = 0x0001L;
+	private static final long serialVersionUID = 0x040180000001L;
 	
 	private static final WSearch searchModule = new WSearch();
 	
@@ -78,7 +78,7 @@ public class WSearch
 		extends JPanel
 		implements ListCellRenderer
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040180010001L;
 
 		JLabel 	icon;
 		JLabel	title;

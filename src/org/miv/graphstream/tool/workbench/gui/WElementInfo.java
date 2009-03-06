@@ -23,7 +23,7 @@ import javax.swing.table.DefaultTableModel;
 public class WElementInfo
 	extends JDialog
 {
-	private static final long serialVersionUID = 0x0001L;
+	private static final long serialVersionUID = 0x0400C0000001L;
 
 	public WElementInfo( Element e )
 	{

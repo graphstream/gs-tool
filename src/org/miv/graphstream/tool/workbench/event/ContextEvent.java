@@ -41,7 +41,7 @@ public class ContextEvent extends EventObject
 	/**
 	 * Defines serial version uid.
 	 */
-	public static final long serialVersionUID = 0x00A001L;
+	public static final long serialVersionUID = 0x030030000001L;
 	
 	/**
 	 * New context.

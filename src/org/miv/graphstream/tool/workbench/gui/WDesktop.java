@@ -68,7 +68,7 @@ public class WDesktop
 	extends JPanel
 	implements WorkbenchListener,WindowFocusListener
 {
-	public static final long serialVersionUID = 0x00A00701L;
+	public static final long serialVersionUID = 0x040090000001L;
 	
 	public static final String styleSheet = 
 		"url('org/miv/graphstream/tool/workbench/ressources/css/gswb-desktop.css')";
@@ -191,7 +191,7 @@ public class WDesktop
 	class ContextFrame extends JDialog
 		implements ContextListener, WindowListener, MouseListener, MouseWheelListener, KeyListener
 	{
-		public static final long serialVersionUID = 0x00A00801L;
+		public static final long serialVersionUID = 0x040090010001L;
 		
 		protected Context ctx;
 		protected SwingGraphViewer viewer;

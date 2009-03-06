@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 public class WorkbenchEnvironment extends HashMap<String, Object>
 {
-	public static final long serialVersionUID = 0x00A01701L;
+	public static final long serialVersionUID = 0x0100B0000001L;
 	
 	public String getString( String key )
 	{

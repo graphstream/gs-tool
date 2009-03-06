@@ -35,7 +35,7 @@ import javax.swing.JPanel;
 public class WAbout
 	extends JDialog
 {
-	private static final long serialVersionUID = 0x0001L;
+	private static final long serialVersionUID = 0x040020000001L;
 	
 	private static final WAbout about = new WAbout();
 	

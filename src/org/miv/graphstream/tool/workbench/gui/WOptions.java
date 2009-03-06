@@ -53,7 +53,7 @@ public class WOptions
 	extends JDialog
 	implements ItemListener, ChangeListener, ActionListener, WXmlConstants
 {
-	private static final long serialVersionUID = 0x0001L;
+	private static final long serialVersionUID = 0x040170000001L;
 	
 	protected static String userSettings = "";
 	

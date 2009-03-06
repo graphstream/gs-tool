@@ -27,7 +27,7 @@ import java.util.EventObject;
 
 public class WorkbenchEvent extends EventObject
 {
-	public static final long serialVersionUID = 0x00A00901L;
+	public static final long serialVersionUID = 0x030080000001L;
 	
 	public WorkbenchEvent( WCore src )
 	{

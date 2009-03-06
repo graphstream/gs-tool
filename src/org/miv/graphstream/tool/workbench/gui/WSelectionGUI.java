@@ -53,13 +53,13 @@ import javax.swing.ListCellRenderer;
 public class WSelectionGUI extends JList 
 	implements ContextChangeListener, SelectionListener
 {
-	public static final long serialVersionUID = 0x00A00C01L;
+	public static final long serialVersionUID = 0x040190000001L;
 	
 	static class ElementRenderer
 		extends JPanel
 		implements ListCellRenderer
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040190010001L;
 
 		JLabel 	icon;
 		JLabel	title;

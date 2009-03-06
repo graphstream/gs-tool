@@ -57,7 +57,7 @@ public class WMenuBar
 	extends JMenuBar
 	implements NotificationListener, WXmlConstants
 {
-	public static final long serialVersionUID = 0x00A00301L;
+	public static final long serialVersionUID = 0x040160000001L;
 
 	private static final Pattern getaction = Pattern.compile("^@getaction\\((.*)\\)$");
 	
@@ -267,7 +267,7 @@ public class WMenuBar
 	static class ComponentPool
 		extends LinkedList<JComponent>
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x040160010001L;
 		
 		public void disable()
 		{
