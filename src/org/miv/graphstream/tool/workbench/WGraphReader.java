@@ -37,8 +37,10 @@ public class WGraphReader
 {
 	static enum Mode
 	{
+		Full,
 		Begin,
 		Step,
+		SlowStep,
 		End,
 		Finish
 	}
@@ -47,10 +49,13 @@ public class WGraphReader
 	GraphReader reader;
 	Mode 		mode;
 	Context 	ctx;
+	boolean		fullMode;
+	boolean		slowMode;
 	
 	public WGraphReader()
 	{
-		
+		fullMode = false;
+		slowMode = false;
 	}
 	
 	public void read( String file, Context ctx )
@@ -69,7 +74,7 @@ public class WGraphReader
 	{
 		this.reader = reader;
 		this.path   = file;
-		this.mode	= Mode.Begin;
+		this.mode	= fullMode ? Mode.Full : Mode.Begin;
 		this.ctx	= ctx;
 		
 		GraphReaderListenerHelper l = new GraphReaderListenerHelper( ctx.getGraph() );
@@ -78,12 +83,26 @@ public class WGraphReader
 		SwingUtilities.invokeLater(this);
 	}
 	
+	private void full()
+	{
+		try
+		{
+			reader.read(path);
+			ctx.resetChanged();
+			mode = Mode.Finish;
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	private void begin()
 	{
 		try
 		{
 			reader.begin(path);
-			mode = Mode.Step;
+			mode = slowMode ? Mode.SlowStep : Mode.Step;
 		}
 		catch( Exception e )
 		{
@@ -95,9 +114,18 @@ public class WGraphReader
 	{
 		try
 		{
-			boolean b = reader.nextStep();
+			boolean b;
+			
+			if( mode == Mode.Step )
+				b = reader.nextStep();
+			else if( mode == Mode.SlowStep )
+				b = reader.nextEvents();
+			else
+				return;
+			
 			ctx.resetChanged();
-			mode = b ? Mode.Step : Mode.End;
+			
+			mode = b ? mode : Mode.End;
 		}
 		catch( Exception e )
 		{
@@ -124,13 +152,17 @@ public class WGraphReader
 		{
 			begin();
 		}
-		else if( mode == Mode.Step )
+		else if( mode == Mode.Step || mode == Mode.SlowStep )
 		{
 			step();
 		}
 		else if( mode == Mode.End )
 		{
 			end();
+		}
+		else if( mode == Mode.Full )
+		{
+			full();
 		}
 	}
 	
