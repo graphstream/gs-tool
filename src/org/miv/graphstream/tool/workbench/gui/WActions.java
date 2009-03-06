@@ -390,7 +390,7 @@ public class WActions
 		
 		public void actionPerformed( ActionEvent e )
 		{
-			ActionAccessory.showAccessory();
+			WActionAccessory.showAccessory();
 		}
 	}
 	

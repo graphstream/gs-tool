@@ -61,6 +61,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.MenuSelectionManager;
 
 public class WDesktop
@@ -199,20 +200,24 @@ public class WDesktop
 		protected int automaticNodeIdCount = 0;
 		protected int automaticEdgeIdCount = 0;
 		protected String lastNodeSelected = null;
+		protected JProgressBar	readerProgression;
 		
 		public ContextFrame( Context ctx )
 		{
 			super( gui );
 			
+			setLayout( new BorderLayout() );
 			setTitle(ctx.getGraph().getId());
 			
 			edgeSelectionHandler = new EdgeSelectionHandler();
 			
 			this.viewer = new SwingGraphViewer( ctx.getGraph(), ctx.isAutolayout(), true );
 			this.ctx = ctx;
+			this.readerProgression = new JProgressBar(ctx.getReaderProgressionModel());
 			
 			Component c = this.viewer.getSwingComponent();
-			add( c );
+			add( c, BorderLayout.CENTER );
+			
 			c.addMouseListener( this );
 			c.addMouseWheelListener( this );
 			
@@ -449,10 +454,18 @@ public class WDesktop
 			}
 		}
 		
-		public void contextElementOperation( ContextEvent ce, Element e, 
-				ElementOperation op, Object data )
+		public void contextGraphOperation( ContextEvent ce,	GraphOperation op, Object data )
 		{
-			
+			if( op == GraphOperation.ReadBegin )
+			{
+				add( readerProgression, BorderLayout.SOUTH );
+				validate();
+			}
+			else if( op == GraphOperation.ReadEnd )
+			{
+				remove( readerProgression );
+				validate();
+			}
 		}
 
 	// SelectionListener implementation

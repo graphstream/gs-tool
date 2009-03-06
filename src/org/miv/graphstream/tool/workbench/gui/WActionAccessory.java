@@ -25,13 +25,14 @@ package org.miv.graphstream.tool.workbench.gui;
 import org.miv.graphstream.tool.workbench.Context;
 import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.WCore.ActionMode;
+import org.miv.graphstream.tool.workbench.cli.CLI;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.ContextChangeListener;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -41,56 +42,82 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JSlider;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-public class ActionAccessory
+public class WActionAccessory
 	extends JDialog 
 {
 	public static final long serialVersionUID = 0x00A01401L;
 	
-	private static final HashMap<ActionMode,ActionAccessory> accessories = new HashMap<ActionMode,ActionAccessory>();
-	
 	static void load()
 	{
-		accessories.put( ActionMode.ADD_NODE, 	new AddNodeAccessory() );
-		accessories.put( ActionMode.ADD_EDGE, 	new AddEdgeAccessory() );
-		accessories.put( ActionMode.SELECT, 	new SelectAccessory() );
+		if( accessories == null )
+			accessories = new WActionAccessory();
 	}
+	
+	private static WActionAccessory accessories = new WActionAccessory();
 	
 	public static void showAccessory()
 	{
 		ActionMode current = WCore.getCore().getActionMode();
 		
-		if( accessories.containsKey(current) )
-			accessories.get(current).setVisible(true);
+		accessories.setMode(current);
+		accessories.setVisible(true);
 	}
 	
-	protected GridLayout layout;
-	protected Map<String,Component> components;
+	protected Map<ActionMode,Integer> modeToTabsIndex;
+	protected JTabbedPane tabs;
 	
-	public ActionAccessory()
+	public WActionAccessory()
 	{
-		this( "Accessory" );
+		this( "Configure" );
 	}
 	
-	public ActionAccessory( String title )
+	public WActionAccessory( String title )
 	{
 		setTitle(title);
 		
-		components = new HashMap<String,Component>();
+		modeToTabsIndex	= new HashMap<ActionMode,Integer>();
+		tabs 			= new JTabbedPane();
 		
-		layout = new GridLayout();
-		setLayout( layout );
-		//setBorder( javax.swing.BorderFactory.createTitledBorder(title) );
+		setLayout( new BorderLayout() );
+		add( tabs, BorderLayout.CENTER );
+		
+		tabs.addTab( 
+				null,//WGetText.getText("action:edgeadd"), 
+				WIcons.getIcon("action:select"), 
+				new SelectAccessory() );
+		modeToTabsIndex.put(ActionMode.SELECT,0);
+		
+		tabs.addTab( 
+				null,//WGetText.getText("action:nodeadd"), 
+				WIcons.getIcon("action:nodeadd"), 
+				new AddNodeAccessory() );
+		modeToTabsIndex.put(ActionMode.ADD_NODE,1);
+		
+		tabs.addTab( 
+				null,//WGetText.getText("action:edgeadd"), 
+				WIcons.getIcon("action:edgeadd"), 
+				new AddEdgeAccessory() );
+		modeToTabsIndex.put(ActionMode.ADD_EDGE,2);
+		
+		tabs.setPreferredSize( new java.awt.Dimension(300,150) );
+		
 		pack();
 	}
 	
+	public void setMode( ActionMode mode )
+	{
+		if( modeToTabsIndex.containsKey(mode) )
+			tabs.setSelectedIndex(modeToTabsIndex.get(mode));
+	}
+	/*
 	protected synchronized void registerComponent( String id, Component c, int elements )
 	{
 		components.put( id, c );
@@ -157,8 +184,9 @@ public class ActionAccessory
 		
 		return button;
 	}
-	
-	static class AddNodeAccessory extends ActionAccessory
+	*/
+	static class AddNodeAccessory
+		extends JPanel
 		implements DocumentListener, ContextChangeListener
 	{
 		public static final long serialVersionUID = 0x00A01501L;
@@ -167,9 +195,26 @@ public class ActionAccessory
 		
 		public AddNodeAccessory()
 		{
-			super( "Add node options" );
+			//nodeIdFormat = addTextOption( "id ", "id", "node#%n" );
+			nodeIdFormat = new JTextField( "node#%n" );
 			
-			nodeIdFormat = addTextOption( "id ", "id", "node#%n" );
+			GridBagLayout bag = new GridBagLayout();
+			GridBagConstraints c = new GridBagConstraints();
+			setLayout(bag);
+			
+			JLabel l = new JLabel( "id: " );
+			
+			c.gridy = 0;
+			c.gridx = 0;
+			c.fill = GridBagConstraints.HORIZONTAL;
+			bag.setConstraints(l,c);
+			add(l);
+			
+			c.gridx = 1;
+			c.weightx = 2.0;
+			c.gridwidth = GridBagConstraints.REMAINDER;
+			bag.setConstraints(nodeIdFormat,c);
+			add(nodeIdFormat);
 			
 			nodeIdFormat.getDocument().addDocumentListener( this );
 			nodeIdFormat.setToolTipText( "specify nodes id.\nyou can use \"%n\" to insert" +
@@ -222,7 +267,8 @@ public class ActionAccessory
 		}
 	}
 	
-	static class AddEdgeAccessory extends ActionAccessory
+	static class AddEdgeAccessory
+		extends JPanel
 		implements ChangeListener, DocumentListener, ContextChangeListener
 	{
 		public static final long serialVersionUID = 0x00A01601L;
@@ -232,11 +278,35 @@ public class ActionAccessory
 		
 		public AddEdgeAccessory()
 		{
-			super( "Add edge options" );
+			GridBagLayout bag = new GridBagLayout();
+			GridBagConstraints c = new GridBagConstraints();
+			setLayout(bag);
 			
-			cycle = addBooleanOption( "Cycle ?", "cycle", false );
-			directed = addBooleanOption( "Directed ?", "directed", false );
-			edgeIdFormat = addTextOption( "id ", "id", "edge#%n" );
+			edgeIdFormat 	= new JTextField( "edge#%n" );
+			cycle			= new JCheckBox( "Cycle ?", false );
+			directed		= new JCheckBox( "Directed ?", false );
+			
+			JLabel l = new JLabel( "id: " );
+			
+			c.gridy = 0;
+			c.gridx = 0;
+			c.fill = GridBagConstraints.HORIZONTAL;
+			bag.setConstraints(l,c);
+			add(l);
+			
+			c.gridx = 1;
+			c.weightx = 2.0;
+			c.gridwidth = GridBagConstraints.REMAINDER;
+			bag.setConstraints(edgeIdFormat,c);
+			add(edgeIdFormat);
+			
+			c.gridy++;
+			bag.setConstraints(cycle,c);
+			add(cycle);
+			
+			c.gridy++;
+			bag.setConstraints(directed,c);
+			add(directed);
 			
 			cycle.addChangeListener( this );
 			directed.addChangeListener( this );
@@ -300,25 +370,83 @@ public class ActionAccessory
 		}
 	}
 	
-	static class SelectAccessory extends ActionAccessory
+	static class SelectAccessory
+		extends JPanel
 		implements ActionListener
 	{
 		public static final long serialVersionUID = 0x00A01801L;
 		
-		protected JButton pattern;
+		//protected JButton pattern;
+		protected JTextField pattern;
+		protected JCheckBox  nodes;
+		protected JCheckBox  edges;
 		
 		public SelectAccessory()
 		{
-			super( "Selection options" );
+			GridBagLayout bag = new GridBagLayout();
+			GridBagConstraints c = new GridBagConstraints();
+			setLayout(bag);
 			
-			pattern = addButton( "select pattern", "pattern" );
-			pattern.addActionListener( this );
+			JLabel l = new JLabel( "pattern: " );
+			pattern 	= new JTextField( ".*" );
+			nodes		= new JCheckBox( "nodes" );
+			edges		= new JCheckBox( "edges" );
+			
+			c.gridy = 0;
+			c.gridx = 0;
+			c.fill = GridBagConstraints.HORIZONTAL;
+			bag.setConstraints(l,c);
+			add(l);
+			
+			c.gridx = 1;
+			c.weightx = 2.0;
+			c.gridwidth = GridBagConstraints.REMAINDER;
+			bag.setConstraints(pattern,c);
+			add(pattern);
+			
+			c.gridy++;
+			c.gridx = 0;
+			c.gridwidth = GridBagConstraints.RELATIVE;
+			c.weightx = 0;
+			bag.setConstraints(nodes,c);
+			add(nodes);
+			
+			c.gridy++;
+			bag.setConstraints(edges,c);
+			add(edges);
+			
+			JButton button = new JButton("select");
+			button.addActionListener(this);
+			c.gridy=1;
+			c.gridx=1;
+			c.gridheight = 2;
+			c.weightx = 2.0;
+			bag.setConstraints(button,c);
+			add(button);
 		}
 		
 		public void actionPerformed( ActionEvent e )
 		{
-			if( e != null && e.getSource() == pattern )
-				WUtils.selectPattern( this, WCore.getCore().getCLI() );
+			if( nodes.isSelected() || edges.isSelected() )
+			{
+				String cmd = "select all";
+				
+				if( ! ( nodes.isSelected() && edges.isSelected() ) )
+				{
+					if( nodes.isSelected() )
+						cmd += " nodes";
+					else
+						cmd += " edges";
+				}
+				
+				cmd += " \"" + pattern.getText() + "\"";
+				
+				String error = WCore.getCore().getCLI().execute( cmd );
+				if( CLI.isErrorMessage( error ) )
+					WUtils.errorMessage( this, CLI.getMessage( error ) );
+				else if( CLI.isWarningMessage( error ) )
+					WUtils.warningMessage( this, CLI.getMessage( error ) );
+			}
 		}
 	}
 }

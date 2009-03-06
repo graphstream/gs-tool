@@ -32,13 +32,13 @@
 	</container>
 	<container name="action" lang="en">
 		<entry name="action:select" value="select nodes and edges" lang="en"></entry>
-		<entry name="action:node_add" value="add nodes" lang="en"></entry>
-		<entry name="action:node_del" value="remove nodes" lang="en"></entry>
-		<entry name="action:node_info" value="get info on nodes" lang="en"></entry>
-		<entry name="action:edge_add" value="add edges" lang="en"></entry>
-		<entry name="action:edge_del" value="remove edges" lang="en"></entry>
-		<entry name="action:edge_info" value="get info on edges" lang="en"></entry>
-		<entry name="action:open_terminal" value="open a new terminal" lang="en"></entry>
+		<entry name="action:nodeadd" value="add nodes" lang="en"></entry>
+		<entry name="action:nodedel" value="remove nodes" lang="en"></entry>
+		<entry name="action:nodeinfo" value="get info on nodes" lang="en"></entry>
+		<entry name="action:edgeadd" value="add edges" lang="en"></entry>
+		<entry name="action:edgedel" value="remove edges" lang="en"></entry>
+		<entry name="action:edgeinfo" value="get info on edges" lang="en"></entry>
+		<entry name="system:openterminal" value="open a new terminal" lang="en"></entry>
 		<entry name="action:configure" value="configure selected tool" lang="en"></entry>
 	</container>
 	<container name="dialog" lang="en">
@@ -87,13 +87,13 @@
 	</container>
 	<container name="action" lang="fr">
 		<entry name="action:select" value="selectionner des noeuds et des arètes" lang="fr"></entry>
-		<entry name="action:node_add" value="ajouter des noeuds" lang="fr"></entry>
-		<entry name="action:node_del" value="supprimer des noeuds" lang="fr"></entry>
-		<entry name="action:node_info" value="obtenir des infos sur les noeuds" lang="fr"></entry>
-		<entry name="action:edge_add" value="ajouter des arètes" lang="fr"></entry>
-		<entry name="action:edge_del" value="supprimer des arètes" lang="fr"></entry>
-		<entry name="action:edge_info" value="obtenir des infos sur les arètes" lang="fr"></entry>
-		<entry name="action:open_terminal" value="ouvrir un nouveau terminal" lang="fr"></entry>
+		<entry name="action:nodeadd" value="ajout de noeuds" lang="fr"></entry>
+		<entry name="action:nodedel" value="supprimer des noeuds" lang="fr"></entry>
+		<entry name="action:nodeinfo" value="obtenir des infos sur les noeuds" lang="fr"></entry>
+		<entry name="action:edgeadd" value="ajouter des arètes" lang="fr"></entry>
+		<entry name="action:edgedel" value="supprimer des arètes" lang="fr"></entry>
+		<entry name="action:edgeinfo" value="obtenir des infos sur les arètes" lang="fr"></entry>
+		<entry name="system:openterminal" value="ouvrir un nouveau terminal" lang="fr"></entry>
 		<entry name="action:configure" value="configurer l'outil selectionné" lang="fr"></entry>
 	</container>
 	<container name="dialog" lang="fr">

@@ -102,7 +102,7 @@ public class WLoader
 		
 		splashInfo( "loading module : actions...", current++/count );
 		WActions.load();
-		ActionAccessory.load();
+		WActionAccessory.load();
 
 		splashInfo( "loading gui...", current++/count );
 		WGui.init();

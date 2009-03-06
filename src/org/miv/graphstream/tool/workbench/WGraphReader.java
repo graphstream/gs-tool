@@ -22,11 +22,16 @@
  */
 package org.miv.graphstream.tool.workbench;
 
+import java.io.FileInputStream;
+import java.nio.channels.FileChannel;
+
 import javax.swing.SwingUtilities;
+import javax.swing.DefaultBoundedRangeModel;
 
 import org.miv.graphstream.io.GraphReader;
 import org.miv.graphstream.io.GraphReaderFactory;
 import org.miv.graphstream.io.GraphReaderListenerHelper;
+import org.miv.graphstream.tool.workbench.event.ContextListener.GraphOperation;
 
 /**
  * A reader using the Swing thread.
@@ -51,11 +56,15 @@ public class WGraphReader
 	Context 	ctx;
 	boolean		fullMode;
 	boolean		slowMode;
+	FileChannel	channel;
+	
+	final DefaultBoundedRangeModel progressionModel = new DefaultBoundedRangeModel(0,0,0,100);
 	
 	public WGraphReader()
 	{
-		fullMode = false;
-		slowMode = false;
+		fullMode 	= false;
+		slowMode 	= false;
+		mode		= Mode.Finish;
 	}
 	
 	public void read( String file, Context ctx )
@@ -83,6 +92,11 @@ public class WGraphReader
 		SwingUtilities.invokeLater(this);
 	}
 	
+	public boolean isReading()
+	{
+		return mode != Mode.Finish;
+	}
+	
 	private void full()
 	{
 		try
@@ -101,7 +115,9 @@ public class WGraphReader
 	{
 		try
 		{
-			reader.begin(path);
+			FileInputStream in = new FileInputStream(path);
+			channel = in.getChannel();
+			reader.begin(in);
 			mode = slowMode ? Mode.SlowStep : Mode.Step;
 		}
 		catch( Exception e )
@@ -139,6 +155,11 @@ public class WGraphReader
 		{
 			reader.end();
 			mode = Mode.Finish;
+			
+			if( ctx instanceof DefaultContext )
+			{
+				( (DefaultContext) ctx ).fireGraphOperation(GraphOperation.ReadEnd,path);
+			}
 		}
 		catch( Exception e )
 		{
@@ -163,6 +184,15 @@ public class WGraphReader
 		else if( mode == Mode.Full )
 		{
 			full();
+		}
+		
+		try
+		{
+			progressionModel.setValue( (int) ( 100 * channel.position() / channel.size() ) );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
 		}
 	}
 	

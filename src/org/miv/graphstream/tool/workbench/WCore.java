@@ -387,11 +387,10 @@ public class WCore
 	/**
 	 * @see org.miv.graphstream.tool.workbench.event.ContextListener
 	 */
-	public void contextElementOperation( ContextEvent ce, Element e, 
-			ElementOperation op, Object data )
+	public void contextGraphOperation( ContextEvent ce, GraphOperation op, Object data )
 	{
 		for( ContextListener cl : contextListeners )
-			cl.contextElementOperation(ce,e,op,data);
+			cl.contextGraphOperation(ce,op,data);
 	}
 	
 // ContextChangeListener operations

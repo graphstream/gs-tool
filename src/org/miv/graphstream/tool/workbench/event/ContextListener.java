@@ -22,22 +22,21 @@
  */
 package org.miv.graphstream.tool.workbench.event;
 
-import org.miv.graphstream.graph.Element;
-
 public interface ContextListener
 {
-	public static enum ElementOperation
+	public static enum GraphOperation
 	{
 		NodeAdded,
 		NodeRemoved,
 		EdgeAdded,
 		EdgeRemoved,
 		AttributeChanged,
-		GraphClear
+		GraphClear,
+		ReadBegin,
+		ReadEnd
 	}
 	
 	public void contextAutolayoutChanged( ContextEvent ce );
 	
-	public void contextElementOperation( ContextEvent ce, Element e, 
-			ElementOperation op, Object data );
+	public void contextGraphOperation( ContextEvent ce,	GraphOperation op, Object data );
 }

@@ -85,7 +85,6 @@ public class WGui
 	protected static Color background = new Color( 238, 238, 238 );
 	
 	protected WToolBar 					actionBox;
-	protected InfoBox 					infoBox;
 	protected WMenuBar 					menuBar;
 	protected WCore 					core;
 	protected WDesktop 					desktop;
@@ -103,7 +102,6 @@ public class WGui
 		this.actionBox = new WToolBar( this );
 		this.menuBar = new WMenuBar( this.actionBox );
 		this.desktop = new WDesktop( this, core.getCLI() );
-		this.infoBox = new InfoBox( core.getCLI() );
 		
 		this.selectionTree = new WSelectionGUI();
 		

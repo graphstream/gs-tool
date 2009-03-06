@@ -22,6 +22,8 @@
  */
 package org.miv.graphstream.tool.workbench;
 
+import javax.swing.DefaultBoundedRangeModel;
+
 import org.miv.graphstream.tool.workbench.event.ContextListener;
 import org.miv.graphstream.tool.workbench.event.SelectionListener;
 
@@ -84,6 +86,10 @@ public interface Context
 	void setGraph( Graph graph );
 	
 	void readGraph( String path, String reader );
+	
+	boolean isReading();
+	
+	DefaultBoundedRangeModel getReaderProgressionModel();
 	/**
 	 * Get the Selection object of this content.
 	 * @return the selection list

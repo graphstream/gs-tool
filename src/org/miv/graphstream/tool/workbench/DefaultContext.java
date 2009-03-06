@@ -23,7 +23,7 @@
 package org.miv.graphstream.tool.workbench;
 
 import org.miv.graphstream.tool.workbench.event.ContextListener;
-import org.miv.graphstream.tool.workbench.event.ContextListener.ElementOperation;
+import org.miv.graphstream.tool.workbench.event.ContextListener.GraphOperation;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.SelectionListener;
 import org.miv.graphstream.tool.workbench.event.SelectionEvent;
@@ -36,6 +36,8 @@ import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.io.GraphReader;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javax.swing.DefaultBoundedRangeModel;
 
 /**
  * Default implementation of a Context.
@@ -79,6 +81,8 @@ public class DefaultContext implements Context, GraphListener
 	 */
 	protected boolean changed;
 	
+	protected final WGraphReader reader = new WGraphReader();
+	
 	/**
 	 * Default constructor.
 	 * Should not be used.
@@ -90,7 +94,7 @@ public class DefaultContext implements Context, GraphListener
 	/**
 	 * Build a context from a given graph.
 	 * 
-	 * @param graph the grpah wrapped by this context.
+	 * @param graph the graph wrapped by this context.
 	 */
 	public DefaultContext( Graph graph )
 	{
@@ -172,27 +176,39 @@ public class DefaultContext implements Context, GraphListener
 		return path;
 	}
 	
-	public void readGraph( String path, String reader )
+	public void readGraph( String path, String readerClass )
 	{
-		WGraphReader wgr = new WGraphReader();
-		
-		if( reader == null )
+		if( readerClass == null )
 		{
-			wgr.read(path,this);
+			reader.read(path,this);
+			fireGraphOperation(GraphOperation.ReadBegin,path);
 		}
 		else
 		{
 			try
 			{
-				wgr.read((GraphReader) Class.forName(reader).newInstance(),path,this);
+				reader.read((GraphReader) Class.forName(readerClass).newInstance(),path,this);
+				fireGraphOperation(GraphOperation.ReadBegin,path);
 			}
 			catch( Exception e )
 			{
 				e.printStackTrace();
-				wgr.read(path,this);
+				reader.read(path,this);
+				fireGraphOperation(GraphOperation.ReadBegin,path);
 			}
 		}
 	}
+	
+	public boolean isReading()
+	{
+		return reader.isReading();
+	}
+	
+	public DefaultBoundedRangeModel getReaderProgressionModel()
+	{
+		return reader.progressionModel;
+	}
+	
 	/**
 	 * @see org.miv.graphstream.tool.workbench.Context#addContextListener(ContextListener)
 	 */
@@ -255,12 +271,12 @@ public class DefaultContext implements Context, GraphListener
 	 * @param op operation type
 	 * @param data data relative to the operation
 	 */
-	protected void fireElementOperation( Element e, ElementOperation op, Object data )
+	protected void fireGraphOperation( GraphOperation op, Object data )
 	{
 		ContextEvent ce = new ContextEvent( this, this );
 		
 		for( ContextListener cl: contextListeners )
-			cl.contextElementOperation(ce,e,op,data);
+			cl.contextGraphOperation(ce,op,data);
 	}
 	/**
 	 * Fire listeners that an element has been added to the selection list.
@@ -306,7 +322,7 @@ public class DefaultContext implements Context, GraphListener
 	public void afterNodeAdd( Graph graph, Node node )
 	{
 		changed = true;
-		fireElementOperation(node,ElementOperation.NodeAdded,null);
+		fireGraphOperation(GraphOperation.NodeAdded,node);
 	}
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
@@ -314,7 +330,7 @@ public class DefaultContext implements Context, GraphListener
 	public void afterEdgeAdd( Graph graph, Edge edge )
 	{
 		changed = true;
-		fireElementOperation(edge,ElementOperation.EdgeAdded,null);
+		fireGraphOperation(GraphOperation.EdgeAdded,edge);
 	}
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
@@ -332,7 +348,7 @@ public class DefaultContext implements Context, GraphListener
 		if( selection.contains( edge ) )
 			selection.unselect( edge );
 		
-		fireElementOperation(edge,ElementOperation.EdgeRemoved,null);
+		fireGraphOperation(GraphOperation.EdgeRemoved,edge);
 	}
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
@@ -342,7 +358,7 @@ public class DefaultContext implements Context, GraphListener
 		if( selection.contains( node ) )
 			selection.unselect( node );
 		
-		fireElementOperation(node,ElementOperation.NodeRemoved,null);
+		fireGraphOperation(GraphOperation.NodeRemoved,node);
 	}
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
@@ -350,6 +366,7 @@ public class DefaultContext implements Context, GraphListener
 	public void beforeGraphClear( Graph graph )
 	{
 		selection.unselect();
+		fireGraphOperation(GraphOperation.GraphClear,null);
 	}
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener

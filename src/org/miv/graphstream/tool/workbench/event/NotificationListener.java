@@ -31,7 +31,7 @@ public interface NotificationListener
 		contextRemoved,
 		contextShow,
 		contextAutolayoutChanged,
-		contextElementOperation,
+		contextGraphOperation,
 		noContext,
 		fullMode,
 		normalMode,

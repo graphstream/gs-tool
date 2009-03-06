@@ -22,7 +22,6 @@
  */
 package org.miv.graphstream.tool.workbench;
 
-import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.tool.workbench.event.ContextListener;
 import org.miv.graphstream.tool.workbench.event.ContextChangeListener;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
@@ -112,9 +111,8 @@ public class WNotificationServer
 		dispatch( Notification.contextAutolayoutChanged );
 	}
 	
-	public void contextElementOperation( ContextEvent ce, Element e, 
-			ElementOperation op, Object data )
+	public void contextGraphOperation( ContextEvent ce,	GraphOperation op, Object data )
 	{
-		dispatch( Notification.contextElementOperation );
+		dispatch( Notification.contextGraphOperation );
 	}
 }

@@ -143,8 +143,8 @@ public class WElementList
 	WCore core;
 	LinkedList<String> elements;
 	ElementsModel nmodel;
-	ElementOperation add;
-	ElementOperation del;
+	GraphOperation add;
+	GraphOperation del;
 	Type type;
 	
 	protected WElementList( WCore core, Type type, ElementsModel nmodel )
@@ -168,13 +168,13 @@ public class WElementList
 		
 		if( type == Type.NodeList )
 		{
-			this.add = ElementOperation.NodeAdded;
-			this.del = ElementOperation.NodeRemoved;
+			this.add = GraphOperation.NodeAdded;
+			this.del = GraphOperation.NodeRemoved;
 		}
 		else if( type == Type.EdgeList )
 		{
-			this.add = ElementOperation.EdgeAdded;
-			this.del = ElementOperation.EdgeRemoved;
+			this.add = GraphOperation.EdgeAdded;
+			this.del = GraphOperation.EdgeRemoved;
 		}
 		
 		setModel(this.nmodel);
@@ -213,28 +213,29 @@ public class WElementList
 	{
 	}
 	
-	public void contextElementOperation( ContextEvent ce, Element e, 
-			ElementOperation op, Object data )
+	public void contextGraphOperation( ContextEvent ce, GraphOperation op, Object data )
 	{
-		String id = e.getId();
-		
-		if( id == null )
-			return;
-		
-		if( op == add )
+		if( op == add || op == del )
 		{
-			if( ! elements.contains(id) ) elements.add(id);
-			nmodel.fireIntervalAdded(elements.size()-1,elements.size());
-		}
-		else if( op == del )
-		{
-			int index = elements.indexOf(id);
-			if( index != -1 )
+			String id = ((Element)data).getId();
+
+			if( id == null )
+				return;
+
+			if( op == add )
 			{
-				elements.remove(index);
-				nmodel.fireIntervalRemoved(index,index+1);
+				if( ! elements.contains(id) ) elements.add(id);
+				nmodel.fireIntervalAdded(elements.size()-1,elements.size());
+			}
+			else if( op == del )
+			{
+				int index = elements.indexOf(id);
+				if( index != -1 )
+				{
+					elements.remove(index);
+					nmodel.fireIntervalRemoved(index,index+1);
+				}
 			}
 		}
-		
 	}
 }
