@@ -338,7 +338,12 @@ public class WMenuBar
 			for( int i = 0; i < history.size() && i < 10; i++ )
 			{
 				WUserSettings.FileHistory fh = history.get(i);
-				openFile = new JMenuItem( fh.getPathName(), WIcons.getIcon("file:restore") );
+				
+				String name = fh.getPathName();
+				if( name.length() > 50 )
+					name = name.substring(0,20) + "..." + name.substring(name.length()-30);
+				
+				openFile = new JMenuItem( name, WIcons.getIcon("file:restore") );
 				openFile.setActionCommand(fh.getPathName());
 				openFile.addActionListener( new ActionListener()
 				{

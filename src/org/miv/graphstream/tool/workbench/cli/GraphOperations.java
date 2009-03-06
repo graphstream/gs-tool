@@ -176,6 +176,7 @@ public class GraphOperations extends CLICommandPool
 					id + "\" not created" );
 			
 			ctx.readGraph(f.getAbsolutePath(),ccr.getAttribute( "reader" ));
+			ctx.setDefaultFile(f.getAbsolutePath());
 			
 			if( ccr.hasAttribute( "display" ) )
 				_execute_( cli, "display graph \"" + id + "\"" 

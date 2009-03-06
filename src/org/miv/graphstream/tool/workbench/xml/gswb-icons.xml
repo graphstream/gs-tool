@@ -14,7 +14,9 @@
 	<icon key="gs_logo" ressource="org/miv/graphstream/tool/workbench/ressources/gs_logo.png"/>
 	<icon key="key" ressource="org/miv/graphstream/tool/workbench/ressources/key_16.png"/>
 	<icon key="file:new" ressource="org/miv/graphstream/tool/workbench/ressources/filenew24.png"/>
-	<icon key="file:open" ressource="org/miv/graphstream/tool/workbench/ressources/fileopen24.png"/>
+	<icon key="file:open" ressource="org/miv/graphstream/tool/workbench/ressources/fileopen24.png"/><icon
+		key="file:lastopened" ressource="org/miv/graphstream/tool/workbench/ressources/filelastopened24.png">
+</icon>
 	<icon key="file:save" ressource="org/miv/graphstream/tool/workbench/ressources/filesave24.png"/>
 	<icon key="file:saveas" ressource="org/miv/graphstream/tool/workbench/ressources/filesaveas24.png"/><icon
 		key="file:restore" ressource="org/miv/graphstream/tool/workbench/ressources/filerestore24.png">

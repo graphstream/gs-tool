@@ -45,7 +45,8 @@ import javax.swing.DefaultBoundedRangeModel;
  * @author Guilhelm Savin
  *
  */
-public class DefaultContext implements Context, GraphListener
+public class DefaultContext
+	implements Context, GraphListener
 {
 	/**
 	 * Graph defining this context.

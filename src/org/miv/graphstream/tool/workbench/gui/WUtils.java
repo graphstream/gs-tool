@@ -49,7 +49,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -158,9 +157,11 @@ public class WUtils
 	
 	public static void initGraphFileFilters( JFileChooser jfc )
 	{
-		jfc.addChoosableFileFilter( new ExtFileFilter( "[.]dgs", "Dynamic Graph Stream format (*.dgs)" ) );
-		jfc.addChoosableFileFilter( new ExtFileFilter( "[.]dot", "GraphViz \"dot\" format (*.dot) " ) );
-		jfc.addChoosableFileFilter( new ExtFileFilter( "[.](dot|dgs)", "Graph format (*.dgs,*.dot) " ) );
+		jfc.addChoosableFileFilter( new ExtFileFilter( "[.]dgs", "The GraphStream file format (*.dgs)" ) );
+		jfc.addChoosableFileFilter( new ExtFileFilter( "[.]dot", "The GraphViz file format (*.dot) " ) );
+		jfc.addChoosableFileFilter( new ExtFileFilter( "[.]gml", "The GML file format (*.gml) " ) );
+		jfc.addChoosableFileFilter( new ExtFileFilter( "[.]tlp", "The Tulip file format (*.tlp) " ) );
+		jfc.addChoosableFileFilter( new ExtFileFilter( "[.](dot|dgs)", "Graph formats (*.dgs,*.dot,*.gml) " ) );
 	}
 	/**
 	 * Return an automatic id based on the given format.
@@ -212,16 +213,6 @@ public class WUtils
 		
 		return id;
 	}
-	/**
-	 * Graphical way to select a pattern.
-	 * 
-	 * @param cli
-	 */
-	public static void selectPattern( Component parent, CLI cli )
-	{
-		SelectPatternDialog spd = new SelectPatternDialog( parent, cli );
-		spd.setVisible( true );
-	}
 	
 	public static Font getDefaultFont()
 	{
@@ -230,91 +221,6 @@ public class WUtils
 	
 // Classes declarations	
 
-	static class SelectPatternDialog extends JDialog
-		implements ActionListener
-	{
-		public static final long serialVersionUID = 0x00A01901L;
-		
-		protected JCheckBox nodes, edges;
-		protected JTextField pattern;
-		protected CLI cli;
-		
-		public SelectPatternDialog( Component parent, CLI cli )
-		{
-			super( 
-					(Frame) (parent == null ? null :
-					parent instanceof Dialog ? (Dialog) parent :
-					parent instanceof Frame ? (Frame) parent : null), "Select pattern" );
-			
-			this.cli = cli;
-			
-			setLayout( new GridLayout( 3, 1 ) );
-			nodes = new JCheckBox( "nodes", true );
-			edges = new JCheckBox( "edges", true );
-			pattern = new JTextField( ".*", 20 );
-			
-			JPanel tmp = new JPanel();
-			tmp.add( nodes );
-			tmp.add( edges );
-			add( tmp );
-			
-			tmp = new JPanel();
-			tmp.add( new JLabel( "Pattern: " ) );
-			tmp.add( pattern );
-			add( tmp );
-			
-			JButton ok, cancel;
-			ok = new JButton( "select" );
-			ok.setActionCommand( "select.valid" );
-			ok.addActionListener( this );
-			cancel = new JButton( "cancel" );
-			cancel.setActionCommand( "select.cancel" );
-			cancel.addActionListener( this );
-			tmp = new JPanel();
-			tmp.add( ok );
-			tmp.add( cancel );
-			add( tmp );
-			
-			pack();
-			setResizable( false );
-		}
-		
-		public void actionPerformed( ActionEvent e )
-		{
-			if( e == null ) return;
-			else if( e.getActionCommand().equals( "select.cancel" ) )
-				setVisible( false );
-			else if( e.getActionCommand().equals( "select.valid" ) )
-				select();
-		}
-		
-		protected void select()
-		{
-			if( nodes.isSelected() || edges.isSelected() )
-			{
-				String cmd = "select all";
-				
-				if( ! ( nodes.isSelected() && edges.isSelected() ) )
-				{
-					if( nodes.isSelected() )
-						cmd += " nodes";
-					else
-						cmd += " edges";
-				}
-				
-				cmd += " \"" + pattern.getText() + "\"";
-				
-				String error = cli.execute( cmd );
-				if( CLI.isErrorMessage( error ) )
-					errorMessage( this, CLI.getMessage( error ) );
-				else if( CLI.isWarningMessage( error ) )
-					warningMessage( this, CLI.getMessage( error ) );
-			}
-			
-			setVisible( false );
-		}
-	}
-	
 	static class NewGraphDialog extends JDialog 
 		implements ChangeListener, ActionListener
 	{

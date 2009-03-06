@@ -113,6 +113,8 @@ public class WGraphReader
 	
 	private void begin()
 	{
+		ctx.getGraph().clear();
+		
 		try
 		{
 			FileInputStream in = new FileInputStream(path);

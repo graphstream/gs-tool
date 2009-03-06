@@ -35,7 +35,7 @@ public class WClipboard
 	public static class ClipboardContent
 		extends LinkedList<Element>
 	{
-		private static final long serialVersionUID = 0x0001L;
+		private static final long serialVersionUID = 0x010060010001L;
 		
 		public ClipboardContent()
 		{

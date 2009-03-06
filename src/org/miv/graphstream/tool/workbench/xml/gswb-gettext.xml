@@ -10,7 +10,9 @@
 </entry>
 		<entry name="menu:generate" lang="en" value="Generate" />
 		<entry name="file:save" lang="en" value="Save" />
-		<entry name="file:saveas" lang="en" value="Save as" />
+		<entry name="file:saveas" lang="en" value="Save as" /><entry
+			name="file:restore" lang="en" value="Restore">
+</entry>
 		<entry name="system:exit" lang="en" value="Exit" />
 		<entry name="menu:edit" lang="en" value="Edit" /><entry name="edit:undo" value="Undo" lang="en"></entry>
 		<entry name="edit:redo" value="Redo" lang="en"></entry>
@@ -65,7 +67,9 @@
 </entry>
 		<entry name="menu:generate" lang="fr" value="Générer" />
 		<entry name="file:save" lang="fr" value="Enregistrer" />
-		<entry name="file:saveas" lang="fr" value="Enregistrer sous" />
+		<entry name="file:saveas" lang="fr" value="Enregistrer sous" /><entry
+			name="file:restore" lang="fr" value="Revenir">
+</entry>
 		<entry name="system:exit" lang="fr" value="Quitter" />
 		<entry name="menu:edit" lang="fr" value="Edition" /><entry name="edit:undo" lang="fr" value="Annuler"></entry>
 		<entry name="edit:redo" lang="fr" value="Rétablir"></entry>

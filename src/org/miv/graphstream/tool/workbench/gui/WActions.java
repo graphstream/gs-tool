@@ -50,6 +50,7 @@ public class WActions
 		actions.put( "file:open", 		new OpenFileAction() );
 		actions.put( "file:save", 		new SaveFileAction() );
 		actions.put( "file:saveas", 	new SaveAsFileAction() );
+		actions.put( "file:restore", 	new RestoreFileAction() );
 		
 		actions.put( "system:help", 	new HelpAction() );
 		actions.put( "system:options", 	new OptionsAction() );
@@ -202,6 +203,7 @@ public class WActions
 				WUtils.selectFile(null,WCore.getCore().getActiveContext());
 			
 			WCore.getCore().saveContext();
+			WUserSettings.newFileUsed(WCore.getCore().getActiveContext().getDefaultFile());
 		}
 	}
 	
@@ -220,6 +222,25 @@ public class WActions
 		{
 			WUtils.selectFile(null,WCore.getCore().getActiveContext());
 			actions.get("file:save").actionPerformed(e);
+		}
+	}
+	
+	static class RestoreFileAction
+		extends BaseAction
+	{
+		private static final long serialVersionUID = 0x0001L;
+		
+		public RestoreFileAction()
+		{
+			super("file:restore");
+		}
+		
+		public void actionPerformed( ActionEvent e )
+		{
+			String file = WCore.getCore().getActiveContext().getDefaultFile();
+			
+			if( file != null )
+				WCore.getCore().getActiveContext().readGraph(file,null);
 		}
 	}
 	

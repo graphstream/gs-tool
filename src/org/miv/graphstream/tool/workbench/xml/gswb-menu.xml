@@ -3,13 +3,16 @@
 	<!--File menu--><menu id="file" name="@gettext(menu:file)">
 		<item command="@getaction(file:new)"/>
 		<item command="@getaction(file:open)"/><menu
-			id="file:lastopened" name="@gettext(file:lastopened)">
+			id="file:lastopened" name="@gettext(file:lastopened)" icon="@file:lastopened">
 </menu>
 	<menu
 			id="algorithm:generator" name="@gettext(menu:generate)" disableOn="noContext" enableOn="contextAdded">
 </menu><separator></separator>
 		<item command="@getaction(file:save)" disableOn="noContext" enableOn="contextAdded"/>
 		<item command="@getaction(file:saveas)" disableOn="noContext" enableOn="contextAdded">
+		</item>
+		<item command="@getaction(file:restore)" disableOn="noContext"
+			enableOn="contextAdded">
 		</item>
 		<separator/>
 		<item command="@getaction(system:exit)"/>
