@@ -129,15 +129,26 @@ public interface WXmlConstants
 	public static final String QNAME_GSWB_SETTINGS_SETTING				 	= "setting";
 	public static final String QNAME_GSWB_SETTINGS_SETTING_NAME				= "name";
 	public static final String QNAME_GSWB_SETTINGS_SETTING_VALUE			= "value";
+	public static final String QNAME_GSWB_SETTINGS_HISTORY					= "history";
+	public static final String QNAME_GSWB_SETTINGS_HISTORY_FILE				= "file";
+	public static final String QNAME_GSWB_SETTINGS_HISTORY_FILE_PATHNAME	= "pathname";
+	public static final String QNAME_GSWB_SETTINGS_HISTORY_FILE_DATE		= "date";
 	
 	public static final WXElementSpec SPEC_SETTING = new WXElementSpec(
 			QNAME_GSWB_SETTINGS_SETTING).declareAttributes(
 					QNAME_GSWB_SETTINGS_SETTING_NAME,
 					QNAME_GSWB_SETTINGS_SETTING_VALUE);
 	
+	public static final WXElementSpec SPEC_HISTORY_FILE = new WXElementSpec(
+			QNAME_GSWB_SETTINGS_HISTORY_FILE).declareAttributes(
+					QNAME_GSWB_SETTINGS_HISTORY_FILE_PATHNAME,
+					QNAME_GSWB_SETTINGS_HISTORY_FILE_DATE);
+			
+	public static final WXElementSpec SPEC_HISTORY = new WXElementSpec(
+			QNAME_GSWB_SETTINGS_HISTORY).declareChildren(SPEC_HISTORY_FILE);
+	
 	public static final WXElementSpec SPEC_SETTINGS = new WXElementSpec(
-			QNAME_GSWB_SETTINGS).declareChildren(
-					SPEC_SETTING);
+			QNAME_GSWB_SETTINGS).declareChildren(SPEC_SETTING,SPEC_HISTORY);
 	
 	public static final String GSWB_ICONS_XML = "org/miv/graphstream/tool/workbench/xml/gswb-icons.xml";
 	

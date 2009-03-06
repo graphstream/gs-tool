@@ -564,13 +564,14 @@ public class WUtils
 			{
 			case APPROVE_OPTION:
 			{
-				String id = null, reader = null;
-				if( accessory.useGraphId.isSelected() && ! accessory.graphId.getText().equals("") )
-					id = accessory.graphId.getText();
-				if( accessory.useReader.isSelected() && ! accessory.readerClass.getText().equals("") )
-					reader = accessory.readerClass.getText();
-				
-				openGraph( getSelectedFile(), id, reader, accessory.autolayout.isSelected() );
+				//Thread t = new Thread( new Runnable()
+				//{
+					//public void run()
+					//{
+						openGraph();
+					//}
+				//});
+				//t.start();
 				break;
 			}
 			case ERROR_OPTION:		
@@ -578,8 +579,17 @@ public class WUtils
 			}
 		}
 		
-		protected void openGraph( File f, String id, String reader, boolean autolayout )
+		protected void openGraph()
 		{
+			File f = getSelectedFile();
+			String id = null, reader = null;
+			boolean autolayout = accessory.autolayout.isSelected();
+			
+			if( accessory.useGraphId.isSelected() && ! accessory.graphId.getText().equals("") )
+				id = accessory.graphId.getText();
+			if( accessory.useReader.isSelected() && ! accessory.readerClass.getText().equals("") )
+				reader = accessory.readerClass.getText();
+			
 			if( f == null ) return;
 			String cmd = String.format( "open graph \"%s\"%s%s and display%s", 
 					f.getAbsolutePath(),
@@ -592,6 +602,7 @@ public class WUtils
 				errorMessage( this, CLI.getMessage( error ) );
 			else if( CLI.isWarningMessage( error ) )
 				warningMessage( this, CLI.getMessage( error ) );
+			else WUserSettings.newFileUsed(f.getAbsolutePath());
 		}
 	}
 	

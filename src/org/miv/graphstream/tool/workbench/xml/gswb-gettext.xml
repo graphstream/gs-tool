@@ -5,7 +5,9 @@
 	<container name="menu" lang="en">
 		<entry name="menu:file" lang="en" value="File" />
 		<entry name="file:new" lang="en" value="New" />
-		<entry name="file:open" lang="en" value="Open" />
+		<entry name="file:open" lang="en" value="Open" /><entry name="file:lastopened"
+			lang="en" value="Last opened">
+</entry>
 		<entry name="menu:generate" lang="en" value="Generate" />
 		<entry name="file:save" lang="en" value="Save" />
 		<entry name="file:saveas" lang="en" value="Save as" />
@@ -58,7 +60,9 @@
 	<container name="menu" lang="fr">
 		<entry name="menu:file" lang="fr" value="Fichier" />
 		<entry name="file:new" lang="fr" value="Nouveau" />
-		<entry name="file:open" lang="fr" value="Ouvrir" />
+		<entry name="file:open" lang="fr" value="Ouvrir" /><entry
+			name="file:lastopened" lang="fr" value="Récemment ouverts">
+</entry>
 		<entry name="menu:generate" lang="fr" value="Générer" />
 		<entry name="file:save" lang="fr" value="Enregistrer" />
 		<entry name="file:saveas" lang="fr" value="Enregistrer sous" />

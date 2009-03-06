@@ -89,7 +89,7 @@ public class WGui
 	protected WMenuBar 					menuBar;
 	protected WCore 					core;
 	protected WDesktop 					desktop;
-	protected SelectionTree 			selectionTree;
+	protected WSelectionGUI 			selectionTree;
 	protected WDialog 					dialogSelection;
 	protected HashMap<String,WDialog> 	dialogs;
 	
@@ -105,8 +105,7 @@ public class WGui
 		this.desktop = new WDesktop( this, core.getCLI() );
 		this.infoBox = new InfoBox( core.getCLI() );
 		
-		this.selectionTree = new SelectionTree( core.getCLI() );
-		core.addSelectionListener( this.selectionTree );
+		this.selectionTree = new WSelectionGUI();
 		
 		JPanel tmp = new JPanel();
 		tmp.setPreferredSize(new java.awt.Dimension( 150, 300 ));

@@ -2,8 +2,10 @@
 <gswb:menubar xmlns="org/miv/graphstream" xmlns:gswb="workbench">
 	<!--File menu--><menu id="file" name="@gettext(menu:file)">
 		<item command="@getaction(file:new)"/>
-		<item command="@getaction(file:open)"/>
-		<menu
+		<item command="@getaction(file:open)"/><menu
+			id="file:lastopened" name="@gettext(file:lastopened)">
+</menu>
+	<menu
 			id="algorithm:generator" name="@gettext(menu:generate)" disableOn="noContext" enableOn="contextAdded">
 </menu><separator></separator>
 		<item command="@getaction(file:save)" disableOn="noContext" enableOn="contextAdded"/>

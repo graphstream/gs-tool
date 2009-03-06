@@ -216,14 +216,19 @@ public class WElementList
 	public void contextElementOperation( ContextEvent ce, Element e, 
 			ElementOperation op, Object data )
 	{
+		String id = e.getId();
+		
+		if( id == null )
+			return;
+		
 		if( op == add )
 		{
-			if( ! elements.contains(e.getId()) ) elements.add(e.getId());
+			if( ! elements.contains(id) ) elements.add(id);
 			nmodel.fireIntervalAdded(elements.size()-1,elements.size());
 		}
 		else if( op == del )
 		{
-			int index = elements.indexOf(e.getId());
+			int index = elements.indexOf(id);
 			if( index != -1 )
 			{
 				elements.remove(index);

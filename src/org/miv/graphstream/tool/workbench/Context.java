@@ -82,6 +82,8 @@ public interface Context
 	 * @param graph new graph
 	 */
 	void setGraph( Graph graph );
+	
+	void readGraph( String path, String reader );
 	/**
 	 * Get the Selection object of this content.
 	 * @return the selection list

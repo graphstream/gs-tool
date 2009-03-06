@@ -16,7 +16,9 @@
 	<icon key="file:new" ressource="org/miv/graphstream/tool/workbench/ressources/filenew24.png"/>
 	<icon key="file:open" ressource="org/miv/graphstream/tool/workbench/ressources/fileopen24.png"/>
 	<icon key="file:save" ressource="org/miv/graphstream/tool/workbench/ressources/filesave24.png"/>
-	<icon key="file:saveas" ressource="org/miv/graphstream/tool/workbench/ressources/filesaveas24.png"/>
+	<icon key="file:saveas" ressource="org/miv/graphstream/tool/workbench/ressources/filesaveas24.png"/><icon
+		key="file:restore" ressource="org/miv/graphstream/tool/workbench/ressources/filerestore24.png">
+</icon>
 	<icon key="system:exit" ressource="org/miv/graphstream/tool/workbench/ressources/exit24.png"/>
 	<icon key="edit:undo" ressource="org/miv/graphstream/tool/workbench/ressources/undo24.png"/>
 	<icon key="edit:redo" ressource="org/miv/graphstream/tool/workbench/ressources/redo24.png"/>

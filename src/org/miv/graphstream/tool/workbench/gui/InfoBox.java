@@ -36,13 +36,13 @@ public class InfoBox extends JPanel
 
 	protected JTabbedPane tabs;
 	protected GraphInfo graphInfo;
-	protected SelectionTree selectionTree;
+	protected WSelectionGUI selectionTree;
 	
 	public InfoBox( CLI cli )
 	{
 		this.tabs = new JTabbedPane();
 		this.graphInfo = new GraphInfo( cli );
-		this.selectionTree = new SelectionTree( cli );
+		this.selectionTree = new WSelectionGUI();
 		
 		cli.getCore().addSelectionListener( this.selectionTree );
 		

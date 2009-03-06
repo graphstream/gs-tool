@@ -26,10 +26,8 @@ import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Node;
 
-import org.miv.graphstream.tool.workbench.Context;
 import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.WSelection;
-import org.miv.graphstream.tool.workbench.cli.CLI;
 import org.miv.graphstream.tool.workbench.event.ContextChangeListener;
 import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.SelectionListener;
@@ -39,6 +37,7 @@ import java.util.Iterator;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -51,7 +50,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
-public class SelectionTree extends JList 
+public class WSelectionGUI extends JList 
 	implements ContextChangeListener, SelectionListener
 {
 	public static final long serialVersionUID = 0x00A00C01L;
@@ -72,11 +71,8 @@ public class SelectionTree extends JList
 			title 		= new JLabel();
 			description = new JLabel();
 
-			if( WFonts.hasFont("dialog:title") )
-				title.setFont(WFonts.getFont("dialog:title"));
-
-			if( WFonts.hasFont("dialog:infos") )
-				description.setFont(WFonts.getFont("dialog:infos"));
+			title.setFont( title.getFont().deriveFont(Font.BOLD,14.0f) );
+			description.setFont( description.getFont().deriveFont(Font.PLAIN,12.0f) );
 
 			description.setForeground(description.getForeground().brighter().brighter());
 
@@ -138,17 +134,14 @@ public class SelectionTree extends JList
 		}
 	}
 	
-	protected CLI cli;
-	protected Context ctx;
 	DefaultListModel 	model;
 	
-	public SelectionTree( CLI cli )
+	public WSelectionGUI()
 	{
-		this.cli = cli;
-		this.ctx = null;
 		this.model = new DefaultListModel();
 		
-		cli.getCore().addContextChangeListener( this );
+		WCore.getCore().addContextChangeListener( this );
+		WCore.getCore().addSelectionListener(this);
 		
 		setModel( this.model );
 		setCellRenderer( new ElementRenderer() );
@@ -167,6 +160,9 @@ public class SelectionTree extends JList
 	
 	public void contextChanged( ContextEvent e )
 	{
+		if( WCore.getCore().getActiveContext() == null )
+			return;
+		
 		WSelection s = WCore.getCore().getActiveContext().getSelection();
 		
 		Iterator<Element> ite = s.iterator();

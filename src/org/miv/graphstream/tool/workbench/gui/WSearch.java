@@ -25,6 +25,7 @@ package org.miv.graphstream.tool.workbench.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -89,11 +90,8 @@ public class WSearch
 			title 		= new JLabel();
 			description = new JLabel();
 
-			if( WFonts.hasFont("dialog:title") )
-				title.setFont(WFonts.getFont("dialog:title"));
-
-			if( WFonts.hasFont("dialog:infos") )
-				description.setFont(WFonts.getFont("dialog:infos"));
+			title.setFont( title.getFont().deriveFont(Font.BOLD,14.0f) );
+			description.setFont( description.getFont().deriveFont(Font.PLAIN,12.0f) );
 
 			description.setForeground(description.getForeground().brighter().brighter());
 
@@ -121,7 +119,7 @@ public class WSearch
 			bag.setConstraints(title,c);
 			add(title);
 
-			c.insets = new Insets(-10,10,0,0);
+			c.insets = new Insets(-10,5,0,0);
 
 			bag.setConstraints(description,c);
 			add(description);
@@ -171,8 +169,9 @@ public class WSearch
 		Insets nullInsets = new Insets(0,0,0,0);
 		
 		setLayout(bag);
-		setResizable(false);
+		//setResizable(false);
 		
+		c.gridy = 0;
 		c.fill = GridBagConstraints.BOTH;
 		JLabel label = new JLabel( WGetText.getText("edit:find") );
 		c.weightx = 0;
@@ -189,6 +188,7 @@ public class WSearch
 		
 		c.weightx = 0;
 		c.gridx = 1;
+		c.gridy++;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		isRegularExpression = new JCheckBox(WGetText.getText("regex"),true);
 		bag.setConstraints(isRegularExpression,c);
@@ -204,6 +204,7 @@ public class WSearch
 		button.setActionCommand("search");
 		button.addActionListener(this);
 		c.gridx = 1;
+		c.gridy++;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		bag.setConstraints(button,c);
 		add(button);
@@ -237,9 +238,10 @@ public class WSearch
 		c.gridx = 0;
 		c.gridy = 3;
 		c.weightx = 0;
-		c.weighty = 0;
+		c.weighty = 2.0;
 		c.fill = GridBagConstraints.BOTH;
 		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.gridheight = GridBagConstraints.REMAINDER;
 		bag.setConstraints(panel,c);
 		add(panel);
 		

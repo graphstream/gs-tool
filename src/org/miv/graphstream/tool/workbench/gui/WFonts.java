@@ -72,12 +72,12 @@ public final class WFonts
 	static void load()
 	{
 		FontEntry [] entries = {
-			new FontEntry( "dialog:title", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Bold.ttf", 
-					Font.BOLD, 14.0f ),
-			new FontEntry( "dialog:infos", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Regular.ttf",
-					Font.PLAIN, 14.0f ),
-			new FontEntry( "default", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Regular.ttf",
-					Font.PLAIN, 14.0f )
+			//new FontEntry( "dialog:title", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Bold.ttf", 
+			//		Font.BOLD, 14.0f ),
+			//new FontEntry( "dialog:infos", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Regular.ttf",
+			//		Font.PLAIN, 14.0f ),
+			//new FontEntry( "default", "org/miv/graphstream/tool/workbench/ressources/fonts/Gputeks-Regular.ttf",
+			//		Font.PLAIN, 14.0f )
 			//new FontEntry( "default", "org/miv/graphstream/tool/workbench/ressources/fonts/AG-Stencil.ttf",
 			//		Font.PLAIN, 16.0f )
 		};
@@ -93,5 +93,12 @@ public final class WFonts
 				e.printStackTrace();
 			}
 		}
+		
+		if( ! fonts.containsKey("dialog:title") )
+			fonts.put("dialog:title", Font.decode("Arial-BOLD-14") );
+		if( ! fonts.containsKey("dialog:infos") )
+			fonts.put("dialog:title", Font.decode("Arial-PLAIN-12") );
+		if( ! fonts.containsKey("default") )
+			fonts.put("dialog:title", Font.decode("Arial-PLAIN-12") );
 	}
 }

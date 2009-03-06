@@ -5,6 +5,8 @@ import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.graph.Edge;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -27,22 +29,23 @@ public class WElementInfo
 	{
 		GridBagLayout bag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
-		Insets labelInsets = new Insets( 0, 10, 0, 10 );
-		Insets infosInsets = new Insets( 0, 0, 0, 0 );
+		Insets labelInsets = new Insets( 5, 10, 5, 10 );
+		Insets infosInsets = new Insets( 5, 0, 5, 0 );
 		
 		JLabel label;
 		
 		setTitle( "element : " + e.getId() );
 		setLayout(bag);
 		setIconImage( WUtils.getImageIcon( "gs_logo" ).getImage() );
-		setResizable(false);
+		//setResizable(false);
 		
 		c.insets = labelInsets;
 		c.weightx = 1.0;
 		c.gridwidth = 1;
+		c.gridy = 0;
 		c.fill = GridBagConstraints.BOTH;
-		label = new JLabel("type");
-		label.setFont( WFonts.getFont("dialog:title") );
+		label = new JLabel("type",JLabel.RIGHT);
+		label.setFont( label.getFont().deriveFont(Font.BOLD,14.0f) );
 		bag.setConstraints(label,c);
 		add(label);
 		
@@ -50,7 +53,7 @@ public class WElementInfo
 		c.insets = infosInsets;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		label = new JLabel( e.getClass().getCanonicalName() );
-		label.setFont( WFonts.getFont("dialog:infos") );
+		label.setFont( label.getFont().deriveFont(Font.PLAIN,12.0f) );
 		bag.setConstraints(label,c);
 		add(label);
 		
@@ -61,8 +64,9 @@ public class WElementInfo
 			c.insets = labelInsets;
 			c.weightx = 1.0;
 			c.gridwidth = 1;
-			label = new JLabel("degree");
-			label.setFont( WFonts.getFont("dialog:title") );
+			c.gridy++;
+			label = new JLabel("degree",JLabel.RIGHT);
+			label.setFont( label.getFont().deriveFont(Font.BOLD,14.0f) );
 			bag.setConstraints(label,c);
 			add(label);
 			
@@ -70,7 +74,7 @@ public class WElementInfo
 			c.insets = infosInsets;
 			c.gridwidth = GridBagConstraints.REMAINDER;
 			label = new JLabel( String.format("%d (in:%d,out:%d)",n.getDegree(),n.getInDegree(),n.getOutDegree()) );
-			label.setFont( WFonts.getFont("dialog:infos") );
+			label.setFont( label.getFont().deriveFont(Font.PLAIN,12.0f) );
 			bag.setConstraints(label,c);
 			add(label);
 		}
@@ -81,8 +85,9 @@ public class WElementInfo
 			c.insets = labelInsets;
 			c.weightx = 1.0;
 			c.gridwidth = 1;
-			label = new JLabel("directed");
-			label.setFont( WFonts.getFont("dialog:title") );
+			c.gridy++;
+			label = new JLabel("directed",JLabel.RIGHT);
+			label.setFont( label.getFont().deriveFont(Font.BOLD,14.0f) );
 			bag.setConstraints(label,c);
 			add(label);
 			
@@ -90,15 +95,16 @@ public class WElementInfo
 			c.insets = infosInsets;
 			c.gridwidth = GridBagConstraints.REMAINDER;
 			label = new JLabel( Boolean.toString(edge.isDirected()) );
-			label.setFont( WFonts.getFont("dialog:infos") );
+			label.setFont( label.getFont().deriveFont(Font.PLAIN,12.0f) );
 			bag.setConstraints(label,c);
 			add(label);
 			
 			c.insets = labelInsets;
 			c.weightx = 1.0;
 			c.gridwidth = 1;
-			label = new JLabel("source");
-			label.setFont( WFonts.getFont("dialog:title") );
+			c.gridy++;
+			label = new JLabel("source",JLabel.RIGHT);
+			label.setFont( label.getFont().deriveFont(Font.BOLD,14.0f) );
 			bag.setConstraints(label,c);
 			add(label);
 			
@@ -106,15 +112,16 @@ public class WElementInfo
 			c.insets = infosInsets;
 			c.gridwidth = GridBagConstraints.REMAINDER;
 			label = new JLabel( edge.getSourceNode().getId() );
-			label.setFont( WFonts.getFont("dialog:infos") );
+			label.setFont( label.getFont().deriveFont(Font.PLAIN,14.0f) );
 			bag.setConstraints(label,c);
 			add(label);
 			
 			c.insets = labelInsets;
 			c.weightx = 1.0;
 			c.gridwidth = 1;
-			label = new JLabel("target");
-			label.setFont( WFonts.getFont("dialog:title") );
+			c.gridy++;
+			label = new JLabel("target",JLabel.RIGHT);
+			label.setFont( label.getFont().deriveFont(Font.BOLD,14.0f) );
 			bag.setConstraints(label,c);
 			add(label);
 			
@@ -122,7 +129,7 @@ public class WElementInfo
 			c.insets = infosInsets;
 			c.gridwidth = GridBagConstraints.REMAINDER;
 			label = new JLabel( edge.getTargetNode().getId() );
-			label.setFont( WFonts.getFont("dialog:infos") );
+			label.setFont( label.getFont().deriveFont(Font.PLAIN,14.0f) );
 			bag.setConstraints(label,c);
 			add(label);
 		}
@@ -145,10 +152,12 @@ public class WElementInfo
 		JPanel attsPanel = new JPanel();
 		attsPanel.setLayout( new BorderLayout() );
 		attsPanel.add(scrollAtts,BorderLayout.CENTER);
-		attsPanel.setPreferredSize( bag.preferredLayoutSize(this));
+		attsPanel.setPreferredSize( new Dimension( 300,100) );//bag.preferredLayoutSize(this));
 		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.gridheight = 3;
+		c.gridheight = GridBagConstraints.REMAINDER;
+		c.gridy++;
 		c.weightx = 0.0;
+		c.weighty = 2.0;
 		c.fill = GridBagConstraints.BOTH;
 		bag.setConstraints(attsPanel,c);
 		add(attsPanel);

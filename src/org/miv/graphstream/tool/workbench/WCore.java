@@ -30,6 +30,9 @@ import org.miv.graphstream.tool.workbench.gui.CLITerm;
 import java.io.IOException;
 
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javax.swing.SwingUtilities;
 
 /**
  * Core of the workbench.
@@ -67,10 +70,10 @@ public class WCore
 	private int 								activeCtx 				= -1;
 	private String 								activeCtxId 			= null;
 	private int 								createdCtx 				= 0;
-	private LinkedList<ContextChangeListener> 	contextChangeListeners 	= new LinkedList<ContextChangeListener>();
-	private LinkedList<ContextListener> 		contextListeners 		= new LinkedList<ContextListener>();
-	private LinkedList<WorkbenchListener> 		workbenchListeners 		= new LinkedList<WorkbenchListener>();
-	private LinkedList<SelectionListener> 		selectionListeners 		= new LinkedList<SelectionListener>();
+	private ConcurrentLinkedQueue<ContextChangeListener> 	contextChangeListeners 	= new ConcurrentLinkedQueue<ContextChangeListener>();
+	private ConcurrentLinkedQueue<ContextListener> 			contextListeners 		= new ConcurrentLinkedQueue<ContextListener>();
+	private ConcurrentLinkedQueue<WorkbenchListener> 		workbenchListeners 		= new ConcurrentLinkedQueue<WorkbenchListener>();
+	private ConcurrentLinkedQueue<SelectionListener> 		selectionListeners 		= new ConcurrentLinkedQueue<SelectionListener>();
 	private CLI 								cli;
 	private int 								terminalCloseAction 	= javax.swing.JFrame.EXIT_ON_CLOSE;
 	private ActionMode 							actionMode;
@@ -132,10 +135,28 @@ public class WCore
 	
 	public Context createNewContext( String clazz, String gid, String graphClass )
 	{
-		Context ctx = ContextFactory.createContext( clazz, gid, graphClass );
+		final Context ctx = ContextFactory.createContext( clazz, gid, graphClass );
 		registerContext(ctx);
 		
-		fireContextAdded( ctx );
+		if( SwingUtilities.isEventDispatchThread() )
+			fireContextAdded( ctx );
+		else
+		{
+			try
+			{
+				SwingUtilities.invokeAndWait( new Runnable()
+				{
+					public void run()
+					{
+						fireContextAdded( ctx );
+					}
+				});
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
 		
 		return ctx;
 	}
@@ -223,16 +244,19 @@ public class WCore
 		if( i<0 || i>=ctxs.size() )
 			return;
 		
-		System.err.printf( "select context %d\n", i );
-		
-		if( activeCtxId == null || ! activeCtxId.equals(ctxsid.get(i)) )
+		if( activeCtx >= ctxs.size() || activeCtxId == null || ! activeCtxId.equals(ctxsid.get(i)) )
 		{
-			ctxs.get(activeCtx).removeContextListener(this);
-			ctxs.get(activeCtx).getSelection().removeSelectionListener(this);
+			if( activeCtx < ctxs.size() )
+			{
+				ctxs.get(activeCtx).removeContextListener(this);
+				ctxs.get(activeCtx).getSelection().removeSelectionListener(this);
+			}
+			
 			activeCtx = i;
 			activeCtxId = ctxsid.get(i);
 			ctxs.get(activeCtx).addContextListener(this);
 			ctxs.get(activeCtx).getSelection().addSelectionListener(this);
+			
 			fireContextChanged();
 		}
 	}
@@ -254,6 +278,7 @@ public class WCore
 		try
 		{
 			ctx.getGraph().write( ctx.getDefaultFile() );
+			ctx.resetChanged();
 		}
 		catch( IOException e )
 		{
@@ -402,7 +427,7 @@ public class WCore
 	
 	public void addSelectionListener( SelectionListener sl )
 	{
-		this.selectionListeners.addLast( sl );
+		this.selectionListeners.add( sl );
 	}
 	
 	public void removeSelectionListener( SelectionListener sl )
@@ -450,7 +475,7 @@ public class WCore
 
 	public void addContextChangeListener( ContextChangeListener ccl )
 	{
-		this.contextChangeListeners.addLast( ccl );
+		this.contextChangeListeners.add( ccl );
 	}
 	
 	public void removeContextChangeListener( ContextChangeListener ccl )
@@ -460,7 +485,7 @@ public class WCore
 	
 	public void addWorkbenchListener( WorkbenchListener wl )
 	{
-		this.workbenchListeners.addLast( wl );
+		this.workbenchListeners.add( wl );
 	}
 	
 	public void removeWorkbenchListener( WorkbenchListener wl )

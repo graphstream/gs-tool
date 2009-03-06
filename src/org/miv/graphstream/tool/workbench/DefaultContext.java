@@ -33,8 +33,9 @@ import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;
 import org.miv.graphstream.graph.Node;
+import org.miv.graphstream.io.GraphReader;
 
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Default implementation of a Context.
@@ -63,12 +64,12 @@ public class DefaultContext implements Context, GraphListener
 	/**
 	 * The ContextListener listenning to this context.
 	 */
-	protected LinkedList<ContextListener> contextListeners = new LinkedList<ContextListener>();
+	protected ConcurrentLinkedQueue<ContextListener> contextListeners = new ConcurrentLinkedQueue<ContextListener>();
 	/**
 	 * The SelectionListener listenning to the selection list of this
 	 * context.
 	 */
-	protected LinkedList<SelectionListener> selectionListeners = new LinkedList<SelectionListener>();
+	protected ConcurrentLinkedQueue<SelectionListener> selectionListeners = new ConcurrentLinkedQueue<SelectionListener>();
 	/**
 	 * The path of the file storing the graph.
 	 */
@@ -169,6 +170,28 @@ public class DefaultContext implements Context, GraphListener
 	public String getDefaultFile()
 	{
 		return path;
+	}
+	
+	public void readGraph( String path, String reader )
+	{
+		WGraphReader wgr = new WGraphReader();
+		
+		if( reader == null )
+		{
+			wgr.read(path,this);
+		}
+		else
+		{
+			try
+			{
+				wgr.read((GraphReader) Class.forName(reader).newInstance(),path,this);
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+				wgr.read(path,this);
+			}
+		}
 	}
 	/**
 	 * @see org.miv.graphstream.tool.workbench.Context#addContextListener(ContextListener)

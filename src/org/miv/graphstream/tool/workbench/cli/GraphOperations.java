@@ -22,12 +22,12 @@
  */
 package org.miv.graphstream.tool.workbench.cli;
 
-import org.miv.graphstream.io.GraphParseException;
-import org.miv.graphstream.io.GraphReader;
-import org.miv.graphstream.io.GraphReaderFactory;
+//import org.miv.graphstream.io.GraphParseException;
+//import org.miv.graphstream.io.GraphReader;
+//import org.miv.graphstream.io.GraphReaderFactory;
 import org.miv.graphstream.tool.workbench.Context;
 
-import java.io.IOException;
+//import java.io.IOException;
 import java.io.File;
 
 public class GraphOperations extends CLICommandPool
@@ -174,46 +174,9 @@ public class GraphOperations extends CLICommandPool
 			Context ctx = cli.core.getContext(id);
 			if( ctx == null ) return createErrorMessage( "context \"" + 
 					id + "\" not created" );
-		
-			try
-			{
-				GraphReader reader;
-				
-				if( ccr.hasAttribute( "reader" ) )
-					reader = (GraphReader) Class.forName( ccr.getAttribute( "reader" ) ).newInstance();
-				else
-					reader = GraphReaderFactory.readerFor( ccr.getAttribute( "file" ) );
 			
-				ctx.getGraph().read( reader, ccr.getAttribute( "file" ) );
-				ctx.resetChanged();
-			}
-			catch( GraphParseException e )
-			{
-				return createErrorMessage( "GraphParseException: " + e.getMessage() );
-			}
-			catch( IOException e )
-			{
-				return createErrorMessage( "IOException: " + e.getMessage() );
-			}
-			catch( ClassNotFoundException e )
-			{
-				return createErrorMessage( "unknown class: \"<i>" + 
-						ccr.getAttribute( "reader" ) + "</i>\"" );
-			}
-			catch( InstantiationException e )
-			{
-				return createErrorMessage( "cannot create reader" );
-			}
-			catch( IllegalAccessException e )
-			{
-				return createErrorMessage( "cannot access reader" );
-			}
-			catch( ClassCastException e )
-			{
-				return createErrorMessage( "not a reader \"<i>" + 
-						ccr.getAttribute( "reader" ) + "</i>\"" );
-			}
-		
+			ctx.readGraph(f.getAbsolutePath(),ccr.getAttribute( "reader" ));
+			
 			if( ccr.hasAttribute( "display" ) )
 				_execute_( cli, "display graph \"" + id + "\"" 
 						+ ( ccr.hasAttribute( "display attributes" ) ? 

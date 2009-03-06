@@ -198,6 +198,9 @@ public class WActions
 		
 		public void actionPerformed( ActionEvent e )
 		{
+			if( WCore.getCore().getActiveContext().getDefaultFile() == null )
+				WUtils.selectFile(null,WCore.getCore().getActiveContext());
+			
 			WCore.getCore().saveContext();
 		}
 	}
@@ -216,6 +219,7 @@ public class WActions
 		public void actionPerformed( ActionEvent e )
 		{
 			WUtils.selectFile(null,WCore.getCore().getActiveContext());
+			actions.get("file:save").actionPerformed(e);
 		}
 	}
 	
@@ -463,7 +467,7 @@ public class WActions
 					"Delete user settings ?" );
 			
 			if( r == JOptionPane.YES_OPTION )
-				WUserSettings.deleteUserSettigns();
+				WUserSettings.deleteUserSettings();
 		}
 	}
 }

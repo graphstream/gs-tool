@@ -22,6 +22,7 @@
  */
 package org.miv.graphstream.tool.workbench.gui;
 
+import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.WNotificationServer;
 import org.miv.graphstream.tool.workbench.event.NotificationListener;
 import org.miv.graphstream.tool.workbench.xml.WXElement;
@@ -29,6 +30,7 @@ import org.miv.graphstream.tool.workbench.xml.WXmlConstants;
 
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 
@@ -38,6 +40,7 @@ import java.net.URL;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -310,6 +313,7 @@ public class WMenuBar
 	private void loadXml( ActionListener al, InputStream in )
 	{
 		handle( null, WGetText.readGetTextXml(null,in), al );
+		rebuildFileHistory();
 	}
 	
 	public void registerComponent( String id, JComponent c )
@@ -320,6 +324,34 @@ public class WMenuBar
 	public JComponent getRegisteredComponent( String id )
 	{
 		return idMapping.get(id);
+	}
+	
+	public void rebuildFileHistory()
+	{
+		if( idMapping.containsKey("file:lastopened") )
+		{
+			JMenu last = (JMenu) idMapping.get("file:lastopened");
+			last.removeAll();
+			List<WUserSettings.FileHistory> history = WUserSettings.getFileHistory();
+			JMenuItem openFile;
+			
+			for( int i = 0; i < history.size() && i < 10; i++ )
+			{
+				WUserSettings.FileHistory fh = history.get(i);
+				openFile = new JMenuItem( fh.getPathName(), WIcons.getIcon("file:restore") );
+				openFile.setActionCommand(fh.getPathName());
+				openFile.addActionListener( new ActionListener()
+				{
+					public void actionPerformed( ActionEvent e )
+					{
+						WCore.getCore().getCLI().execute( String.format( 
+								"open graph \"%s\" and display", 
+								e.getActionCommand() ) );
+					}
+				});
+				last.add(openFile);
+			}
+		}
 	}
 	
 	public void disableOn( JComponent c, String n )

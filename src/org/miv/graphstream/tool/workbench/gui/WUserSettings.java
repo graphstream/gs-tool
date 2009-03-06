@@ -26,7 +26,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
+
+import java.text.DateFormat;
+
+import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.HashMap;
 
@@ -67,17 +74,52 @@ public class WUserSettings
 		wus.save();
 	}
 	
-	public static void deleteUserSettigns()
+	public static void deleteUserSettings()
 	{
-		File settings = new File(String.format( "%s/.graphstream/gswb-settings.xml",
-				System.getenv().get("HOME") ));
+		File settings = getUserSettingsFile();
 		
 		if( settings.exists() )
 			settings.delete();
 	}
 	
+	public static File getUserSettingsFile()
+	{
+		String home = System.getProperty("user.home");
+		String sep  = System.getProperty("file.separator");
+		
+		if( home == null )
+			return null;
+		
+		return new File( home + sep + ".graphstream" + sep + "gswb-settings.xml" );
+	}
+	
+	public static List<FileHistory> getFileHistory()
+	{
+		return Collections.unmodifiableList(wus.history);
+	}
+	
+	public static void newFileUsed( String path )
+	{
+		for( FileHistory fh : wus.history )
+		{
+			if( fh.pathname.equals(path) )
+			{
+				fh.date = DateFormat.getDateTimeInstance().getCalendar().getTime();
+				Collections.sort(wus.history);
+				return;
+			}
+		}
+		
+		wus.history.add( new FileHistory(path,DateFormat.getDateTimeInstance().getCalendar().getTime()) );
+		Collections.sort(wus.history);
+		
+		saveUserSettings();
+	}
+	
 	String 					lookAndFeel;
 	Locale 					locale;
+	LinkedList<FileHistory>	history;
+	boolean					fullmode;
 	HashMap<String,String>	settings;
 	
 	private WUserSettings()
@@ -85,6 +127,7 @@ public class WUserSettings
 		lookAndFeel = null;
 		locale		= Locale.getDefault();
 		settings	= new HashMap<String,String>();
+		history		= new LinkedList<FileHistory>();
 	}
 	
 	public String getLookAndFeel()
@@ -109,15 +152,12 @@ public class WUserSettings
 	
 	public void load()
 	{
-		File settings = new File(String.format( "%s/.graphstream/gswb-settings.xml",
-				System.getenv().get("HOME") ));
+		File settings = getUserSettingsFile();
 		
 		try
 		{
 			if( settings.exists() )
-			{
 				load( new FileInputStream(settings) );
-			}
 		}
 		catch( Exception e )
 		{
@@ -165,14 +205,35 @@ public class WUserSettings
 					}
 					else settings.put(name,value);
 				}
+				else if( wxe.is(SPEC_HISTORY) )
+				{
+					history.clear();
+					Iterator<WXElement> files = wxe.iteratorOnChildren();
+					
+					while( files.hasNext() )
+					{
+						WXElement file = files.next();
+						
+						if( file.is(SPEC_HISTORY_FILE) )
+						{
+							
+							String pathname = file.getAttribute(QNAME_GSWB_SETTINGS_HISTORY_FILE_PATHNAME);
+							String date = file.getAttribute(QNAME_GSWB_SETTINGS_HISTORY_FILE_DATE);
+							
+							FileHistory fh = new FileHistory(pathname,date);
+							history.add(fh);
+						}
+					}
+					
+					Collections.sort(history);
+				}
 			}
 		}
 	}
 	
 	public void save()
 	{
-		File settings = new File(String.format( "%s/.graphstream/gswb-settings.xml",
-				System.getenv().get("HOME") ));
+		File settings = getUserSettingsFile();
 		
 		try
 		{
@@ -182,8 +243,6 @@ public class WUserSettings
 			FileWriter out = new FileWriter(settings);
 			
 			out.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
-			out.write( "<!DOCTYPE gswb PUBLIC \"-//W3C//DTD HTML 4.01 Frameset//EN\" " +
-					"\"jar:org/miv/graphstream/tool/workbench/xml/graphstream-workbench.dtd\">\n" );
 			out.write( "<gswb:settings xmlns=\"org/miv/graphstream\" xmlns:gswb=\"workbench\">\n" );
 			
 			out.write( String.format( "\t<setting name=\"%s\" value=\"%s\"/>\n", 
@@ -191,6 +250,12 @@ public class WUserSettings
 			out.write( String.format( "\t<setting name=\"%s\" value=\"%s\"/>\n",
 					"locale", WGetText.getLocale().getLanguage() + "," + 
 					WGetText.getLocale().getCountry() + "," + WGetText.getLocale().getVariant() ));
+			
+			out.write( "\t<history>\n" );
+			for( FileHistory fh : history )
+				out.write( String.format( "\t\t<file pathname=\"%s\" date=\"%s\"/>\n", fh.pathname,
+						DateFormat.getDateTimeInstance().format(fh.date)) );
+			out.write( "\t</history>\n" );
 			
 			out.write( "</gswb:settings>\n" );
 			
@@ -200,6 +265,49 @@ public class WUserSettings
 		catch( Exception e )
 		{
 			e.printStackTrace();
+		}
+	}
+	
+	public static class FileHistory
+		implements Comparable<FileHistory>
+	{
+		String 	pathname;
+		Date 	date;
+		
+		public FileHistory( String pathname, Date date )
+		{
+			this.pathname = pathname;
+			this.date = date;
+		}
+		
+		public FileHistory( String pathname, String date )
+		{
+			this.pathname = pathname;
+			
+			try
+			{
+				this.date = DateFormat.getDateTimeInstance().parse(date);
+			}
+			catch( Exception e )
+			{
+				this.date = null;
+				e.printStackTrace();
+			}
+		}
+		
+		public String getPathName()
+		{
+			return pathname;
+		}
+		
+		public Date getDate()
+		{
+			return date;
+		}
+		
+		public int compareTo( FileHistory fh )
+		{
+			return date.compareTo(fh.date);
 		}
 	}
 }

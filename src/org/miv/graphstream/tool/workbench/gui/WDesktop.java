@@ -170,12 +170,13 @@ public class WDesktop
 	
 	public void windowGainedFocus( WindowEvent e )
 	{
-		Window w = e.getWindow();
-		
-		if( w instanceof ContextFrame )
+		for( ContextFrame cf : iframes.values() )
 		{
-			ContextFrame cf = (ContextFrame) w;
-			cli.execute( String.format( "select graph \"%s\"", cf.ctx.getGraph().getId() ) );
+			if( cf.isFocused() )
+			{
+				cli.execute( String.format( "select graph \"%s\"", cf.ctx.getGraph().getId() ) );
+				break;
+			}
 		}
 	}
 	
