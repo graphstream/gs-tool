@@ -21,7 +21,7 @@
 		<item command="@getaction(edit:undo)" disableOn="historyUndoDisable" enableOn="historyUndoEnable"></item>
 		<item command="@getaction(edit:redo)" enableOn="historyRedoEnable" disableOn="historyRedoDisable"></item>
 		<separator></separator>
-		<menu name="@gettext(menu:select)" enableOn="contextAdded" disableOn="noContext">
+		<menu name="@gettext(edit:select)" enableOn="contextAdded" disableOn="noContext">
 			<item name="@gettext(menu:selectall)" command="@CLI:select all" strokeKey="VK_A" strokeModifier="CTRL_MASK"/>
 			<item name="@gettext(menu:unselectall)" command="@CLI:unselect all" strokeKey="VK_A" strokeModifier="CTRL_MASK,SHIFT_MASK"/>
 		</menu>

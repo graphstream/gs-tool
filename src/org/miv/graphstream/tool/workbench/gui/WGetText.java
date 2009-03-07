@@ -79,7 +79,7 @@ public class WGetText
 			return key;
 	}
 	
-	private static final Pattern getTextPattern = Pattern.compile("^@gettext\\((.*)\\)$" );
+	private static final Pattern getTextPattern = Pattern.compile("^(.*)?@gettext\\(([^\\)]*)\\)(.*)?$" );
 	
 	public static String getTextLookup( String str )
 	{
@@ -87,7 +87,11 @@ public class WGetText
 		
 		if( m.matches() )
 		{
-			return getText(m.group(1));
+			
+			return 
+				( m.group(1) != null ? m.group(1) : "" ) + 
+				getText(m.group(2)) + 
+				( m.group(3) != null ? m.group(3) : "" );
 		}
 		else if( texts.containsKey(str) )
 		{

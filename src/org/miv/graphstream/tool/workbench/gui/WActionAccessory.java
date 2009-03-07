@@ -283,8 +283,11 @@ public class WActionAccessory
 			setLayout(bag);
 			
 			edgeIdFormat 	= new JTextField( "edge#%n" );
-			cycle			= new JCheckBox( "Cycle ?", false );
-			directed		= new JCheckBox( "Directed ?", false );
+			cycle			= new JCheckBox( WGetText.getTextLookup("@gettext(misc:cycle) ?"), false );
+			directed		= new JCheckBox( WGetText.getTextLookup("@gettext(misc:directed) ?"), false );
+			
+			WUtils.reloadOnLangChanged(cycle,"@gettext(misc:cycle) ?","setText");
+			WUtils.reloadOnLangChanged(directed,"@gettext(misc:directed) ?","setText");
 			
 			JLabel l = new JLabel( "id: " );
 			
@@ -389,8 +392,11 @@ public class WActionAccessory
 			
 			JLabel l = new JLabel( "pattern: " );
 			pattern 	= new JTextField( ".*" );
-			nodes		= new JCheckBox( "nodes" );
-			edges		= new JCheckBox( "edges" );
+			nodes		= new JCheckBox( WGetText.getText("nodes") );
+			edges		= new JCheckBox( WGetText.getText("edges") );
+			
+			WUtils.reloadOnLangChanged(nodes,"nodes","setText");
+			WUtils.reloadOnLangChanged(edges,"edges","setText");
 			
 			c.gridy = 0;
 			c.gridx = 0;
@@ -415,8 +421,11 @@ public class WActionAccessory
 			bag.setConstraints(edges,c);
 			add(edges);
 			
-			JButton button = new JButton("select");
+			JButton button = new JButton( WGetText.getText("edit:select") );
 			button.addActionListener(this);
+			
+			WUtils.reloadOnLangChanged(button,"edit:select","setText");
+			
 			c.gridy=1;
 			c.gridx=1;
 			c.gridheight = 2;

@@ -204,8 +204,8 @@ WAlgorithmGUI$WAlgorithmParameterGUIFieldElementModel : 0x04005007
                                     WUtils$ReloadPool : 0x04022006
                           WUtils$SaveGraphFileChooser : 0x04022007
 
-                                  WXElement$Attribute : WXElement001
-                          WXElement$WXElementIterator : WXElement002
+                                  WXElement$Attribute : 0x05001001
+                          WXElement$WXElementIterator : 0x05001002
 
                          WXmlHandler$WXElementChecker : 0x05004001
                          WXmlHandler$WXElementHandler : 0x05004002
