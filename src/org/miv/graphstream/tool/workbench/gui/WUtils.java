@@ -161,7 +161,7 @@ public class WUtils
 		jfc.addChoosableFileFilter( new ExtFileFilter( "[.]dot", "The GraphViz file format (*.dot) " ) );
 		jfc.addChoosableFileFilter( new ExtFileFilter( "[.]gml", "The GML file format (*.gml) " ) );
 		jfc.addChoosableFileFilter( new ExtFileFilter( "[.]tlp", "The Tulip file format (*.tlp) " ) );
-		jfc.addChoosableFileFilter( new ExtFileFilter( "[.](dot|dgs)", "Graph formats (*.dgs,*.dot,*.gml) " ) );
+		jfc.addChoosableFileFilter( new ExtFileFilter( "[.](dot|dgs|tlp|gml)", "Graph formats (*.dgs,*.dot,*.gml,*.tlp) " ) );
 	}
 	/**
 	 * Return an automatic id based on the given format.
@@ -224,7 +224,7 @@ public class WUtils
 	static class NewGraphDialog extends JDialog 
 		implements ChangeListener, ActionListener
 	{
-		public static final long serialVersionUID = 0x040220020001L;
+		public static final long serialVersionUID = 0x0401C0020001L;
 		
 		protected Component parent;
 		protected CLI cli;
@@ -435,7 +435,7 @@ public class WUtils
 	
 	static class OpenGraphFileChooser extends JFileChooser
 	{
-		public static final long serialVersionUID = 0x040220040001L;
+		public static final long serialVersionUID = 0x0401C0040001L;
 		
 		protected OpenGraphAccessory accessory;
 		protected CLI cli;
@@ -514,7 +514,7 @@ public class WUtils
 	
 	static class OpenGraphAccessory extends JPanel implements ChangeListener
 	{
-		public static final long serialVersionUID = 0x040220030001L;
+		public static final long serialVersionUID = 0x0401C0030001L;
 		
 		protected JTextField graphId;
 		protected JTextField readerClass;
@@ -589,7 +589,7 @@ public class WUtils
 	
 	static class SaveGraphFileChooser extends JFileChooser
 	{
-		public static final long serialVersionUID = 0x040220070001L;
+		public static final long serialVersionUID = 0x0401C0070001L;
 		
 		protected CLI cli;
 		protected Component parent;
@@ -700,7 +700,7 @@ public class WUtils
 		extends LinkedList<ReloadField>
 		implements NotificationListener
 	{
-		private static final long serialVersionUID = 0x040220060001L;
+		private static final long serialVersionUID = 0x0401C0060001L;
 		
 		public ReloadPool()
 		{

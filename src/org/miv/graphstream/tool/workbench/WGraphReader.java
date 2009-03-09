@@ -190,7 +190,10 @@ public class WGraphReader
 		
 		try
 		{
-			progressionModel.setValue( (int) ( 100 * channel.position() / channel.size() ) );
+			if( channel.isOpen() )
+				progressionModel.setValue( (int) ( 100 * channel.position() / channel.size() ) );
+			else
+				progressionModel.setValue(100);
 		}
 		catch( Exception e )
 		{
