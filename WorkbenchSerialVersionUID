@@ -82,9 +82,9 @@ Class numbering :
                 WOptions : 0x04017
                  WSearch : 0x04018
            WSelectionGUI : 0x04019
-                WToolBar : 0x04020
-           WUserSettings : 0x04021
-                  WUtils : 0x04022
+                WToolBar : 0x0401A
+           WUserSettings : 0x0401B
+                  WUtils : 0x0401C
                   
                WXElement : 0x05001
            WXElementSpec : 0x05002
@@ -194,15 +194,15 @@ WAlgorithmGUI$WAlgorithmParameterGUIFieldElementModel : 0x04005007
 
                         WSelectionGUI$ElementRenderer : 0x04019001
 
-                            WUserSettings$FileHistory : 0x04021001
+                            WUserSettings$FileHistory : 0x0401B001
 
-                                 WUtils$ExtFileFilter : 0x04022001
-                                WUtils$NewGraphDialog : 0x04022002
-                            WUtils$OpenGraphAccessory : 0x04022003
-                          WUtils$OpenGraphFileChooser : 0x04022004
-                                   WUtils$ReloadField : 0x04022005
-                                    WUtils$ReloadPool : 0x04022006
-                          WUtils$SaveGraphFileChooser : 0x04022007
+                                 WUtils$ExtFileFilter : 0x0401C001
+                                WUtils$NewGraphDialog : 0x0401C002
+                            WUtils$OpenGraphAccessory : 0x0401C003
+                          WUtils$OpenGraphFileChooser : 0x0401C004
+                                   WUtils$ReloadField : 0x0401C005
+                                    WUtils$ReloadPool : 0x0401C006
+                          WUtils$SaveGraphFileChooser : 0x0401C007
 
                                   WXElement$Attribute : 0x05001001
                           WXElement$WXElementIterator : 0x05001002

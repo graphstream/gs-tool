@@ -7,7 +7,7 @@ Workbench current version 0.91b
 	- manual
 	- full help
 	- history fully functionnal
-	- valid serialVersionUID
+	+ valid serialVersionUID
 	- fullmode functionnal
 	- find bug source when two context blind
 	- edit element attribute
