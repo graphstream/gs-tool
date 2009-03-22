@@ -372,14 +372,14 @@ public class WAlgorithm
 					algo = co.newInstance(fullValues);
 				}
 			
-				algo.setGraph(graph);
+				algo.init(graph);
 			
 				if( algo instanceof DynamicAlgorithm )
 				{
 					DynamicAlgorithm dalgo = (DynamicAlgorithm) algo;
 					
 					dynamize = true;
-					dalgo.begin();
+					//dalgo.begin();
 					while( dynamize )
 					{
 						dalgo.compute();
@@ -391,7 +391,7 @@ public class WAlgorithm
 						{
 						}
 					}
-					dalgo.end();
+					dalgo.terminate();
 				}
 				else
 					algo.compute();

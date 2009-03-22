@@ -28,11 +28,9 @@ import org.miv.graphstream.tool.workbench.event.ContextEvent;
 import org.miv.graphstream.tool.workbench.event.SelectionListener;
 import org.miv.graphstream.tool.workbench.event.SelectionEvent;
 
-import org.miv.graphstream.graph.Edge;
 import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
 import org.miv.graphstream.graph.GraphListener;
-import org.miv.graphstream.graph.Node;
 import org.miv.graphstream.io.GraphReader;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -320,46 +318,39 @@ public class DefaultContext
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
 	 */
-	public void afterNodeAdd( Graph graph, Node node )
+	public void nodeAdded( String graphId, String nodeId )
 	{
 		changed = true;
-		fireGraphOperation(GraphOperation.NodeAdded,node);
+		fireGraphOperation(GraphOperation.NodeAdded,nodeId);
 	}
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
 	 */
-	public void afterEdgeAdd( Graph graph, Edge edge )
+	public void edgeAdded( String graphId, String edgeId, String src, 
+			String trg, boolean directed )
 	{
 		changed = true;
-		fireGraphOperation(GraphOperation.EdgeAdded,edge);
+		fireGraphOperation(GraphOperation.EdgeAdded,edgeId);
 	}
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
 	 */
-	public void attributeChanged( Element element, String attribute,
-			Object oldValue, Object newValue )
+	public void edgeRemoved( String graphId, String edgeId )
 	{
-		changed = true;
-	}
-	/**
-	 * @see org.miv.graphstream.graph.GraphListener
-	 */
-	public void beforeEdgeRemove( Graph graph, Edge edge )
-	{
-		if( selection.contains( edge ) )
-			selection.unselect( edge );
+		if( selection.contains( graph.getEdge(edgeId)) )
+			selection.unselect( graph.getEdge(edgeId));
 		
-		fireGraphOperation(GraphOperation.EdgeRemoved,edge);
+		fireGraphOperation(GraphOperation.EdgeRemoved,edgeId);
 	}
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
 	 */
-	public void beforeNodeRemove( Graph graph, Node node )
+	public void nodeRemoved( String graphId, String nodeId )
 	{
-		if( selection.contains( node ) )
-			selection.unselect( node );
+		if( selection.contains( graph.getNode(nodeId)) )
+			selection.unselect( graph.getNode(nodeId));
 		
-		fireGraphOperation(GraphOperation.NodeRemoved,node);
+		fireGraphOperation(GraphOperation.NodeRemoved,nodeId);
 	}
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
@@ -372,7 +363,43 @@ public class DefaultContext
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
 	 */
-	public void stepBegins(Graph graph, double time)
+	public void stepBegins(String graphId, double time)
 	{
+	}
+	
+	public void edgeAttributeAdded(String graphId, String edgeId,
+			String attribute, Object value) {
+		changed = true;
+	}
+	public void edgeAttributeChanged(String graphId, String edgeId,
+			String attribute, Object oldValue, Object newValue) {
+		changed = true;
+	}
+	public void edgeAttributeRemoved(String graphId, String edgeId,
+			String attribute) {
+		changed = true;
+	}
+	public void graphAttributeAdded(String graphId, String attribute,
+			Object value) {
+		changed = true;
+	}
+	public void graphAttributeChanged(String graphId, String attribute,
+			Object oldValue, Object newValue) {
+		changed = true;
+	}
+	public void graphAttributeRemoved(String graphId, String attribute) {
+		changed = true;
+	}
+	public void nodeAttributeAdded(String graphId, String nodeId,
+			String attribute, Object value) {
+		changed = true;
+	}
+	public void nodeAttributeChanged(String graphId, String nodeId,
+			String attribute, Object oldValue, Object newValue) {
+		changed = true;
+	}
+	public void nodeAttributeRemoved(String graphId, String nodeId,
+			String attribute) {
+		changed = true;
 	}
 }

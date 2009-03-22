@@ -22,11 +22,8 @@
  */
 package org.miv.graphstream.tool.workbench.gui;
 
-import org.miv.graphstream.graph.Edge;
-import org.miv.graphstream.graph.Element;
 import org.miv.graphstream.graph.Graph;
-import org.miv.graphstream.graph.GraphListener;
-import org.miv.graphstream.graph.Node;
+import org.miv.graphstream.graph.GraphElementsListener;
 import org.miv.graphstream.tool.workbench.WCore;
 import org.miv.graphstream.tool.workbench.cli.CLI;
 import org.miv.graphstream.tool.workbench.event.*;
@@ -50,7 +47,7 @@ import javax.swing.DefaultComboBoxModel;
  *
  */
 public class WGraphInfo extends JPanel 
-	implements ContextChangeListener, GraphListener, ItemListener
+	implements ContextChangeListener, GraphElementsListener, ItemListener
 {
 	public static final long serialVersionUID = 0x040100000001L;
 	
@@ -170,10 +167,10 @@ public class WGraphInfo extends JPanel
 		if( g != listeningGraph )
 		{
 			if( listeningGraph != null ) 
-				listeningGraph.removeGraphListener( this );
+				listeningGraph.removeGraphElementsListener( this );
 			
 			if( g != null )
-				g.addGraphListener( this );
+				g.addGraphElementsListener( this );
 			
 			listeningGraph = g;
 		}
@@ -183,32 +180,38 @@ public class WGraphInfo extends JPanel
 	
 // GraphListener implementation
 	
-	public void afterNodeAdd( Graph graph, Node node )
+	public void nodeAdded( String graphId, String id )
 	{
 		updateGraphInformation();
 	}
 
-	public void afterEdgeAdd( Graph graph, Edge edge )
+	public void edgeAdded( String graphId, String id, String src, String trg, boolean directed )
 	{
 		updateGraphInformation();
 	}
 
-	public void beforeNodeRemove( Graph graph, Node node )
+	public void nodeRemoved( String graphId, String id )
 	{
 		Graph g = core.getActiveContext().getGraph();
 		setNodesCount( g.getNodeCount() - 1 );
 	}
 	
-	public void beforeEdgeRemove( Graph graph, Edge edge )
+	public void edgeRemoved( String graphId, String id )
 	{
 		Graph g = core.getActiveContext().getGraph();
 		setEdgesCount( g.getEdgeCount() - 1 );
 	}
 	
 	public void beforeGraphClear( Graph graph ) {}
+	
+	public void stepBegins( String graphId, double time )
+	{
+		
+	}
+	/*
 	public void attributeChanged( Element element, String attribute,
 			Object oldValue, Object newValue ) {}
-	
+	*/
 // ItemListener implementation
 	
 	public void itemStateChanged( ItemEvent e )
