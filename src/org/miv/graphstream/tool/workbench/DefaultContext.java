@@ -355,7 +355,7 @@ public class DefaultContext
 	/**
 	 * @see org.miv.graphstream.graph.GraphListener
 	 */
-	public void beforeGraphClear( Graph graph )
+	public void graphCleared( String graphId )
 	{
 		selection.unselect();
 		fireGraphOperation(GraphOperation.GraphClear,null);

@@ -202,7 +202,7 @@ public class WGraphInfo extends JPanel
 		setEdgesCount( g.getEdgeCount() - 1 );
 	}
 	
-	public void beforeGraphClear( Graph graph ) {}
+	public void graphCleared( String graph ) {}
 	
 	public void stepBegins( String graphId, double time )
 	{
