@@ -77,9 +77,6 @@ public class LinkRenderer
 	    g2d.setPaint( new GradientPaint( 5 + p1[0], 5 + p1[1], COLOR_TRG, 5 + p2[0], 5 + p2[1], COLOR_SRC ) );
 	    g2d.setStroke(LINK_STROKE);
 	    g2d.drawLine( 5 + p1[0], 5 + p1[1], 5 + p2[0], 5 + p2[1] );
-	    
-	    //g2d.fillOval( 5 + p1[0] - 5, 5 + p1[1] - 5, 10, 10 );
-	    //g2d.drawRect(0,0,getWidth(),getHeight());
 	}
 
 	public void propertyChange(PropertyChangeEvent evt)

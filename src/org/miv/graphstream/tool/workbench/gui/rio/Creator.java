@@ -10,6 +10,11 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+
 import javax.swing.JPanel;
 
 public class Creator
@@ -17,44 +22,139 @@ public class Creator
 {
 	private static final long serialVersionUID = 0x06008000L;
 
-	protected static final BasicStroke STROKE  		= new BasicStroke( 3, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
-	protected static final BasicStroke BORDER  		= new BasicStroke( 1, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
-	protected static final BasicStroke OVER_STROKE  = new BasicStroke( 10, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final BasicStroke 	selectionModeStroke = new BasicStroke( 2, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final BasicStroke 	STROKE  			= new BasicStroke( 10, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final BasicStroke 	BORDER  			= new BasicStroke( 3, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final BasicStroke 	OVER_STROKE  		= new BasicStroke( 20, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
 	
-	protected static final Color		OVER	= new Color( 0, 0.5f, 0.95f, 0.5f );
-	protected static final Color		SELECT	= new Color( 0.8f, 1, 0.2f, 0.5f );
+	protected static final Color		BASIC				= new Color( 1,1,1, 0.5f );
+	protected static final Color		OVER				= new Color( 0, 0.5f, 0.95f, 0.5f );
+	protected static final Color		SELECT				= new Color( 0.8f, 1, 0.2f, 0.5f );
+	protected static final Color		overIOComponent		= new Color(1,0.6f,0,0.4f);
 	
-	GSLinker 	linker;
-	
-	int 		mouse = -1;
-	
-	boolean 	input = false;
-	boolean 	output = false;
-	
-	static int	count = 1;
-	
-	public Creator( GSLinker linker )
+	protected static enum Mode
 	{
-		this.linker = linker;
-		
-		setSize( 90, 90 );
+		None,
+		InputSelection,
+		OutputSelection
+	}
+	
+	GSLinker 			linker;
+	
+	int 				mousex = -1;
+	int					mousey = -1;
+	
+	boolean 			input = false;
+	boolean 			output = false;
+	
+	Line2D				left;
+	Arc2D				center;
+	Line2D				right;
+	Path2D				shape;
+	
+	XShape				inputSelector;
+	XShape				outputSelector;
+	
+	int					inputs = 3;
+	int					outputs = 10;
+	
+	Mode				mode = Mode.None;
+	
+	AffineTransform		transform;
+	
+	static int			count = 1;
+	
+	IOComponent	over = null;
+	
+	public Creator( GSLinker l )
+	{
+		setSize( 120, 120 );
 		setLocation(10,10);
 		setOpaque(false);
+
+		linker 		= l;
+		
+		transform	= new AffineTransform();
+		
+		left 		= new Line2D.Float( 10, 60, 45, 60 );
+		right 		= new Line2D.Float( 75, 60, 110, 60 );
+		center 		= new Arc2D.Float( 45, 45, 30, 30, 0, 360, Arc2D.OPEN );
+			
+		shape 		= new Path2D.Float();
+			shape.append( left, false);
+			shape.append( center, false );
+			shape.append( right, false );
+		
+		inputSelector = new XShape();
+		inputSelector.draw( "outter", new Arc2D.Float( 10, 10, 100, 100, 0, 360, Arc2D.OPEN ) );
+		for( int i = 0; i < inputs; i++ )
+		{
+			inputSelector.fill( "selection#" + i, new Arc2D.Float( 
+					getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) inputs ) - 5, 
+					getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) inputs ) - 5, 
+					10, 10, 0, 360, Arc2D.OPEN )
+			);
+		}
+			
+		outputSelector = new XShape();
+		outputSelector.draw( "outter", new Arc2D.Float( 10, 10, 100, 100, 0, 360, Arc2D.OPEN ) );
+		for( int i = 0; i < outputs; i++ )
+		{
+			outputSelector.fill( "selection#" + i, new Arc2D.Float( 
+				getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) outputs ) - 5, 
+				getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) outputs ) - 5, 
+				10, 10, 0, 360, Arc2D.OPEN )
+			);
+		}
 		
 		addMouseMotionListener( new MouseMotionAdapter()
 		{
 			public void mouseMoved( MouseEvent e )
 			{
-				Creator.this.mouse = (int) ( ( e.getX() / (float) Creator.this.getWidth() ) * 3 );
+				Creator.this.mousex = (int) ( ( e.getX() / (float) Creator.this.getWidth() ) * 3 );
+				Creator.this.mousey = (int) ( ( e.getY() / (float) Creator.this.getHeight() ) * 3 );
 				Creator.this.repaint();
 			}
 			
 			public void mouseDragged( MouseEvent e )
 			{
-				Creator.this.setLocation(
+				Creator.this.over = null;
+				
+				if( mousex == 1 && mousey == 1 )
+				{
+					Creator.this.setLocation(
 						Creator.this.getX() + e.getX() - Creator.this.getWidth() / 2,
 						Creator.this.getY() + e.getY() - Creator.this.getHeight() / 2
-				);
+					);
+				}
+				else if( mousex == 0 && mousey == 1 )
+				{
+					double theta = Math.atan2(
+							Creator.this.getHeight() / 2 - e.getY(),
+							Creator.this.getWidth() / 2  - e.getX()
+					);
+					
+					Creator.this.transform.setToIdentity();
+					Creator.this.transform.rotate(theta, Creator.this.getWidth() / 2, Creator.this.getHeight() / 2 );
+					
+					Creator.this.mode = Mode.InputSelection;
+					
+					repaint();
+				}
+				else if( mousex == 2 && mousey == 1 )
+				{
+					double theta = Math.atan2(
+							e.getY() - Creator.this.getHeight() / 2,
+							e.getX() - Creator.this.getWidth() / 2 
+					);
+					
+					Creator.this.transform.setToIdentity();
+					Creator.this.transform.rotate(theta, Creator.this.getWidth() / 2, Creator.this.getHeight() / 2 );
+					
+					Creator.this.mode = Mode.OutputSelection;
+					
+					repaint();
+				}
 			}
 		});
 		
@@ -62,34 +162,70 @@ public class Creator
 		{
 			public void mouseExited( MouseEvent e )
 			{
-				Creator.this.mouse = -1;
+				Creator.this.mousex = -1;
+				Creator.this.mousey = -1;
 				Creator.this.repaint();
 			}
 			
 			public void mouseClicked( MouseEvent e )
 			{
-				switch(Creator.this.mouse)
+				switch(Creator.this.mousex)
 				{
 				case 0:
 					Creator.this.input = ! Creator.this.input;
+					if( Creator.this.over != null )
+						Creator.this.over.setInput( Creator.this.input );
+					
 					break;
 				case 1:
-					if( input && output )
-						Creator.this.linker.addFilter( String.format( "creator:filter#%04d", count++ ) );
-					else if( input )
-						Creator.this.linker.addInput( String.format( "creator:input#%04d", count++ ) );
-					else if( output )
-						Creator.this.linker.addOutput( String.format( "creator:output#%04d", count++ ) );
-					/*
-					input  = false;
-					output = false;
-					*/
+					if( Creator.this.mousey == 1 && Creator.this.over == null )
+					{
+						if( input && output )
+							Creator.this.linker.addFilter( String.format( "creator:filter#%04d", count++ ) );
+						else if( input )
+							Creator.this.linker.addInput( String.format( "creator:input#%04d", count++ ) );
+						else if( output )
+							Creator.this.linker.addOutput( String.format( "creator:output#%04d", count++ ) );
+					}
+					
 					break;
 				case 2:
 					Creator.this.output = ! Creator.this.output;
+					if( Creator.this.over != null )
+						Creator.this.over.setOutput( Creator.this.output );
+					
 					break;
 				}
 				
+				Creator.this.repaint();
+			}
+			
+			public void mouseReleased( MouseEvent e )
+			{
+				IOComponent ioc = Creator.this.linker.getNearestIOComponent(e.getX()+Creator.this.getX(),e.getY()+Creator.this.getY());
+				
+				if( ioc != null )
+				{
+					double d = Math.sqrt(
+							Math.pow( Creator.this.getX() + Creator.this.getWidth() / 2 - ioc.getX() - ioc.getWidth() / 2, 2 ) +
+							Math.pow( Creator.this.getY() + Creator.this.getHeight() / 2 - ioc.getY() - ioc.getHeight() / 2, 2 )
+					);
+					
+					if( d < getWidth() / 3 )
+					{
+						Creator.this.over = ioc;
+						Creator.this.input = ioc.input;
+						Creator.this.output = ioc.output;
+						
+						Creator.this.setLocation(
+								ioc.getX() + ioc.getWidth() / 2 - Creator.this.getWidth() / 2,
+								ioc.getY() + ioc.getHeight() / 2 - Creator.this.getHeight() / 2
+						);
+					}
+				}
+				
+				Creator.this.transform.setToIdentity();
+				Creator.this.mode = Mode.None;
 				Creator.this.repaint();
 			}
 		});
@@ -114,44 +250,40 @@ public class Creator
 	    g2d.setRenderingHint( RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY );
 	    g2d.setRenderingHint( RenderingHints.KEY_STROKE_CONTROL,      RenderingHints.VALUE_STROKE_PURE );
 
-	    if( mouse == 0 || input )
+	    if( mode == Mode.InputSelection )
+	    {
+	    	g2d.setStroke(selectionModeStroke);
+	    	inputSelector.paint(g2d);
+	    }
+	    else if( mode == Mode.OutputSelection )
+	    {
+	    	g2d.setStroke(selectionModeStroke);
+	    	outputSelector.paint(g2d);
+	    }
+	    
+	    g2d.transform(transform);
+	    g2d.setStroke(OVER_STROKE);
+    	
+	    if( ( ( mousex == 0 || input && mode == Mode.None ) ) || mode == Mode.InputSelection )
 	    {
 	    	g2d.setColor( input ? SELECT : OVER );
-	    	g2d.setStroke(OVER_STROKE);
-	    	
-	    	g2d.fillOval( getWidth() / 18 - 4, 4 * getHeight() / 9 - 4, getWidth() / 9 + 8, getHeight() / 9 + 8 );
-    		g2d.drawLine( getWidth() / 9, getHeight() / 2, getWidth() / 3 + 4, getHeight() / 2 );
+	    	g2d.draw(left);
 	    }
 	    
-	    if( mouse == 1 )
+	    if( mousex == 1 )
 	    {
 	    	g2d.setColor( OVER );
-	    	g2d.setStroke(OVER_STROKE);
-	    	
-	    	g2d.drawOval( getWidth() / 3 + 4, getHeight() / 3 + 4, getWidth() / 3 - 8, getHeight() / 3 - 8 );
+	    	g2d.draw(center);
 	    }
 	    
-	    if( mouse == 2 || output )
+	    if( ( ( mousex == 2 || output && mode == Mode.None ) ) || mode == Mode.OutputSelection )
 	    {
 	    	g2d.setColor( output ? SELECT : OVER );
-	    	g2d.setStroke(OVER_STROKE);
-
-    		g2d.fillOval( 15 * getWidth() / 18 - 4, 4 * getHeight() / 9 - 4, getWidth() / 9 + 8, getHeight() / 9 + 8 );
-    		g2d.drawLine( 15 * getWidth() / 18, getHeight() / 2, 2 * getWidth() / 3 - 4, getHeight() / 2 );
+	    	g2d.draw(right);
 	    }
 	    
-		g2d.setColor( Color.WHITE );
+		g2d.setColor( over != null ? overIOComponent : BASIC );
 		g2d.setStroke(STROKE);
-		
-		// Center circle
-		g2d.drawOval( getWidth() / 3 + 4, getHeight() / 3 + 4, getWidth() / 3 - 8, getHeight() / 3 - 8 );
-		
-		// Left disk
-		g2d.fillOval( getWidth() / 18, 4 * getHeight() / 9, getWidth() / 9, getHeight() / 9 );
-		g2d.drawLine( getWidth() / 9, getHeight() / 2, getWidth() / 3 + 4, getHeight() / 2 );
-		
-		// Right disk
-		g2d.fillOval( 15 * getWidth() / 18, 4 * getHeight() / 9, getWidth() / 9, getHeight() / 9 );
-		g2d.drawLine( 15 * getWidth() / 18, getHeight() / 2, 2 * getWidth() / 3 - 4, getHeight() / 2 );
+		g2d.draw(shape);
 	}
 }

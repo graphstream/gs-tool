@@ -3,6 +3,7 @@ package org.miv.graphstream.tool.workbench.gui.rio;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
@@ -47,12 +48,16 @@ public class GSLinker
 		//setLayout(null);// new java.awt.FlowLayout() );
 		
 		status = new StatusBar(this);
+		
 		Trash trash = new Trash(this);
 		trash.setLocation( 10, 10 );
 		
+		Creator creator = new Creator(this);
+		creator.setLocation( trash.getX() + trash.getWidth(), trash.getY() + trash.getHeight() / 2 - creator.getHeight() / 2 );
+		
 		add( splash,			JLayeredPane.POPUP_LAYER );
 		add( status,			JLayeredPane.POPUP_LAYER );
-		add( new Creator(this),	JLayeredPane.POPUP_LAYER );
+		add( creator,			JLayeredPane.POPUP_LAYER );
 		add( trash,				JLayeredPane.DRAG_LAYER );
 	}
 	
@@ -73,21 +78,21 @@ public class GSLinker
 	
 	public void addInput( String name )
 	{
-		IOComponent gsi = new InputComponent(name,this);
+		IOComponent gsi = new IOComponent(name,this,true,false);
 		addIOComponent(name,gsi);
 		gsi.checkPosition();
 	}
 	
 	public void addOutput( String name )
 	{
-		IOComponent gso = new OutputComponent(name,this);
+		IOComponent gso = new IOComponent(name,this,false,true);
 		addIOComponent(name,gso);
 		gso.checkPosition();
 	}
 	
 	public void addFilter( String name )
 	{
-		IOComponent gso = new FilterComponent(name,this);
+		IOComponent gso = new IOComponent(name,this,true,true);
 		addIOComponent(name,gso);
 		gso.checkPosition();
 	}
@@ -102,12 +107,20 @@ public class GSLinker
 			validate();
 			repaint();
 			
-			for( LinkRenderer link : ioc.links )
+			for( IOComponent ioc2 : ioComponents.values() )
 			{
+				ioc2.componentRemoved(ioc);
+			}
+			
+			while( ioc.links.size() > 0 )
+			{
+				LinkRenderer link = ioc.links.poll();
+				
 				link.src.linkRemoved(link);
 				link.trg.linkRemoved(link);
 				
 				links.remove(getLinkTag(link.src.id,link.trg.id));
+				remove(link);
 			}
 		}
 	}
@@ -180,6 +193,25 @@ public class GSLinker
 			if( ioc.isBeingDragged() ) return ioc;
 		
 		return null;
+	}
+	
+	public IOComponent getNearestIOComponent( int x, int y )
+	{
+		IOComponent ioc = null;
+		float		distance = getWidth() * getHeight();
+		
+		for( IOComponent i : ioComponents.values() )
+		{
+			float d = (float) Math.sqrt( Math.pow( i.getX() - x, 2 ) + Math.pow( i.getY() - y, 2 ) );
+			
+			if( d < distance )
+			{
+				ioc = i;
+				distance = d;
+			}
+		}
+		
+		return ioc;
 	}
 	
 	public void display()

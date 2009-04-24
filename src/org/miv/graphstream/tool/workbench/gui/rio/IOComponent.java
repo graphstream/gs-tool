@@ -1,5 +1,12 @@
 package org.miv.graphstream.tool.workbench.gui.rio;
 
+import org.miv.graphstream.graph.GraphAttributesListener;
+import org.miv.graphstream.graph.GraphElementsListener;
+import org.miv.graphstream.graph.GraphListener;
+import org.miv.graphstream.io2.Filter;
+import org.miv.graphstream.io2.Input;
+import org.miv.graphstream.io2.Output;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,10 +14,12 @@ import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-//import java.awt.GradientPaint;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseAdapter;
+
+import java.awt.geom.Arc2D;
 
 import java.util.LinkedList;
 import java.util.HashMap;
@@ -19,36 +28,36 @@ import javax.swing.JPanel;
 
 public class IOComponent
 	extends JPanel
+	implements Filter
 {
 	private static final long serialVersionUID = 0x06001000L;
-	
+	/*
 	protected static final Color INPUT 	= new Color(1,0,0,0.4f);
-	protected static final Color OUTPUT = new Color(0,0,1,0.4f);
+	protected static final Color OUTPUT = new Color(1,0.6f,0,0.4f);
 	protected static final Color FILTER = new Color(0,1,0,0.4f);
 	protected static final Color DISABLE= new Color(1,1,1,0.2f);
-	/*
-	protected static final GradientPaint INPUT_G = new GradientPaint(
-			10,10,INPUT,
-			34,34,INPUT.brighter().brighter());
-	protected static final GradientPaint OUTPUT_G = new GradientPaint(
-			10,10,OUTPUT,
-			34,34,OUTPUT.brighter().brighter());
-	protected static final GradientPaint FILTER_G = new GradientPaint(
-			10,10,FILTER,
-			34,34,FILTER.brighter().brighter());
 	
-	protected static final GradientPaint DISABLE = new GradientPaint(
-			10,10,new Color(0.4f,0.4f,0.4f,0.6f),
-			34,34,new Color(0.2f,0.2f,0.2f,0.7f));
-	*/
-	protected static final Color BORDER 				= new Color(1,1,1,0.9f);
+	protected static final Color BORDER 				= new Color(1,1,1,0.5f);
 	protected static final Color BORDER_ON_COLLISION	= new Color(1,0,0,0.7f);
 	protected static final Color BORDER_ON_DRAG 		= new Color(1,1,1,0.6f);
 	protected static final Color		OVER	= new Color( 0.8f, 1, 0.2f, 0.5f );
+	*/
+	protected static final Color 		channelColor 		= new Color(1,1,1,0.5f);
 	
-	protected static final BasicStroke BASIC_STROKE  = new BasicStroke( 1, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final BasicStroke 	channelStroke		= new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final BasicStroke 	channelLockedStroke	= new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND, 0, new float [] { 5, 5 }, 0 );
+	
+	protected static final Color		connectorInColor	= new Color(1,0,0,0.4f);
+	protected static final Color		connectorOutColor	= new Color(1,0.6f,0,0.4f);
+	
+	protected static final BasicStroke	connectorStroke		= new BasicStroke( 10, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	/*
+	protected static final BasicStroke BASIC_STROKE  = new BasicStroke( 10, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
 	protected static final BasicStroke BORDER_STROKE  = new BasicStroke( 2, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
-	protected static final BasicStroke CHANNEL_STROKE = new BasicStroke( 4, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final BasicStroke CHANNEL_STROKE = new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	*/
+	
+	protected static final int			division			= 8;
 	
 	protected class ProximityPeer
 	{
@@ -69,23 +78,33 @@ public class IOComponent
 		}
 	}
 	
-	GSLinker	linker;
+	XShape								shape;
 	
-	Paint 		fill;
+	GSLinker							linker;
 	
-	boolean		input;
-	boolean		output;
+	Paint 								fill;
+	
+	boolean								input;
+	boolean								output;
+	
+	Input 								in;
+	Output								out;
 	
 	LinkedList<ProximityPeer> 			proximity;
 	HashMap<IOComponent,ProximityPeer>	proximityMap;
 	
 	LinkedList<LinkRenderer>			links;
 	
-	boolean		onDrag = false;
-	boolean		mouseOver = false;
-	boolean		onCollision = false;
+	boolean								onDrag 			= false;
+	boolean								mouseOver 		= false;
+	boolean								onCollision 	= false;
+	boolean								lock			= false;
 	
-	String		id;
+	String								id;
+	
+	float								speed			= 0;
+	float								acceleration	= 0;
+	long								date			= System.currentTimeMillis();
 	
 	public IOComponent( String id, GSLinker linker, boolean input, boolean output )
 	{
@@ -94,16 +113,22 @@ public class IOComponent
 		this.input	= input;
 		this.output = output;
 		
-		setBounds(0,0,44,44);
-		setPreferredSize( new Dimension(44,44) );
+		setBounds(0,0,64,64);
+		setPreferredSize( new Dimension(64,64) );
 		
+		buildShapes();
+		if( ! input )
+			shape.disable("input");
+		if( ! output )
+			shape.disable("output");
+		/*
 		if( input && output )
 			fill = FILTER;
 		else if( input )
 			fill = INPUT;
 		else
 			fill = OUTPUT;
-		
+		*/
 		proximity 		= new LinkedList<ProximityPeer>();
 		proximityMap 	= new HashMap<IOComponent,ProximityPeer>();
 		
@@ -150,12 +175,45 @@ public class IOComponent
 			
 			public void mouseClicked( MouseEvent e )
 			{
-				if( e.getClickCount() > 1 )
+				if( Math.sqrt( Math.pow( e.getX() - getWidth() / 2, 2 ) + Math.pow( e.getY() - getHeight() / 2, 2 ) ) < division )
+				{
+					IOComponent.this.lock();
+				}
+				else if( e.getClickCount() > 1 )
 					IOComponent.this.click(e.getX(),e.getY());
 			}
 		});
 		
 		setOpaque(false);
+	}
+	
+	protected void buildShapes()
+	{
+		int	div = division;
+		
+		XShape shape = new XShape();
+		
+		shape.draw( "channel", 	new Arc2D.Float(div,div,6*div,6*div,0,360,Arc2D.OPEN), 			channelColor, 		channelStroke );
+		shape.draw( "input",	new Arc2D.Float(2*div,2*div,4*div,4*div,100,160,Arc2D.OPEN),	connectorInColor,	connectorStroke );
+		shape.draw( "output",	new Arc2D.Float(2*div,2*div,4*div,4*div,80,-160,Arc2D.OPEN),	connectorOutColor,	connectorStroke );
+		
+		this.shape = shape;
+	}
+	
+	protected void lock()
+	{
+		lock = ! lock;
+		
+		if( ! lock )
+		{
+			shape.setStroke( "channel", channelStroke );
+		}
+		else
+		{
+			shape.setStroke( "channel", channelLockedStroke );
+		}
+		
+		repaint();
 	}
 	
 	public void repaint()
@@ -179,7 +237,7 @@ public class IOComponent
 	    g2d.setRenderingHint( RenderingHints.KEY_COLOR_RENDERING,     RenderingHints.VALUE_COLOR_RENDER_QUALITY );
 	    g2d.setRenderingHint( RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY );
 	    g2d.setRenderingHint( RenderingHints.KEY_STROKE_CONTROL,      RenderingHints.VALUE_STROKE_PURE );
-		
+		/*
 	    g2d.setStroke(BORDER_STROKE);
 	    
 	    if( isEnabled() )
@@ -199,13 +257,8 @@ public class IOComponent
 		if( mouseOver )
 			g2d.setPaint(OVER);
 		g2d.drawOval(2,2,40,40);
-		/*
-		if( mouseOver )
-		{
-			g2d.setStroke(BASIC_STROKE);
-			g2d.drawRect(0,0,getWidth(),getHeight());
-		}
 		*/
+	    shape.paint(g2d);
 	}
 	
 	public void tracked( int x, int y )
@@ -222,6 +275,21 @@ public class IOComponent
 	
 	public void moveTo( int x, int y )
 	{
+		long date = Math.min( System.currentTimeMillis() - this.date, 1000 );
+		
+		float speed = (float) Math.min(
+				Math.sqrt( Math.pow( x - getX(), 2 ) + Math.pow( y - getY(), 2 ) ),
+				10 * date
+		);
+		
+		speed /= (float) date;
+		speed /= 10;
+		
+		acceleration = ( this.speed - speed );
+		
+		this.speed 	= speed;
+		this.date	= System.currentTimeMillis();
+		
 		Object o = getLocation();
 		setLocation(x,y);
 		firePropertyChange("position",o,getLocation());
@@ -236,20 +304,22 @@ public class IOComponent
 			while( i < proximity.size() && proximity.get(i).distance < pp.distance ) i++;
 			proximity.add(i,pp);
 
-			if( pp.distance < 100 && pp.ioc.output && input )
+			if( ! isLock() && ! pp.ioc.isLock() )
 			{
-				linker.virtualLink(id,pp.ioc.id);
+				if( pp.distance < 100 && pp.ioc.output && input )
+				{
+					linker.virtualLink(id,pp.ioc.id);
+				}
+				else if( pp.distance < 100 && output && pp.ioc.input )
+				{
+					linker.virtualLink(pp.ioc.id,id);
+				}
+				else if( pp.distance > 150 )
+				{
+					linker.unlinkIfVirtual(id,pp.ioc.id);
+					linker.unlinkIfVirtual(pp.ioc.id,id);
+				}
 			}
-			else if( pp.distance < 100 && output && pp.ioc.input )
-			{
-				linker.virtualLink(pp.ioc.id,id);
-			}
-			else if( pp.distance > 150 )
-			{
-				linker.unlinkIfVirtual(id,pp.ioc.id);
-				linker.unlinkIfVirtual(pp.ioc.id,id);
-			}
-
 		}
 		
 		checkCollision();
@@ -261,15 +331,40 @@ public class IOComponent
 		firePropertyChange("dragged",onDrag,v);
 	}
 	
-	protected void setOnCollision( boolean v )
+	void setOnCollision( boolean v )
 	{
 		onCollision = v;
+		repaint();
+	}
+	
+	void setInput( boolean on )
+	{
+		this.input = on;
+		
+		if( on )	shape.enable("input");
+		else		shape.disable("input");
+		
+		repaint();
+	}
+	
+	void setOutput( boolean on )
+	{
+		this.output = on;
+		
+		if( on )	shape.enable("output");
+		else		shape.disable("output");
+		
 		repaint();
 	}
 	
 	public boolean isBeingDragged()
 	{
 		return onDrag;
+	}
+	
+	public boolean isLock()
+	{
+		return lock;
 	}
 	
 	public void componentAdded( IOComponent ioc )
@@ -296,6 +391,17 @@ public class IOComponent
 		proximity.add(i,pp);
 		
 		checkCollision();
+	}
+	
+	public void componentRemoved( IOComponent ioc )
+	{
+		ProximityPeer pp = proximityMap.get(ioc);
+		
+		if( pp != null )
+		{
+			proximityMap.remove(ioc);
+			proximity.remove(pp);
+		}
 	}
 	
 	public void linkAdded( LinkRenderer link )
@@ -365,6 +471,196 @@ public class IOComponent
 	
 	protected void click( int x, int y )
 	{
-		
+	}
+	
+// Filter
+	
+	/**
+	 * @see org.miv.graphstream.io2.Input
+	 */
+	public void addGraphListener( GraphListener listener )
+	{
+		if( input && in != null )
+			in.addGraphAttributesListener(listener);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Input
+	 */
+	public void removeGraphListener( GraphListener listener )
+	{
+		if( input && in != null )
+			in.removeGraphAttributesListener(listener);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Input
+	 */
+	public void addGraphAttributesListener( GraphAttributesListener listener )
+	{
+		if( input && in != null )
+			in.addGraphAttributesListener(listener);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Input
+	 */
+	public void removeGraphAttributesListener( GraphAttributesListener listener )
+	{
+		if( input && in != null )
+			in.removeGraphAttributesListener(listener);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Input
+	 */
+	public void addGraphElementsListener( GraphElementsListener listener )
+	{
+		if( input && in != null )
+			in.addGraphElementsListener(listener);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Input
+	 */
+	public void removeGraphElementsListener( GraphElementsListener listener )
+	{
+		if( input && in != null )
+			in.removeGraphElementsListener(listener);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	{
+		if( output && out != null )
+			out.graphAttributeAdded(graphId, attribute, value);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+	{
+		if( output && out != null )
+			out.graphAttributeChanged(graphId, attribute, oldValue, newValue);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void graphAttributeRemoved( String graphId, String attribute )
+	{
+		if( output && out != null )
+			out.graphAttributeRemoved(graphId, attribute);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	{
+		if( output && out != null )
+			out.nodeAttributeAdded(graphId, nodeId, attribute, value);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+	{
+		if( output && out != null )
+			out.nodeAttributeChanged(graphId, nodeId, attribute, oldValue, newValue);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	{
+		if( output && out != null )
+			out.nodeAttributeRemoved(graphId, nodeId, attribute);
+	}
+
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	{
+		if( output && out != null )
+			out.edgeAttributeAdded(graphId, edgeId, attribute, value);
+	}
+
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+	{
+		if( output && out != null )
+			out.edgeAttributeChanged(graphId, edgeId, attribute, oldValue, newValue);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	{
+		if( output && out != null )
+			out.edgeAttributeRemoved(graphId, edgeId, attribute);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void nodeAdded( String graphId, String nodeId )
+	{
+		if( output && out != null )
+			out.nodeAdded(graphId, nodeId);
+	}
+
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void nodeRemoved( String graphId, String nodeId )
+	{
+		if( output && out != null )
+			out.nodeRemoved(graphId, nodeId);
+	}
+
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
+	{
+		if( output && out != null )
+			out.edgeAdded(graphId, edgeId, fromNodeId, toNodeId, directed);
+	}
+
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void edgeRemoved( String graphId, String edgeId )
+	{
+		if( output && out != null )
+			out.edgeRemoved(graphId, edgeId);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void graphCleared( String graphId )
+	{
+		if( output && out != null )
+			out.graphCleared(graphId);
+	}
+	
+	/**
+	 * @see org.miv.graphstream.io2.Output
+	 */
+	public void stepBegins( String graphId, double time )
+	{
+		if( output && out != null )
+			out.stepBegins(graphId, time);
 	}
 }
