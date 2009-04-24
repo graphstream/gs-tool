@@ -3,8 +3,58 @@ package org.miv.graphstream.tool.workbench.gui.rio;
 import java.io.File;
 import java.net.URI;
 
+import java.util.LinkedList;
+
 public class Processor
 {
+	static LinkedList<String>	inputs	= new LinkedList<String>();
+	static LinkedList<String>	outputs	= new LinkedList<String>();
+	static LinkedList<String>	filters	= new LinkedList<String>();
+	
+	static
+	{
+		inputs.add("file");
+		inputs.add("url");
+		outputs.add("dgs");
+		outputs.add("gml");
+		outputs.add("svg");
+		outputs.add("tlp");
+		outputs.add("png");
+		filters.add("attributes filters");
+		filters.add("elements filters");
+		filters.add("proxy");
+	}
+	
+	public static int getInputsCount()
+	{
+		return inputs.size();
+	}
+	
+	public static int getOutputsCount()
+	{
+		return outputs.size();
+	}
+	
+	public static int getFiltersCount()
+	{
+		return filters.size();
+	}
+	
+	public static String getInputLabel( int i )
+	{
+		return inputs.get(i);
+	}
+	
+	public static String getOutputLabel( int i )
+	{
+		return outputs.get(i);
+	}
+	
+	public static String getFilterLabel( int i )
+	{
+		return filters.get(i);
+	}
+	
 	public void processText( String txt, IOComponent ioc )
 	{
 		boolean	process = false;

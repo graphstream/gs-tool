@@ -31,31 +31,14 @@ public class IOComponent
 	implements Filter
 {
 	private static final long serialVersionUID = 0x06001000L;
-	/*
-	protected static final Color INPUT 	= new Color(1,0,0,0.4f);
-	protected static final Color OUTPUT = new Color(1,0.6f,0,0.4f);
-	protected static final Color FILTER = new Color(0,1,0,0.4f);
-	protected static final Color DISABLE= new Color(1,1,1,0.2f);
 	
-	protected static final Color BORDER 				= new Color(1,1,1,0.5f);
-	protected static final Color BORDER_ON_COLLISION	= new Color(1,0,0,0.7f);
-	protected static final Color BORDER_ON_DRAG 		= new Color(1,1,1,0.6f);
-	protected static final Color		OVER	= new Color( 0.8f, 1, 0.2f, 0.5f );
-	*/
 	protected static final Color 		channelColor 		= new Color(1,1,1,0.5f);
-	
 	protected static final BasicStroke 	channelStroke		= new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
 	protected static final BasicStroke 	channelLockedStroke	= new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND, 0, new float [] { 5, 5 }, 0 );
 	
 	protected static final Color		connectorInColor	= new Color(1,0,0,0.4f);
 	protected static final Color		connectorOutColor	= new Color(1,0.6f,0,0.4f);
-	
 	protected static final BasicStroke	connectorStroke		= new BasicStroke( 10, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
-	/*
-	protected static final BasicStroke BASIC_STROKE  = new BasicStroke( 10, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
-	protected static final BasicStroke BORDER_STROKE  = new BasicStroke( 2, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
-	protected static final BasicStroke CHANNEL_STROKE = new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
-	*/
 	
 	protected static final int			division			= 8;
 	

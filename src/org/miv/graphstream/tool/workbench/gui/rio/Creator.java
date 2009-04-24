@@ -36,7 +36,8 @@ public class Creator
 	{
 		None,
 		InputSelection,
-		OutputSelection
+		OutputSelection,
+		FilterSelection
 	}
 	
 	GSLinker 			linker;
@@ -54,9 +55,7 @@ public class Creator
 	
 	XShape				inputSelector;
 	XShape				outputSelector;
-	
-	int					inputs = 3;
-	int					outputs = 10;
+	XShape				filterSelector;
 	
 	Mode				mode = Mode.None;
 	
@@ -87,73 +86,151 @@ public class Creator
 		
 		inputSelector = new XShape();
 		inputSelector.draw( "outter", new Arc2D.Float( 10, 10, 100, 100, 0, 360, Arc2D.OPEN ) );
-		for( int i = 0; i < inputs; i++ )
+		for( int i = 0; i < Processor.getInputsCount(); i++ )
 		{
-			inputSelector.fill( "selection#" + i, new Arc2D.Float( 
-					getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) inputs ) - 5, 
-					getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) inputs ) - 5, 
+			inputSelector.fill( "point#" + i, new Arc2D.Float( 
+					getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) Processor.getInputsCount() ) - 5, 
+					getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) Processor.getInputsCount() ) - 5, 
 					10, 10, 0, 360, Arc2D.OPEN )
+			);
+			inputSelector.draw( "selection#" + i, new Arc2D.Float( 
+					getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) Processor.getInputsCount() ) - 5, 
+					getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) Processor.getInputsCount() ) - 5, 
+					10, 10, 0, 360, Arc2D.OPEN ), overIOComponent, STROKE
 			);
 		}
 			
 		outputSelector = new XShape();
 		outputSelector.draw( "outter", new Arc2D.Float( 10, 10, 100, 100, 0, 360, Arc2D.OPEN ) );
-		for( int i = 0; i < outputs; i++ )
+		for( int i = 0; i < Processor.getOutputsCount(); i++ )
 		{
-			outputSelector.fill( "selection#" + i, new Arc2D.Float( 
-				getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) outputs ) - 5, 
-				getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) outputs ) - 5, 
+			outputSelector.fill( "point#" + i, new Arc2D.Float( 
+				getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) Processor.getOutputsCount() ) - 5, 
+				getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) Processor.getOutputsCount() ) - 5, 
 				10, 10, 0, 360, Arc2D.OPEN )
 			);
+			outputSelector.draw( "selection#" + i, new Arc2D.Float( 
+					getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) Processor.getOutputsCount() ) - 5, 
+					getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) Processor.getOutputsCount() ) - 5, 
+					10, 10, 0, 360, Arc2D.OPEN ), overIOComponent, STROKE
+				);
+		}
+			
+		filterSelector = new XShape();
+		filterSelector.draw( "outter", new Arc2D.Float( 10, 10, 100, 100, 0, 360, Arc2D.OPEN ) );
+		for( int i = 0; i < Processor.getFiltersCount(); i++ )
+		{
+			filterSelector.fill( "point#" + i, new Arc2D.Float( 
+				getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) Processor.getFiltersCount() ) - 5, 
+				getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) Processor.getFiltersCount() ) - 5, 
+				10, 10, 0, 360, Arc2D.OPEN )
+			);
+			filterSelector.draw( "selection#" + i, new Arc2D.Float( 
+					getWidth() / 2 + 50 * (float) Math.cos( i * 2 * Math.PI / (float) Processor.getFiltersCount() ) - 5, 
+					getHeight() / 2 + 50 * (float) Math.sin( i * 2 * Math.PI / (float) Processor.getFiltersCount() ) - 5, 
+					10, 10, 0, 360, Arc2D.OPEN ), overIOComponent, STROKE
+				);
 		}
 		
 		addMouseMotionListener( new MouseMotionAdapter()
 		{
 			public void mouseMoved( MouseEvent e )
 			{
-				Creator.this.mousex = (int) ( ( e.getX() / (float) Creator.this.getWidth() ) * 3 );
-				Creator.this.mousey = (int) ( ( e.getY() / (float) Creator.this.getHeight() ) * 3 );
-				Creator.this.repaint();
+				if( Creator.this.mode == Mode.None )
+				{
+					Creator.this.mousex = (int) ( ( e.getX() / (float) Creator.this.getWidth() ) * 3 );
+					Creator.this.mousey = (int) ( ( e.getY() / (float) Creator.this.getHeight() ) * 3 );
+					Creator.this.repaint();
+				}
 			}
 			
 			public void mouseDragged( MouseEvent e )
 			{
-				Creator.this.over = null;
-				
 				if( mousex == 1 && mousey == 1 )
 				{
 					Creator.this.setLocation(
 						Creator.this.getX() + e.getX() - Creator.this.getWidth() / 2,
 						Creator.this.getY() + e.getY() - Creator.this.getHeight() / 2
 					);
+					
+					Creator.this.over = null;
 				}
-				else if( mousex == 0 && mousey == 1 )
+				else if( ( mousex == 0 || mousex == 2 ) && mousey == 1 )
 				{
-					double theta = Math.atan2(
-							Creator.this.getHeight() / 2 - e.getY(),
-							Creator.this.getWidth() / 2  - e.getX()
-					);
+					if( Creator.this.over != null )
+					{
+						double theta = Math.atan2(
+								e.getY() - Creator.this.getHeight() / 2,
+								e.getX() - Creator.this.getWidth() / 2
+						);
+						
+						Creator.this.transform.setToIdentity();
+						Creator.this.transform.rotate(
+								theta + ( Creator.this.mousex == 0 ? Math.PI : 0 ),
+								Creator.this.getWidth() / 2, Creator.this.getHeight() / 2 );
+
+						if( Creator.this.over.input && Creator.this.output )
+							Creator.this.mode = Mode.FilterSelection;
+						else if( Creator.this.over.input )
+							Creator.this.mode = Mode.InputSelection;
+						else if( Creator.this.over.output )
+							Creator.this.mode = Mode.OutputSelection;
+						
+						int i = -1;
 					
-					Creator.this.transform.setToIdentity();
-					Creator.this.transform.rotate(theta, Creator.this.getWidth() / 2, Creator.this.getHeight() / 2 );
-					
-					Creator.this.mode = Mode.InputSelection;
-					
-					repaint();
-				}
-				else if( mousex == 2 && mousey == 1 )
-				{
-					double theta = Math.atan2(
-							e.getY() - Creator.this.getHeight() / 2,
-							e.getX() - Creator.this.getWidth() / 2 
-					);
-					
-					Creator.this.transform.setToIdentity();
-					Creator.this.transform.rotate(theta, Creator.this.getWidth() / 2, Creator.this.getHeight() / 2 );
-					
-					Creator.this.mode = Mode.OutputSelection;
-					
-					repaint();
+						
+						
+						if( theta < 0 )
+							theta += 2 * Math.PI;
+						
+						if( Creator.this.mode == Mode.InputSelection )
+						{
+							i = (int) ( ( theta + 0.5 * Math.PI / (float) Processor.getInputsCount() )  / ( 2 * Math.PI / (float) Processor.getInputsCount() ) );
+							i %= Processor.getInputsCount();
+							Creator.this.linker.setStatusInfo( i + ": " + Processor.getInputLabel( i ) ); 
+							
+							for( int j = 0; j < Processor.getInputsCount(); j++ )
+							{
+								if( j == i )
+									Creator.this.inputSelector.enable( "selection#" + i );
+								else
+									Creator.this.inputSelector.disable( "selection#" + j );
+										
+							}
+						}
+						else if( Creator.this.mode == Mode.OutputSelection )
+						{
+							i = (int) ( ( theta + 0.5 * Math.PI / (float) Processor.getInputsCount() ) / ( 2 * Math.PI / (float) Processor.getOutputsCount() ) );
+							i %= Processor.getOutputsCount();
+							Creator.this.linker.setStatusInfo( i + ": " + Processor.getOutputLabel( i ) ); 
+							
+							for( int j = 0; j < Processor.getOutputsCount(); j++ )
+							{
+								if( j == i )
+									Creator.this.outputSelector.enable( "selection#" + i );
+								else
+									Creator.this.outputSelector.disable( "selection#" + j );
+										
+							}
+						}
+						else if( Creator.this.mode == Mode.FilterSelection )
+						{
+							i = (int) ( ( theta + 0.5 * Math.PI / (float) Processor.getInputsCount() ) / ( 2 * Math.PI / (float) Processor.getFiltersCount() ) );
+							i %= Processor.getFiltersCount();
+							Creator.this.linker.setStatusInfo( i + ": " + Processor.getFilterLabel( i ) ); 
+							
+							for( int j = 0; j < Processor.getFiltersCount(); j++ )
+							{
+								if( j == i )
+									Creator.this.filterSelector.enable( "selection#" + i );
+								else
+									Creator.this.filterSelector.disable( "selection#" + j );
+										
+							}
+						}
+
+						repaint();
+					}
 				}
 			}
 		});
@@ -259,6 +336,11 @@ public class Creator
 	    {
 	    	g2d.setStroke(selectionModeStroke);
 	    	outputSelector.paint(g2d);
+	    }
+	    else if( mode == Mode.FilterSelection )
+	    {
+	    	g2d.setStroke(selectionModeStroke);
+	    	filterSelector.paint(g2d);
 	    }
 	    
 	    g2d.transform(transform);
