@@ -3,6 +3,7 @@ package org.miv.graphstream.tool.workbench.gui.rio;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Shape;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -38,6 +40,8 @@ public class GSLinker
 	Splash							splash		 = new Splash();
 	StatusBar						status;
 	
+	LinkedList<Shape>				pulserCover;					
+	
 	public GSLinker()
 	{
 		super();
@@ -45,8 +49,8 @@ public class GSLinker
 		setPreferredSize( new java.awt.Dimension(600,400) );
 		setBackground(BACKGROUND);
 		setOpaque(true);
-		//setLayout(null);// new java.awt.FlowLayout() );
 		
+		pulserCover = new LinkedList<Shape>();
 		status = new StatusBar(this);
 		
 		Trash trash = new Trash(this);
@@ -64,7 +68,8 @@ public class GSLinker
 	protected void addIOComponent( String name, IOComponent ioc )
 	{
 		ioc.setLocation( getWidth() / 2 - ioc.getWidth() / 2, getHeight() / 2 - ioc.getHeight() / 2 );
-		add( ioc, 1 );
+		ioc.activate( isPulserCovered(ioc) );
+		add( ioc, JLayeredPane.MODAL_LAYER );
 		
 		for( IOComponent ioc2 : ioComponents.values() )
 		{
@@ -123,6 +128,36 @@ public class GSLinker
 				remove(link);
 			}
 		}
+	}
+	
+	public void addPulser()
+	{
+		Pulser pulser = new Pulser( this );
+		
+		add( pulser, JLayeredPane.DEFAULT_LAYER );
+		addPulserCover(pulser.cover);
+	}
+	
+	void addPulserCover( Shape s )
+	{
+		pulserCover.add(s);
+	}
+	
+	public void removePulser( Pulser pulser )
+	{
+		remove(pulser);
+		pulserCover.remove(pulser.cover);
+		checkPulserCover();
+		revalidate();
+		repaint();
+	}
+	
+	public boolean isPulserCovered( IOComponent ioc )
+	{
+		for( Shape s : pulserCover )
+			if( s.contains(ioc.getX()+ioc.getWidth()/2,ioc.getY()+ioc.getHeight()/2) ) return true;
+		
+		return false;
 	}
 	
 	protected String getLinkTag( String src, String trg )
@@ -305,6 +340,12 @@ public class GSLinker
 	{
 		for( IOComponent ioc : ioComponents.values() )
 			ioc.setEnabled(true);
+	}
+	
+	public void checkPulserCover()
+	{
+		for( IOComponent ioc : ioComponents.values() )
+			ioc.activate(isPulserCovered(ioc));
 	}
 	
 	class Splash

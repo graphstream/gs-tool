@@ -19,7 +19,7 @@ public class LinkRenderer
 {
 	private static final long serialVersionUID = 0x06003000L;
 	
-	protected static final BasicStroke LINK_STROKE  = new BasicStroke( 3, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final BasicStroke linkStroke  = new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND, 0, new float [] { 1, 5 }, 0 );
 
 	protected static final Color BORDER 		= new Color(1,1,1,0.9f);
 	protected static final Color VIRTUAL_BORDER = new Color(1,1,1,0.3f);
@@ -75,7 +75,7 @@ public class LinkRenderer
 		
 		//g2d.setColor( virtual ? VIRTUAL_BORDER : BORDER );
 	    g2d.setPaint( new GradientPaint( 5 + p1[0], 5 + p1[1], COLOR_TRG, 5 + p2[0], 5 + p2[1], COLOR_SRC ) );
-	    g2d.setStroke(LINK_STROKE);
+	    g2d.setStroke(linkStroke);
 	    g2d.drawLine( 5 + p1[0], 5 + p1[1], 5 + p2[0], 5 + p2[1] );
 	}
 

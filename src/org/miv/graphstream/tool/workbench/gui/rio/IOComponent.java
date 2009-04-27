@@ -32,13 +32,14 @@ public class IOComponent
 {
 	private static final long serialVersionUID = 0x06001000L;
 	
-	protected static final Color 		channelColor 		= new Color(1,1,1,0.5f);
-	protected static final BasicStroke 	channelStroke		= new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
-	protected static final BasicStroke 	channelLockedStroke	= new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND, 0, new float [] { 5, 5 }, 0 );
+	protected static final Color 		channelColor 			= new Color(1,1,1,0.5f);
+	protected static final BasicStroke 	channelStroke			= new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final BasicStroke 	channelLockedStroke		= new BasicStroke( 5, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND, 0, new float [] { 5, 5 }, 0 );
+	protected static final Color		channelActivatedColor	= new Color( 0.8f, 1, 0.2f, 0.5f );
 	
-	protected static final Color		connectorInColor	= new Color(1,0,0,0.4f);
-	protected static final Color		connectorOutColor	= new Color(1,0.6f,0,0.4f);
-	protected static final BasicStroke	connectorStroke		= new BasicStroke( 10, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
+	protected static final Color		connectorInColor		= new Color(1,0,0,0.4f);
+	protected static final Color		connectorOutColor		= new Color(1,0.6f,0,0.4f);
+	protected static final BasicStroke	connectorStroke			= new BasicStroke( 10, BasicStroke.CAP_ROUND,  BasicStroke.JOIN_ROUND );
 	
 	protected static final int			division			= 8;
 	
@@ -82,6 +83,7 @@ public class IOComponent
 	boolean								mouseOver 		= false;
 	boolean								onCollision 	= false;
 	boolean								lock			= false;
+	boolean								activated		= false;
 	
 	String								id;
 	
@@ -96,7 +98,8 @@ public class IOComponent
 		this.input	= input;
 		this.output = output;
 		
-		setBounds(0,0,64,64);
+		//setBounds(0,0,64,64);
+		setSize( 64, 64 );
 		setPreferredSize( new Dimension(64,64) );
 		
 		buildShapes();
@@ -104,14 +107,7 @@ public class IOComponent
 			shape.disable("input");
 		if( ! output )
 			shape.disable("output");
-		/*
-		if( input && output )
-			fill = FILTER;
-		else if( input )
-			fill = INPUT;
-		else
-			fill = OUTPUT;
-		*/
+		
 		proximity 		= new LinkedList<ProximityPeer>();
 		proximityMap 	= new HashMap<IOComponent,ProximityPeer>();
 		
@@ -141,6 +137,9 @@ public class IOComponent
 			{
 				if( IOComponent.this.isEnabled() )
 					IOComponent.this.setOnDrag( false );
+				
+				IOComponent.this.activate( IOComponent.this.linker.isPulserCovered(IOComponent.this) );
+				
 				repaint();
 			}
 
@@ -454,6 +453,16 @@ public class IOComponent
 	
 	protected void click( int x, int y )
 	{
+	}
+	
+	public void activate( boolean on )
+	{
+		if( ! ( activated && on ) )
+		{
+			activated = on;
+			shape.setColor("channel",on ? channelActivatedColor:channelColor);
+			repaint();
+		}
 	}
 	
 // Filter

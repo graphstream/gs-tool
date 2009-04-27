@@ -1,9 +1,13 @@
 package org.miv.graphstream.tool.workbench.gui.rio;
 
+import java.awt.Color;
+
 import java.io.File;
 import java.net.URI;
 
 import java.util.LinkedList;
+
+import javax.swing.JFileChooser;
 
 public class Processor
 {
@@ -53,6 +57,18 @@ public class Processor
 	public static String getFilterLabel( int i )
 	{
 		return filters.get(i);
+	}
+	
+	public static void selectFile( GSLinker linker, IOComponent ioc )
+	{
+		JFileChooser jfc = new JFileChooser(".");
+		jfc.setOpaque(true);
+		jfc.setBackground( new Color(0,0,0,0.5f) );
+		jfc.setVisible(true);
+		
+		System.err.printf( "splash JFC\n" );
+		
+		linker.splash( ioc.getX(), ioc.getY(), 300, 200, "Choose a file", jfc );
 	}
 	
 	public void processText( String txt, IOComponent ioc )

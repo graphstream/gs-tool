@@ -157,7 +157,7 @@ public class Creator
 				}
 				else if( ( mousex == 0 || mousex == 2 ) && mousey == 1 )
 				{
-					if( Creator.this.over != null )
+					if( Creator.this.over != null && ! Creator.this.over.isLock() )
 					{
 						double theta = Math.atan2(
 								e.getY() - Creator.this.getHeight() / 2,
@@ -195,7 +195,11 @@ public class Creator
 									Creator.this.inputSelector.enable( "selection#" + i );
 								else
 									Creator.this.inputSelector.disable( "selection#" + j );
-										
+							}
+							
+							if( Processor.getInputLabel(i).equals("file") )
+							{
+								//Processor.selectFile(linker,Creator.this.over);
 							}
 						}
 						else if( Creator.this.mode == Mode.OutputSelection )
@@ -263,6 +267,8 @@ public class Creator
 							Creator.this.linker.addInput( String.format( "creator:input#%04d", count++ ) );
 						else if( output )
 							Creator.this.linker.addOutput( String.format( "creator:output#%04d", count++ ) );
+						else if( e.getClickCount() > 1 )
+							Creator.this.linker.addPulser();
 					}
 					
 					break;
