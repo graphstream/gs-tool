@@ -45,14 +45,12 @@ import javax.swing.event.ChangeListener;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.io.GraphParseException;
-import org.graphstream.io.GraphReader;
-import org.graphstream.io.GraphReaderFactory;
-import org.graphstream.io.GraphReaderListenerHelper;
+import org.graphstream.io.file.FileSource;
+import org.graphstream.io.file.FileSourceFactory;
 import org.graphstream.ui.GraphViewer;
 import org.graphstream.ui.GraphViewerRemote;
 import org.graphstream.ui.swing.SwingGraphViewer;
-import org.miv.util.Environment;
-import org.miv.util.NotFoundException;
+import org.util.Environment;
 
 /**
  * A simple (user friendly?) viewer for graphs and dynamic graphs.
@@ -67,7 +65,7 @@ public class ShowGraph extends JFrame implements ActionListener, ChangeListener
 	/**
 	 * The graph reader.
 	 */
-	protected GraphReader reader;
+	protected FileSource reader;
 	
 	/**
 	 * Time to sleep between each step in the graph file.
@@ -412,22 +410,22 @@ public class ShowGraph extends JFrame implements ActionListener, ChangeListener
 	{
 		try
         {
-            reader = GraphReaderFactory.readerFor( fileName );
-            GraphReaderListenerHelper helper = new GraphReaderListenerHelper( graph );
-            reader.addGraphReaderListener( helper );
+            reader = FileSourceFactory.sourceFor( fileName );
+           // GraphReaderListenerHelper helper = new GraphReaderListenerHelper( graph );
+            reader.addGraphListener( graph );
             
             reader.begin( fileName );
             updateStatus();
         }
-        catch( NotFoundException e )
-        {
-			JOptionPane.showMessageDialog( this,
-					String.format( "Cannot find graph file '%s' (%s).", fileName, e.getMessage() ),
-					"Error whiel reading graph",
-					JOptionPane.ERROR_MESSAGE );
-			e.printStackTrace();
-			System.exit( 0 );
-        }
+//        catch( NotFoundException e )
+//        {
+//			JOptionPane.showMessageDialog( this,
+//					String.format( "Cannot find graph file '%s' (%s).", fileName, e.getMessage() ),
+//					"Error whiel reading graph",
+//					JOptionPane.ERROR_MESSAGE );
+//			e.printStackTrace();
+//			System.exit( 0 );
+//        }
         catch( IOException e )
         {
 			JOptionPane.showMessageDialog( this,
@@ -437,15 +435,15 @@ public class ShowGraph extends JFrame implements ActionListener, ChangeListener
 			e.printStackTrace();
 			System.exit( 0 );
         }
-        catch( GraphParseException e )
-        {
-			JOptionPane.showMessageDialog( this,
-					String.format( "Parse error while reading graph '%s' (%s).", fileName, e.getMessage() ),
-					"Error while reading graph",
-					JOptionPane.ERROR_MESSAGE );
-			e.printStackTrace();
-			System.exit( 0 );
-        }
+//        catch( GraphParseException e )
+//        {
+//			JOptionPane.showMessageDialog( this,
+//					String.format( "Parse error while reading graph '%s' (%s).", fileName, e.getMessage() ),
+//					"Error while reading graph",
+//					JOptionPane.ERROR_MESSAGE );
+//			e.printStackTrace();
+//			System.exit( 0 );
+//        }
 	}
 
 	protected void readGraphStep()
@@ -478,15 +476,15 @@ public class ShowGraph extends JFrame implements ActionListener, ChangeListener
 			e.printStackTrace();
 			System.exit( 0 );
         }
-        catch( GraphParseException e )
-        {
-			JOptionPane.showMessageDialog( this,
-					String.format( "Parse error while reading graph '%s' (%s).", fileName, e.getMessage() ),
-					"Error while reading graph",
-					JOptionPane.ERROR_MESSAGE );
-			e.printStackTrace();
-			System.exit( 0 );
-        }
+//        catch( GraphParseException e )
+//        {
+//			JOptionPane.showMessageDialog( this,
+//					String.format( "Parse error while reading graph '%s' (%s).", fileName, e.getMessage() ),
+//					"Error while reading graph",
+//					JOptionPane.ERROR_MESSAGE );
+//			e.printStackTrace();
+//			System.exit( 0 );
+//        }
 	}
 	
 	protected void updateStatus()
