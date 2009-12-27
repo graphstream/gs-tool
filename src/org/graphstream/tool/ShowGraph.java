@@ -44,9 +44,8 @@ import javax.swing.event.ChangeListener;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.io.GraphParseException;
-import org.graphstream.io.file.FileSource;
-import org.graphstream.io.file.FileSourceFactory;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceFactory;
 import org.graphstream.ui.GraphViewer;
 import org.graphstream.ui.GraphViewerRemote;
 import org.graphstream.ui.swing.SwingGraphViewer;
@@ -412,7 +411,7 @@ public class ShowGraph extends JFrame implements ActionListener, ChangeListener
         {
             reader = FileSourceFactory.sourceFor( fileName );
            // GraphReaderListenerHelper helper = new GraphReaderListenerHelper( graph );
-            reader.addGraphListener( graph );
+            reader.addSink( graph );
             
             reader.begin( fileName );
             updateStatus();
