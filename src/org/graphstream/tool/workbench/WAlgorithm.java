@@ -439,7 +439,7 @@ public class WAlgorithm
 		}
 	
 		dynamize = true;
-		gen.begin(graph);
+		gen.begin();
 		while( dynamize )
 		{
 			if( ! gen.nextElement() )

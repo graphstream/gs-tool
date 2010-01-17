@@ -1,11 +1,11 @@
 package org.graphstream.tool.workbench.gui.rio;
 
-import org.graphstream.graph.GraphAttributesListener;
-import org.graphstream.graph.GraphElementsListener;
-import org.graphstream.graph.GraphListener;
-import org.graphstream.io.Pipe;
-import org.graphstream.io.Sink;
-import org.graphstream.io.Source;
+import org.graphstream.stream.AttributeSink;
+import org.graphstream.stream.ElementSink;
+import org.graphstream.stream.Sink;
+import org.graphstream.stream.Pipe;
+import org.graphstream.stream.Sink;
+import org.graphstream.stream.Source;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -468,191 +468,206 @@ public class IOComponent
 // Filter
 	
 	/**
-	 * @see org.graphstream.io.Source
+	 * @see org.graphstream.stream.Source
 	 */
-	public void addGraphListener( GraphListener listener )
+	public void addSink( Sink listener )
 	{
 		if( input && in != null )
-			in.addGraphAttributesListener(listener);
+			in.addAttributeSink(listener);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Source
+	 * @see org.graphstream.stream.Source
 	 */
-	public void removeGraphListener( GraphListener listener )
+	public void removeSink( Sink listener )
 	{
 		if( input && in != null )
-			in.removeGraphAttributesListener(listener);
+			in.removeAttributeSink(listener);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Source
+	 * @see org.graphstream.stream.Source
 	 */
-	public void addGraphAttributesListener( GraphAttributesListener listener )
+	public void addAttributeSink( AttributeSink listener )
 	{
 		if( input && in != null )
-			in.addGraphAttributesListener(listener);
+			in.addAttributeSink(listener);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Source
+	 * @see org.graphstream.stream.Source
 	 */
-	public void removeGraphAttributesListener( GraphAttributesListener listener )
+	public void removeAttributeSink( AttributeSink listener )
 	{
 		if( input && in != null )
-			in.removeGraphAttributesListener(listener);
+			in.removeAttributeSink(listener);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Source
+	 * @see org.graphstream.stream.Source
 	 */
-	public void addGraphElementsListener( GraphElementsListener listener )
+	public void addElementSink( ElementSink listener )
 	{
 		if( input && in != null )
-			in.addGraphElementsListener(listener);
+			in.addElementSink(listener);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Source
+	 * @see org.graphstream.stream.Source
 	 */
-	public void removeGraphElementsListener( GraphElementsListener listener )
+	public void removeElementSink( ElementSink listener )
 	{
 		if( input && in != null )
-			in.removeGraphElementsListener(listener);
+			in.removeElementSink(listener);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void graphAttributeAdded( String graphId, String attribute, Object value )
+	public void graphAttributeAdded( String graphId, long timeId, String attribute, Object value )
 	{
 		if( output && out != null )
-			out.graphAttributeAdded(graphId, attribute, value);
+			out.graphAttributeAdded(graphId, timeId, attribute, value);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void graphAttributeChanged( String graphId, String attribute, Object oldValue, Object newValue )
+	public void graphAttributeChanged( String graphId, long timeId, String attribute, Object oldValue, Object newValue )
 	{
 		if( output && out != null )
-			out.graphAttributeChanged(graphId, attribute, oldValue, newValue);
+			out.graphAttributeChanged(graphId, timeId, attribute, oldValue, newValue);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void graphAttributeRemoved( String graphId, String attribute )
+	public void graphAttributeRemoved( String graphId, long timeId, String attribute )
 	{
 		if( output && out != null )
-			out.graphAttributeRemoved(graphId, attribute);
+			out.graphAttributeRemoved(graphId, timeId, attribute);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void nodeAttributeAdded( String graphId, String nodeId, String attribute, Object value )
+	public void nodeAttributeAdded( String graphId, long timeId, String nodeId, String attribute, Object value )
 	{
 		if( output && out != null )
-			out.nodeAttributeAdded(graphId, nodeId, attribute, value);
+			out.nodeAttributeAdded(graphId, timeId, nodeId, attribute, value);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void nodeAttributeChanged( String graphId, String nodeId, String attribute, Object oldValue, Object newValue )
+	public void nodeAttributeChanged( String graphId, long timeId, String nodeId, String attribute, Object oldValue, Object newValue )
 	{
 		if( output && out != null )
-			out.nodeAttributeChanged(graphId, nodeId, attribute, oldValue, newValue);
+			out.nodeAttributeChanged(graphId, timeId, nodeId, attribute, oldValue, newValue);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void nodeAttributeRemoved( String graphId, String nodeId, String attribute )
+	public void nodeAttributeRemoved( String graphId, long timeId, String nodeId, String attribute )
 	{
 		if( output && out != null )
-			out.nodeAttributeRemoved(graphId, nodeId, attribute);
+			out.nodeAttributeRemoved(graphId, timeId, nodeId, attribute);
 	}
 
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void edgeAttributeAdded( String graphId, String edgeId, String attribute, Object value )
+	public void edgeAttributeAdded( String graphId, long timeId, String edgeId, String attribute, Object value )
 	{
 		if( output && out != null )
-			out.edgeAttributeAdded(graphId, edgeId, attribute, value);
+			out.edgeAttributeAdded(graphId, timeId, edgeId, attribute, value);
 	}
 
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void edgeAttributeChanged( String graphId, String edgeId, String attribute, Object oldValue, Object newValue )
+	public void edgeAttributeChanged( String graphId, long timeId, String edgeId, String attribute, Object oldValue, Object newValue )
 	{
 		if( output && out != null )
-			out.edgeAttributeChanged(graphId, edgeId, attribute, oldValue, newValue);
+			out.edgeAttributeChanged(graphId, timeId, edgeId, attribute, oldValue, newValue);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void edgeAttributeRemoved( String graphId, String edgeId, String attribute )
+	public void edgeAttributeRemoved( String graphId, long timeId, String edgeId, String attribute )
 	{
 		if( output && out != null )
-			out.edgeAttributeRemoved(graphId, edgeId, attribute);
+			out.edgeAttributeRemoved(graphId, timeId, edgeId, attribute);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void nodeAdded( String graphId, String nodeId )
+	public void nodeAdded( String graphId, long timeId, String nodeId )
 	{
 		if( output && out != null )
-			out.nodeAdded(graphId, nodeId);
+			out.nodeAdded(graphId, timeId, nodeId);
 	}
 
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void nodeRemoved( String graphId, String nodeId )
+	public void nodeRemoved( String graphId, long timeId, String nodeId )
 	{
 		if( output && out != null )
-			out.nodeRemoved(graphId, nodeId);
+			out.nodeRemoved(graphId, timeId, nodeId);
 	}
 
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void edgeAdded( String graphId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
+	public void edgeAdded( String graphId, long timeId, String edgeId, String fromNodeId, String toNodeId, boolean directed )
 	{
 		if( output && out != null )
-			out.edgeAdded(graphId, edgeId, fromNodeId, toNodeId, directed);
+			out.edgeAdded(graphId, timeId, edgeId, fromNodeId, toNodeId, directed);
 	}
 
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void edgeRemoved( String graphId, String edgeId )
+	public void edgeRemoved( String graphId, long timeId, String edgeId )
 	{
 		if( output && out != null )
-			out.edgeRemoved(graphId, edgeId);
+			out.edgeRemoved(graphId, timeId, edgeId);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void graphCleared( String graphId )
+	public void graphCleared( String graphId, long timeId )
 	{
 		if( output && out != null )
-			out.graphCleared(graphId);
+			out.graphCleared(graphId, timeId);
 	}
 	
 	/**
-	 * @see org.graphstream.io.Sink
+	 * @see org.graphstream.stream.Sink
 	 */
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long timeId, double time )
 	{
 		if( output && out != null )
-			out.stepBegins(graphId, time);
+			out.stepBegins(graphId, timeId, time);
+	}
+
+	public void clearAttributeSinks()
+	{
+		in.clearAttributeSinks();		
+	}
+
+	public void clearElementSinks()
+	{
+		in.clearElementSinks();
+	}
+
+	public void clearSinks()
+	{
+		in.clearSinks();			
 	}
 }

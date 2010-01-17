@@ -14,7 +14,7 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.miv.graphstream.tool.workbench;
+package org.graphstream.tool.workbench;
 
 /*
  * Serial UID Version:

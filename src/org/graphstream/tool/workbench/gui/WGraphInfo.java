@@ -23,7 +23,7 @@
 package org.graphstream.tool.workbench.gui;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.GraphElementsListener;
+import org.graphstream.stream.ElementSink;
 import org.graphstream.tool.workbench.WCore;
 import org.graphstream.tool.workbench.cli.CLI;
 import org.graphstream.tool.workbench.event.*;
@@ -47,7 +47,7 @@ import javax.swing.DefaultComboBoxModel;
  *
  */
 public class WGraphInfo extends JPanel 
-	implements ContextChangeListener, GraphElementsListener, ItemListener
+	implements ContextChangeListener, ElementSink, ItemListener
 {
 	public static final long serialVersionUID = 0x040100000001L;
 	
@@ -167,10 +167,10 @@ public class WGraphInfo extends JPanel
 		if( g != listeningGraph )
 		{
 			if( listeningGraph != null ) 
-				listeningGraph.removeGraphElementsListener( this );
+				listeningGraph.removeElementSink( this );
 			
 			if( g != null )
-				g.addGraphElementsListener( this );
+				g.addElementSink( this );
 			
 			listeningGraph = g;
 		}
@@ -180,31 +180,31 @@ public class WGraphInfo extends JPanel
 	
 // GraphListener implementation
 	
-	public void nodeAdded( String graphId, String id )
+	public void nodeAdded( String graphId, long timeId, String id )
 	{
 		updateGraphInformation();
 	}
 
-	public void edgeAdded( String graphId, String id, String src, String trg, boolean directed )
+	public void edgeAdded( String graphId, long timeId, String id, String src, String trg, boolean directed )
 	{
 		updateGraphInformation();
 	}
 
-	public void nodeRemoved( String graphId, String id )
+	public void nodeRemoved( String graphId, long timeId, String id )
 	{
 		Graph g = core.getActiveContext().getGraph();
 		setNodesCount( g.getNodeCount() - 1 );
 	}
 	
-	public void edgeRemoved( String graphId, String id )
+	public void edgeRemoved( String graphId, long timeId, String id )
 	{
 		Graph g = core.getActiveContext().getGraph();
 		setEdgesCount( g.getEdgeCount() - 1 );
 	}
 	
-	public void graphCleared( String graph ) {}
+	public void graphCleared( String graph, long timeId ) {}
 	
-	public void stepBegins( String graphId, double time )
+	public void stepBegins( String graphId, long timeId, double time )
 	{
 		
 	}
