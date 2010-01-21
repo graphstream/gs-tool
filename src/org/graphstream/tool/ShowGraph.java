@@ -44,11 +44,11 @@ import javax.swing.event.ChangeListener;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.oldUi.GraphViewer;
-import org.graphstream.oldUi.GraphViewerRemote;
-import org.graphstream.oldUi.swing.SwingGraphViewer;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceFactory;
+import org.graphstream.ui.old.GraphViewer;
+import org.graphstream.ui.old.GraphViewerRemote;
+import org.graphstream.ui.old.swing.SwingGraphViewer;
 import org.util.Environment;
 
 /**
