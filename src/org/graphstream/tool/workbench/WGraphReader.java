@@ -25,13 +25,14 @@ package org.graphstream.tool.workbench;
 import java.io.FileInputStream;
 import java.nio.channels.FileChannel;
 
-import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.SwingUtilities;
+import javax.swing.DefaultBoundedRangeModel;
 
-import org.graphstream.stream.file.FileSource;
-import org.graphstream.stream.file.FileSourceFactory;
+import org.graphstream.io.old.GraphReader;
+import org.graphstream.io.old.GraphReaderFactory;
+import org.graphstream.io.old.GraphReaderListenerHelper;
 import org.graphstream.tool.workbench.event.ContextListener.GraphOperation;
-import org.graphstream.graph.*;
+
 /**
  * A reader using the Swing thread.
  * This prevent for concurrent modification of the graph.
@@ -50,7 +51,7 @@ public class WGraphReader
 	}
 	
 	String 		path;
-	FileSource reader;
+	GraphReader reader;
 	Mode 		mode;
 	Context 	ctx;
 	boolean		fullMode;
@@ -70,7 +71,7 @@ public class WGraphReader
 	{
 		try
 		{
-			read( FileSourceFactory.sourceFor(file), file, ctx );
+			read( GraphReaderFactory.readerFor(file), file, ctx );
 		}
 		catch( Exception e )
 		{
@@ -78,14 +79,15 @@ public class WGraphReader
 		}
 	}
 	
-	public void read( FileSource reader, String file, Context ctx )
+	public void read( GraphReader reader, String file, Context ctx )
 	{
 		this.reader = reader;
 		this.path   = file;
 		this.mode	= fullMode ? Mode.Full : Mode.Begin;
 		this.ctx	= ctx;
 		
-		reader.addSink(ctx.getGraph());
+		GraphReaderListenerHelper l = new GraphReaderListenerHelper( ctx.getGraph() );
+		reader.addGraphReaderListener(l);
 		
 		SwingUtilities.invokeLater(this);
 	}
@@ -99,7 +101,7 @@ public class WGraphReader
 	{
 		try
 		{
-			reader.readAll(path);
+			reader.read(path);
 			ctx.resetChanged();
 			mode = Mode.Finish;
 		}

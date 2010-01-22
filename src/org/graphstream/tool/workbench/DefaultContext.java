@@ -24,8 +24,8 @@ package org.graphstream.tool.workbench;
 
 import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
-import org.graphstream.stream.Sink;
-import org.graphstream.stream.file.FileSource;
+import org.graphstream.graph.GraphListener;
+import org.graphstream.io.old.GraphReader;
 import org.graphstream.tool.workbench.event.ContextEvent;
 import org.graphstream.tool.workbench.event.ContextListener;
 import org.graphstream.tool.workbench.event.SelectionEvent;
@@ -44,7 +44,7 @@ import javax.swing.DefaultBoundedRangeModel;
  *
  */
 public class DefaultContext
-	implements Context, Sink
+	implements Context, GraphListener
 {
 	/**
 	 * Graph defining this context.
@@ -105,7 +105,7 @@ public class DefaultContext
 		this.changed = false;
 		
 		if( graph != null )
-			this.graph.addSink( this );
+			this.graph.addGraphListener( this );
 	}
 	/**
 	 * @see org.graphstream.tool.workbench.Context#getGraph()
@@ -136,10 +136,10 @@ public class DefaultContext
 		if( graph == null ) return;
 		
 		if( this.graph != null )
-			this.graph.removeSink( this );
+			this.graph.removeGraphListener( this );
 		
 		this.graph = graph;
-		this.graph.addSink( this );
+		this.graph.addGraphListener( this );
 		
 		changed = false;
 		
@@ -186,7 +186,7 @@ public class DefaultContext
 		{
 			try
 			{
-				reader.read((FileSource) Class.forName(readerClass).newInstance(),path,this);
+				reader.read((GraphReader) Class.forName(readerClass).newInstance(),path,this);
 				fireGraphOperation(GraphOperation.ReadBegin,path);
 			}
 			catch( Exception e )
@@ -316,26 +316,26 @@ public class DefaultContext
 // GraphListener implementation
 
 	/**
-	 * @see org.graphstream.stream.Sink
+	 * @see org.graphstream.graph.GraphListener
 	 */
-	public void nodeAdded( String graphId, long time, String nodeId )
+	public void nodeAdded( String graphId, String nodeId )
 	{
 		changed = true;
 		fireGraphOperation(GraphOperation.NodeAdded,nodeId);
 	}
 	/**
-	 * @see org.graphstream.stream.Sink
+	 * @see org.graphstream.graph.GraphListener
 	 */
-	public void edgeAdded( String graphId, long time, String edgeId, String src, 
+	public void edgeAdded( String graphId, String edgeId, String src, 
 			String trg, boolean directed )
 	{
 		changed = true;
 		fireGraphOperation(GraphOperation.EdgeAdded,edgeId);
 	}
 	/**
-	 * @see org.graphstream.stream.Sink
+	 * @see org.graphstream.graph.GraphListener
 	 */
-	public void edgeRemoved( String graphId, long time, String edgeId )
+	public void edgeRemoved( String graphId, String edgeId )
 	{
 		if( selection.contains( graph.getEdge(edgeId)) )
 			selection.unselect( graph.getEdge(edgeId));
@@ -343,9 +343,9 @@ public class DefaultContext
 		fireGraphOperation(GraphOperation.EdgeRemoved,edgeId);
 	}
 	/**
-	 * @see org.graphstream.stream.Sink
+	 * @see org.graphstream.graph.GraphListener
 	 */
-	public void nodeRemoved( String graphId, long time, String nodeId )
+	public void nodeRemoved( String graphId, String nodeId )
 	{
 		if( selection.contains( graph.getNode(nodeId)) )
 			selection.unselect( graph.getNode(nodeId));
@@ -353,52 +353,52 @@ public class DefaultContext
 		fireGraphOperation(GraphOperation.NodeRemoved,nodeId);
 	}
 	/**
-	 * @see org.graphstream.stream.Sink
+	 * @see org.graphstream.graph.GraphListener
 	 */
-	public void graphCleared( String graphId, long time )
+	public void graphCleared( String graphId )
 	{
 		selection.unselect();
 		fireGraphOperation(GraphOperation.GraphClear,null);
 	}
 	/**
-	 * @see org.graphstream.stream.Sink
+	 * @see org.graphstream.graph.GraphListener
 	 */
-	public void stepBegins(String graphId, long time, double date)
+	public void stepBegins(String graphId, double time)
 	{
 	}
 	
-	public void edgeAttributeAdded(String graphId, long time, String edgeId,
+	public void edgeAttributeAdded(String graphId, String edgeId,
 			String attribute, Object value) {
 		changed = true;
 	}
-	public void edgeAttributeChanged(String graphId, long time, String edgeId,
+	public void edgeAttributeChanged(String graphId, String edgeId,
 			String attribute, Object oldValue, Object newValue) {
 		changed = true;
 	}
-	public void edgeAttributeRemoved(String graphId, long time, String edgeId,
+	public void edgeAttributeRemoved(String graphId, String edgeId,
 			String attribute) {
 		changed = true;
 	}
-	public void graphAttributeAdded(String graphId, long time, String attribute,
+	public void graphAttributeAdded(String graphId, String attribute,
 			Object value) {
 		changed = true;
 	}
-	public void graphAttributeChanged(String graphId, long time, String attribute,
+	public void graphAttributeChanged(String graphId, String attribute,
 			Object oldValue, Object newValue) {
 		changed = true;
 	}
-	public void graphAttributeRemoved(String graphId, long time, String attribute) {
+	public void graphAttributeRemoved(String graphId, String attribute) {
 		changed = true;
 	}
-	public void nodeAttributeAdded(String graphId, long time, String nodeId,
+	public void nodeAttributeAdded(String graphId, String nodeId,
 			String attribute, Object value) {
 		changed = true;
 	}
-	public void nodeAttributeChanged(String graphId, long time, String nodeId,
+	public void nodeAttributeChanged(String graphId, String nodeId,
 			String attribute, Object oldValue, Object newValue) {
 		changed = true;
 	}
-	public void nodeAttributeRemoved(String graphId, long time, String nodeId,
+	public void nodeAttributeRemoved(String graphId, String nodeId,
 			String attribute) {
 		changed = true;
 	}
