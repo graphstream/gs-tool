@@ -1,0 +1,1186 @@
+/*
+ * This file is part of GraphStream.
+ * 
+ * GraphStream is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * GraphStream is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with GraphStream.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright 2006 - 2009
+ * 	Julien Baudry
+ * 	Antoine Dutot
+ * 	Yoann Pigné
+ * 	Guilhelm Savin
+ */
+
+options { JDK_VERSION = "1.5"; STATIC = false; }
+
+PARSER_BEGIN(CLIParser)
+
+package org.graphstream.tool.workbench.cli;
+
+import org.graphstream.graph.Node;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.tool.workbench.cli.CLIContext.ConnectionMode;
+import org.graphstream.stream.Source;
+import org.graphstream.stream.Sink;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.algorithm.generator.Generator;
+
+import java.io.FileInputStream;
+import java.io.Reader;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.lang.reflect.Constructor;
+
+public class CLIParser
+{
+	static class KeyVal
+	{
+		String key;
+		Object val;
+		
+		public KeyVal( String key, Object val )
+		{
+			this.key = key;
+			this.val = val;
+		}
+	}
+	
+	public static enum Element
+	{
+		graph,
+		node,
+		edge
+	}
+	
+	CLIContext ctx;
+	PrintStream out = System.out;
+	String parserAsSourceId;
+	long currentTimeId = 0;
+	
+	public CLIParser()// Context ctx )
+	{
+		this.ctx = new CLIContext();
+		parserAsSourceId = String.format("CLI_%X_%X",Thread.currentThread().getId(),System.currentTimeMillis());
+		initEnv();
+	}
+	
+	protected void initEnv()
+	{
+		ctx.set("package.graph","org.graphstream.graph.implementations");
+		ctx.set("package.generator","org.graphstream.algorithm.generator");
+		ctx.set("display.autolayout","true");
+		ctx.set("stream.event.betweenStep","100");
+	}
+	
+	public void read( String inPath )
+	{
+		try
+		{
+			ReInit( new FileInputStream(inPath) );
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void read( InputStream in )
+	{
+		ReInit(in);
+		try
+		{
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void read( Reader in )
+	{
+		ReInit(in);
+		try
+		{
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void begin( String inPath )
+	{
+		try
+		{
+			ReInit( new FileInputStream(inPath) );
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void begin( InputStream in )
+	{
+		ReInit(in);
+		try
+		{
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void begin( Reader in )
+	{
+		ReInit(in);
+		try
+		{
+			start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void init( InputStream in )
+	{
+		if( jj_input_stream == null )
+		{
+			try
+			{
+				jj_input_stream = new SimpleCharStream(in, null, 1, 1);
+			} 
+			catch(java.io.UnsupportedEncodingException e)
+			{
+				throw new RuntimeException(e);
+			}
+			
+    		token_source = new CLIParserTokenManager(jj_input_stream);
+    		token = new Token();
+    		
+    		jj_ntk = -1;
+    		jj_gen = 0;
+    		
+    		for (int i = 0; i < jj_la1.length; i++) jj_la1[i] = -1;
+    	}
+    	else
+    	{
+    		ReInit(in);
+    	}
+	}
+	
+	public void init( Reader in )
+	{
+		if( jj_input_stream == null )
+		{
+			jj_input_stream = new SimpleCharStream(in, 1, 1);
+			
+    		token_source = new CLIParserTokenManager(jj_input_stream);
+    		token = new Token();
+    		
+    		jj_ntk = -1;
+    		jj_gen = 0;
+    		
+    		for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    	}
+    	else
+    	{
+    		ReInit(in);
+    	}
+	}
+	
+	protected String unquote( String str )
+	{
+		if( str.startsWith("\"") && str.endsWith("\"") )
+			return str.substring(1,str.length()-1);
+		else if( str.startsWith("\"") )
+			return str.substring(1);
+		else if( str.endsWith("\"") )
+			return str.substring(0,str.length()-1);
+		
+		return str;
+	}
+	
+	protected void streamConnection( String id1, String id2, String op )
+	{
+		if( ! ctx.hasStream(id1) )
+		{
+			error("unknown stream", id1);
+			return;
+		}
+		
+		if( ! ctx.hasStream(id2) )
+		{
+			error("unknown stream", id2);
+			return;
+		}
+		
+		op = op.toLowerCase();
+		
+		if( op.equals("<--") )
+			ctx.connect(id2,id1,ConnectionMode.ConnectFull);
+		else if( op.equals("-->") )
+			ctx.connect(id1,id2,ConnectionMode.ConnectFull);
+		else if( op.equals("<->") )
+			ctx.connect(id1,id2,ConnectionMode.ConnectReverseFull);
+		
+		if( op.equals("!--") )
+			ctx.connect(id2,id1,ConnectionMode.DisconnectFull);
+		else if( op.equals("--!") )
+			ctx.connect(id1,id2,ConnectionMode.DisconnectFull);
+		else if( op.equals("!-!") )
+			ctx.connect(id1,id2,ConnectionMode.DisconnectReverseFull);
+	}
+	
+	protected void error( String title, String message )
+	{
+		out.printf("%s: %s\n", title, message );
+	}
+	
+	protected void betweenStep()
+	{
+		if( ctx.has("stream.event.betweenStep") )
+		{
+			try
+			{
+				Thread.sleep(Long.parseLong(ctx.get("stream.event.betweenStep")));
+			}
+			catch(Exception e) {}
+		}
+	}
+	
+	protected Object createObject( String classname, LinkedList<Object> args )
+	{
+		try
+		{
+			Class<?> cls = Class.forName(classname);
+			Class<?> [] argsCls = (args != null ? new Class<?>[args.size()] : null );
+			
+			if( args != null )
+			{
+				for( int i = 0; i < args.size(); i++ )
+				{
+					argsCls [i] = args.get(i).getClass();
+					
+					if( args.get(i) instanceof Integer )
+						argsCls [i] = Integer.TYPE;
+					else if( args.get(i) instanceof Double )
+						argsCls [i] = Double.TYPE;
+				}
+		}
+			
+			Constructor<?> c = cls.getConstructor(argsCls);
+			return c.newInstance( args == null ? null : args.toArray() );
+		}	
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public static void main( String [] args )
+	{
+		try
+		{
+			CLIParser cp = new CLIParser();
+			cp.init(System.in);
+			cp.start();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+}
+
+PARSER_END(CLIParser)
+
+SKIP :
+{
+ 	" "
+|	"\r"
+|	"\t"
+|	"\n"
+}
+
+TOKEN: { < INT			: ("-")? ["1"-"9"](["0"-"9"])* > }
+TOKEN: { < REAL			: ( <INT> | ("-")? "0" ) "." (["0"-"9"])+ ( ("e"|"E") <INT> )? > } 
+
+TOKEN: { < #EOL         : (("\r")|("\n"))> }
+TOKEN: { < COMMENT		: ("//"((~["\r","\n"])*)<EOL>) > }
+TOKEN: { < LPAREN        : "(" > }
+TOKEN: { < RPAREN        : ")" > }
+
+TOKEN: { < ADD			: "add" > }
+TOKEN: { < AND			: "&&" > }
+TOKEN: { < ATTRIBUTE	: "attribute" > }
+TOKEN: { < AUTOLAYOUT	: "autolayout" > }
+TOKEN: { < BEGIN		: "begin" > }
+TOKEN: { < CHANGE		: "change" > }
+TOKEN: { < CREATE		: "create" > }
+TOKEN: { < CURRENT		: "current" > }
+TOKEN: { < DEL			: "del" > }
+TOKEN: { < EDGE			: "edge" > }
+TOKEN: { < ELEMENT		: "element" > }
+TOKEN: { < END			: "end" > }
+TOKEN: { < EVENTS		: "events" > }
+TOKEN: { < FI			: "fi" > }
+TOKEN: { < FILE			: "file" > }
+TOKEN: { < FOR			: "for" > }
+TOKEN: { < FOREACH		: "foreach" > }
+TOKEN: { < FROM			: "from" > }
+TOKEN: { < GENERATOR	: "generator" > }
+TOKEN: { < GRAPH		: "graph" > }
+TOKEN: { < IF			: "if" > }
+TOKEN: { < IN			: "in" > }
+TOKEN: { < MATCHING		: "matching" > }
+TOKEN: { < NEXT			: "next" > }
+TOKEN: { < OF			: "of" > }
+TOKEN: { < OFF			: "off" > }
+TOKEN: { < ON			: "on" > }
+TOKEN: { < OPEN			: "open" > }
+TOKEN: { < OR			: "||" > }
+TOKEN: { < NEW			: "new" > }
+TOKEN: { < NODE			: "node" > }
+TOKEN: { < READ			: "read" > }
+TOKEN: { < REMOVE		: "remove" > }
+TOKEN: { < RUN			: "run" > }
+TOKEN: { < SET			: "set" > }
+TOKEN: { < SINK			: "sink" > }
+TOKEN: { < SOURCE		: "source" > }
+TOKEN: { < STEP			: "step" > }
+TOKEN: { < STREAM		: "stream" > }
+TOKEN: { < TEST			: "test" > }
+TOKEN: { < THEN			: "then" > }
+TOKEN: { < TO			: "to" > }
+TOKEN: { < USING		: "using" > }
+TOKEN: { < WITH			: "with" > }
+
+TOKEN: { < EXIT 		: "exit" > }
+TOKEN: { < UNSET		: "unset" > }
+TOKEN: { < GET			: "get" > }
+
+TOKEN :
+{
+	< DISPLAY : "display" >
+}
+
+TOKEN: { < EOI			: ";" > }
+
+TOKEN: { < STRING       : (("\"" (~["\""])* "\"")|("'" (~["'"])* "'")) > }
+TOKEN: { < WORD			: ( (["a"-"z"]|["A"-"Z"]) (["a"-"z"]|["A"-"Z"]|["0"-"9"])* ) > }
+
+TOKEN: { < CLASS		: <WORD> ( "." <WORD> )+ > }
+
+TOKEN: { < STREAM_OP	: ("-->"|"<--"|"<->"|"!--"|"--!"|"!-!") > }
+
+void start():
+{
+	if( out == System.out ) out.printf( "> " );
+}
+{
+	( axioms() ";" { if( out == System.out ) out.printf( "> " ); } )* <EOF>
+}
+
+void axioms():
+{
+
+}
+{
+	axiomsSystem()
+	|
+	axiomsGraph()
+	|
+	axiomsStream()
+	|
+	axiomsGenerator()
+	|
+	axiomsFile()
+	|
+	axiomsAttributes()
+	|
+	axiomsElements()
+}
+
+String readClassname():
+{
+	Token cls = null;
+}
+{
+	( cls = <WORD> | cls = <CLASS> ) { return cls.image; }
+}
+
+String readID():
+{
+	Token id = null;
+}
+{
+	id = <STRING> { return unquote(id.image); }
+}
+
+int readInt():
+{
+	Token i = null;
+}
+{
+	i = <INT> { return Integer.parseInt(i.image); }
+}
+
+String readString():
+{
+	Token t = null;
+}
+{
+	t = <STRING> { return unquote(t.image); }
+}
+
+double readDouble():
+{
+	Token t = null;
+}
+{
+	t = <REAL> { return Double.parseDouble(t.image); }
+}
+
+URL readURL():
+{
+	Token t = null;
+}
+{
+	t = <STRING>
+	{
+		try
+		{
+			return new URL(unquote(t.image));
+		}
+		catch( MalformedURLException e )
+		{
+			error("malformed url",e.getMessage());
+		}
+		
+		return null;
+	}
+}
+
+Object [] readArray():
+{
+	LinkedList<Object> array = new LinkedList<Object>();
+	Object  o = null;
+}
+{
+	"{" ( o = readObject() { array.addLast(o); } ( "," o = readObject() { array.addLast(o); } )* )? "}"
+	{ return array.toArray(); } 
+}
+
+Object readObject():
+{
+	Token t = null;
+	String cls = null;
+	LinkedList<Object> args = null;
+	Object obj;
+	double d;
+}
+{
+	t = <STRING> { return unquote(t.image); }
+	|
+	d = readInt() { return (int) d; }
+	|
+	d = readDouble() { return d; }
+	|
+	<NEW> cls = readClassname() "(" ( obj = readObject()
+	{
+		if( args == null )
+			args = new LinkedList<Object>();
+		args.addLast(obj); 
+	} ( "," obj = readObject()
+	{ 
+		if( args == null )
+			args = new LinkedList<Object>();
+		args.addLast(obj); 
+	} )* )? ")"
+	{	
+		obj = createObject(cls,args);
+		return obj;
+	}
+	|
+	obj = readArray() { return obj; }
+}
+
+KeyVal readKeyVal():
+{
+	String k = null;
+	Object v = null;
+}
+{
+	k = readClassname() ( "=" v = readObject() )? { return new KeyVal(k,v); }
+}
+
+LinkedList<KeyVal> readKeyVals():
+{
+	KeyVal kv = null;
+	LinkedList<KeyVal> keys = new LinkedList<KeyVal>();
+}
+{
+	( kv = readKeyVal() { keys.addLast(kv); } ( "," kv = readKeyVal() { keys.addLast(kv); } )* )? { return keys; }
+}
+
+LinkedList<KeyVal> readAttributes():
+{
+	LinkedList<KeyVal> attributes = null;
+}
+{
+	( <WITH> attributes = readKeyVals() )? { return attributes == null ? new LinkedList<KeyVal>() : attributes; }
+}
+
+void axiomsSystem():
+{
+	String key = null;
+	Token val = null;
+	Object o = null;
+}
+{
+	<EXIT> { System.exit(0); }
+	|
+	<SET> key = readClassname() val = <STRING> { ctx.set(key,unquote(val.image)); }
+	|
+	<GET> key = readClassname() { out.printf("%s = \"%s\"\n", key, ctx.get(key)); }
+	|
+	<UNSET> key = readClassname() { ctx.unset(key); }
+}
+
+/*
+ * Axioms definition for graph operations.
+ */
+ 
+void axiomsGraph():
+{
+	Token id = null;
+	HashMap<String,Object> attr;
+}
+{
+	axiomGraphCreation()
+	|
+	axiomGraphRead()
+	|
+	axiomGraphDisplay()
+}
+
+void axiomGraphCreation():
+{
+	Token id = null;
+	LinkedList<KeyVal> attr;
+}
+{
+	( <CREATE> <GRAPH> id = <STRING> attr = readAttributes() { System.out.printf(":: graph creation \"%s\", %s\n",unquote(id.image), attr); } )
+}
+
+void axiomGraphRead():
+{
+	Token id = null;
+	String reader = null;
+}
+{
+	( <OPEN> <GRAPH> id = <STRING> (<USING> reader = readClassname())? { System.out.printf(":: open graph \"%s\"\n",unquote(id.image)); } )
+}
+
+void axiomGraphDisplay():
+{
+	String id = null;
+	boolean on = true;
+}
+{
+	<DISPLAY> id = readID() ( <OFF> { on = false; } )? { ctx.display(id,on); }
+}
+
+/*
+ * Axioms definitions for stream operations.
+ */
+
+void axiomsStream():
+{
+
+}
+{
+	axiomStreamNew()
+	|
+	axiomStreamConnect()
+}
+
+void axiomStreamNew():
+{
+	Token id = null;
+	String cls = null;
+	String pkg = null;
+}
+{
+	<NEW> 
+		( <STREAM> | <GENERATOR> { pkg = ctx.get("package.generator"); } | <GRAPH> { pkg = ctx.get("package.graph"); } )
+		id = <STRING> "@" cls = readClassname()
+	{
+		if( pkg != null )
+			cls = pkg + "." + cls;
+			
+		ctx.newStream(unquote(id.image),cls);
+	}
+}
+
+void axiomStreamConnect():
+{
+	Token idFrom = null, idTo = null;
+	Token s;
+}
+{
+	idFrom = <STRING> s = <STREAM_OP> idTo = <STRING> { streamConnection(unquote(idFrom.image),unquote(idTo.image),s.image); }
+}
+
+/*
+ * Axioms definitions for generators.
+ */
+ 
+void axiomsGenerator():
+{
+	String id = null;
+	int step = 1;
+}
+{
+	<GENERATOR> id = readID() ( 
+	<BEGIN>
+	{
+		if( ctx.hasSource(id) )
+		{
+			Source src = ctx.getSource(id);
+			
+			if( src instanceof Generator )
+				((Generator) src).begin();
+		}
+	}
+	|
+	<STEP> (step = readInt())?
+	{
+		if( ctx.hasSource(id) )
+		{
+			Source src = ctx.getSource(id);
+			
+			if( src instanceof Generator )
+			{
+				for( int i = 0; i < step; i++ )
+				{
+					((Generator) src).nextElement();
+					betweenStep();
+				}
+			}
+		}
+	}
+	|
+	<END>
+	{
+		if( ctx.hasSource(id) )
+		{
+			Source src = ctx.getSource(id);
+			
+			if( src instanceof Generator )
+				((Generator) src).end();
+		}
+	}
+	)
+}
+
+/*
+ * Axioms definitions for file source.
+ */
+
+void axiomsFile():
+{
+	String id = null;
+	URL url = null;
+	int count = 1;
+}
+{
+	<FILE> id = readID() ( 
+		"read" url = readURL()
+		{
+			if( url != null && ctx.hasSource(id) )
+			{
+				Source src = ctx.getSource(id);
+				
+				if( src instanceof FileSource )
+				{
+					try
+					{
+						((FileSource) src).readAll(url);
+					}
+					catch( IOException e )
+					{
+						error( String.format("error while reading \"%s\"",url.toString()), e.getMessage() );
+					}
+				}
+				else
+				{
+					error( "error", String.format("\"%s\" is not a FileSource",id) );
+				}
+			}
+		}
+		|
+		<BEGIN> url = readURL()
+		{
+			if( url != null && ctx.hasSource(id) )
+			{
+				Source src = ctx.getSource(id);
+				
+				if( src instanceof FileSource )
+				{
+					try
+					{
+						((FileSource) src).begin(url);
+					}
+					catch( IOException e )
+					{
+						error( String.format("error while beginning \"%s\"",url.toString()), e.getMessage() );
+					}
+				}
+				else
+				{
+					error( "error", String.format("\"%s\" is not a FileSource",id) );
+				}
+			}
+		}
+		|
+		<NEXT>
+		(
+			<EVENTS> ( count = readInt() )?
+			{
+				if( ctx.hasSource(id) )
+				{
+					Source src = ctx.getSource(id);
+				
+					if( src instanceof FileSource )
+					{
+						try
+						{
+							for( int i = 0; i < count; i++ )
+							{
+								((FileSource) src).nextEvents();
+								betweenStep();
+							}
+						}
+						catch( IOException e )
+						{
+							error( String.format("error in next events of \"%s\"",id), e.getMessage() );
+						}
+					}
+					else
+					{
+						error( "error", String.format("\"%s\" is not a FileSource",id) );
+					}
+				}
+			}
+			|
+			<STEP> ( count = readInt() )?
+			{
+				if( ctx.hasSource(id) )
+				{
+					Source src = ctx.getSource(id);
+				
+					if( src instanceof FileSource )
+					{
+						try
+						{
+							for( int i = 0; i < count; i++ )
+							{
+								((FileSource) src).nextStep();
+								betweenStep();
+							}
+						}
+						catch( IOException e )
+						{
+							error( String.format("error in next step of \"%s\"",id), e.getMessage() );
+						}
+					}
+					else
+					{
+						error( "error", String.format("\"%s\" is not a FileSource",id) );
+					}
+				}
+			}
+		)
+		|
+		<END>
+		{
+			if( ctx.hasSource(id) )
+			{
+				Source src = ctx.getSource(id);
+				
+				if( src instanceof FileSource )
+				{
+					try
+					{
+						((FileSource) src).end();
+					}
+					catch( IOException e )
+					{
+						error( String.format("error while ending \"%s\"",id), e.getMessage() );
+					}
+				}
+				else
+				{
+					error( "error", String.format("\"%s\" is not a FileSource",id) );
+				}
+			}
+		}
+	)
+}
+
+/*
+ * Axioms definitions for attribute.
+ */
+
+void axiomsAttributes():
+{
+	String id = null;
+	LinkedList<KeyVal> attributes = null;
+	Element mode = Element.graph;
+	String target = null;
+	boolean isRegex = false;
+}
+{
+	<ATTRIBUTE> (
+		<ADD> attributes = readKeyVals() <ON> id = readID()
+		( <TO>
+			(
+				<NODE> { mode = Element.node; }
+				|
+				<EDGE> { mode = Element.edge; }
+			) ( <MATCHING> { isRegex = true; } )? target = readString()
+		)?
+		{
+			if( ctx.hasSink(id) )
+			{
+				Sink sink = ctx.getSink(id);
+				
+				if( isRegex && ! ( sink instanceof Graph ) )
+				{
+					error( "invalid requirement", "matching need a graph as sink" );
+				}
+				else
+				{
+					switch(mode)
+					{
+					case graph:	
+						for( int i = 0; i < attributes.size(); i++ )
+							sink.graphAttributeAdded(parserAsSourceId,currentTimeId++,attributes.get(i).key,attributes.get(i).val);
+						break;
+					case node:
+						if( isRegex )
+						{
+							for( Node n : (Graph) sink )
+							{
+								if( n.getId().matches(target) )
+								{
+									for( int i = 0; i < attributes.size(); i++ )
+										sink.nodeAttributeAdded(parserAsSourceId,currentTimeId++,n.getId(),attributes.get(i).key,attributes.get(i).val);
+								}
+							}
+						}
+						else
+						{
+							for( int i = 0; i < attributes.size(); i++ )
+								sink.nodeAttributeAdded(parserAsSourceId,currentTimeId++,target,attributes.get(i).key,attributes.get(i).val);
+						}
+						break;
+					case edge:
+						if( isRegex )
+						{
+							for( Edge e : ((Graph) sink).edgeSet() )
+							{
+								if( e.getId().matches(target) )
+								{
+									for( int i = 0; i < attributes.size(); i++ )
+										sink.edgeAttributeAdded(parserAsSourceId,currentTimeId++,e.getId(),attributes.get(i).key,attributes.get(i).val);
+								}
+							}
+						}
+						else
+						{
+							for( int i = 0; i < attributes.size(); i++ )
+								sink.edgeAttributeAdded(parserAsSourceId,currentTimeId++,target,attributes.get(i).key,attributes.get(i).val);
+						}
+						break;
+					}
+				}
+			}
+		} 
+		|
+		<CHANGE> attributes = readKeyVals() <ON> id = readID()
+		( <TO>
+			(
+				<NODE> { mode = Element.node; }
+				|
+				<EDGE> { mode = Element.edge; }
+			) ( <MATCHING> { isRegex = true; } )? target = readString()
+		)?
+		{
+			if( ctx.hasSink(id) )
+			{
+				Sink sink = ctx.getSink(id);
+				
+				if( isRegex && ! ( sink instanceof Graph ) )
+				{
+					error( "invalid requirement", "matching need a graph as sink" );
+				}
+				else
+				{
+					switch(mode)
+					{
+					case graph:	
+						for( int i = 0; i < attributes.size(); i++ )
+							sink.graphAttributeChanged(parserAsSourceId,currentTimeId++,attributes.get(i).key,null,attributes.get(i).val);
+						break;
+					case node:
+						if( isRegex )
+						{
+							for( Node n : (Graph) sink )
+							{
+								if( n.getId().matches(target) )
+								{
+									for( int i = 0; i < attributes.size(); i++ )
+										sink.nodeAttributeChanged(parserAsSourceId,currentTimeId++,n.getId(),attributes.get(i).key,null,attributes.get(i).val);
+								}
+							}
+						}
+						else
+						{
+							for( int i = 0; i < attributes.size(); i++ )
+								sink.nodeAttributeChanged(parserAsSourceId,currentTimeId++,target,attributes.get(i).key,null,attributes.get(i).val);
+						}
+						break;
+					case edge:
+						if( isRegex )
+						{
+							for( Edge e : ((Graph) sink).edgeSet() )
+							{
+								if( e.getId().matches(target) )
+								{
+									for( int i = 0; i < attributes.size(); i++ )
+										sink.edgeAttributeChanged(parserAsSourceId,currentTimeId++,e.getId(),attributes.get(i).key,null,attributes.get(i).val);
+								}
+							}
+						}
+						else
+						{
+							for( int i = 0; i < attributes.size(); i++ )
+								sink.edgeAttributeChanged(parserAsSourceId,currentTimeId++,target,attributes.get(i).key,null,attributes.get(i).val);
+						}
+						break;
+					}
+				}
+			}
+		} 
+		|
+		<REMOVE> attributes = readKeyVals() <ON> id = readID()
+		( <TO>
+			(
+				<NODE> { mode = Element.node; }
+				|
+				<EDGE> { mode = Element.edge; }
+			) ( <MATCHING> { isRegex = true; } )? target = readString()
+		)?
+		{
+			if( ctx.hasSink(id) )
+			{
+				Sink sink = ctx.getSink(id);
+				
+				if( isRegex && ! ( sink instanceof Graph ) )
+				{
+					error( "invalid requirement", "matching need a graph as sink" );
+				}
+				else
+				{
+					switch(mode)
+					{
+					case graph:	
+						for( int i = 0; i < attributes.size(); i++ )
+							sink.graphAttributeRemoved(parserAsSourceId,currentTimeId++,attributes.get(i).key);
+						break;
+					case node:
+						if( isRegex )
+						{
+							for( Node n : (Graph) sink )
+							{
+								if( n.getId().matches(target) )
+								{
+									for( int i = 0; i < attributes.size(); i++ )
+										sink.nodeAttributeRemoved(parserAsSourceId,currentTimeId++,n.getId(),attributes.get(i).key);
+								}
+							}
+						}
+						else
+						{
+							for( int i = 0; i < attributes.size(); i++ )
+								sink.nodeAttributeRemoved(parserAsSourceId,currentTimeId++,target,attributes.get(i).key);
+						}
+						break;
+					case edge:
+						if( isRegex )
+						{
+							for( Edge e : ((Graph) sink).edgeSet() )
+							{
+								if( e.getId().matches(target) )
+								{
+									for( int i = 0; i < attributes.size(); i++ )
+										sink.edgeAttributeRemoved(parserAsSourceId,currentTimeId++,e.getId(),attributes.get(i).key);
+								}
+							}
+						}
+						else
+						{
+							for( int i = 0; i < attributes.size(); i++ )
+								sink.edgeAttributeRemoved(parserAsSourceId,currentTimeId++,target,attributes.get(i).key);
+						}
+						break;
+					}
+				}
+			}
+		} 
+	) 
+}
+
+/*
+ * Axioms definitions for elements.
+ */
+
+void axiomsElements():
+{
+
+}
+{
+	<ELEMENT> (
+		axiomElementAdd()
+		|
+		axiomElementRemove()
+	)
+}
+
+void axiomElementAdd():
+{
+
+}
+{
+	<ADD> ( axiomElementAddNode() | axiomElementAddEdge() )
+}
+
+void axiomElementAddNode():
+{
+	String nodeId = null;
+	String sinkId = null;
+	LinkedList<KeyVal> attributes = null;
+}
+{
+	<NODE> nodeId = readID() <IN> sinkId = readID() attributes = readAttributes()
+	{
+		Sink sink;
+		
+		if( ctx.hasSink(sinkId) )
+		{
+			sink = ctx.getSink(sinkId);
+			
+			sink.nodeAdded(parserAsSourceId,currentTimeId++,nodeId);
+			
+			if( attributes != null )
+			{
+				for( KeyVal kv : attributes )
+					sink.nodeAttributeAdded(parserAsSourceId,currentTimeId++,nodeId,kv.key,kv.val);
+			}
+		}
+		else
+		{
+			error( "unknown sink", sinkId );
+		}
+	} 
+}
+
+void axiomElementAddEdge():
+{
+	String edgeId = null;
+	String sinkId = null;
+	String fromId = null;
+	String targId = null;
+	boolean directed = false;
+	LinkedList<KeyVal> attributes = null;
+}
+{
+	<EDGE> edgeId = readID() fromId = readID() ( ">" { directed = true; } )? targId = readID() <IN> sinkId = readID() attributes = readAttributes()
+	{
+		Sink sink;
+		
+		if( ctx.hasSink(sinkId) )
+		{
+			sink = ctx.getSink(sinkId);
+			
+			sink.edgeAdded(parserAsSourceId,currentTimeId++,edgeId,fromId,targId,directed);
+			
+			if( attributes != null )
+			{
+				for( KeyVal kv : attributes )
+					sink.edgeAttributeAdded(parserAsSourceId,currentTimeId++,edgeId,kv.key,kv.val);
+			}
+		}
+		else
+		{
+			error( "unknown sink", sinkId );
+		}
+	}
+}
+
+void axiomElementRemove():
+{
+	String elementId = null;
+	String sinkId = null;
+	Element mode = Element.node;
+}
+{
+	<REMOVE> ( <NODE> | <EDGE> { mode = Element.edge; } ) elementId = readID() <FROM> sinkId = readID()
+	{
+		Sink sink;
+		
+		if( ctx.hasSink(sinkId) )
+		{
+			sink = ctx.getSink(sinkId);
+			
+			switch(mode)
+			{
+			case node: sink.nodeRemoved(parserAsSourceId,currentTimeId++,elementId); break;
+			case edge: sink.edgeRemoved(parserAsSourceId,currentTimeId++,elementId); break;
+			}
+		}
+		else
+		{
+			error( "unknown sink", sinkId );
+		}
+	}
+}
