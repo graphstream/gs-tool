@@ -46,9 +46,10 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceFactory;
-import org.graphstream.ui.old.GraphViewer;
-import org.graphstream.ui.old.GraphViewerRemote;
-import org.graphstream.ui.old.swing.SwingGraphViewer;
+import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.layout.Layouts;
+import org.graphstream.ui.swingViewer.GraphRenderer;
+import org.graphstream.ui.swingViewer.Viewer;
 import org.util.Environment;
 
 /**
@@ -130,12 +131,7 @@ public class ShowGraph extends JFrame implements ActionListener, ChangeListener
     /**
      * The graph viewer.
      */
-    protected GraphViewer viewer;
-    
-    /**
-     * The graph viewer command.
-     */
-    protected GraphViewerRemote viewerRemote;
+    protected Viewer viewer;
 
     /**
      * Read/pause reading the graph file.
@@ -187,22 +183,36 @@ public class ShowGraph extends JFrame implements ActionListener, ChangeListener
 		if( env.getParameter( "h" ).length() > 0 || env.getParameter( "help" ).length() > 0 )
 			showHelp();
 		
-		boolean layout = true;
+		boolean doLayout = true;
+		boolean doAntialias = true;
 		
 		fileName     = env.getParameter( "input" );
 		fileName     = askForGraphFileName( fileName );
 		timer        = new Timer( sleepMs, this );
 		graph        = new MultiGraph( fileName );
-		layout       = ! env.getBooleanParameter( "noLayout" );
-		viewer       = new SwingGraphViewer( graph, layout, true );
-		viewerRemote = viewer.newViewerRemote();
+		doLayout       = ! env.getBooleanParameter( "noLayout" );
+		doAntialias       = ! env.getBooleanParameter( "noAntialias" );
+		viewer       = new Viewer( graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD );
+		
+		if( doAntialias )
+		{
+			graph.addAttribute("ui.antialias");
+		}
+		
+		buildUI();
+		
+		if( doLayout )
+		{
+			Layout layout = Layouts.newLayoutAlgorithm();
+			viewer.enableAutoLayout( layout );
+		}
 		String css   = env.getParameter( "css" );
 		
 		if( css != null && css.length() > 0 )
 		     graph.addAttribute( "stylesheet", String.format( "url('%s')", css ) );
 		else graph.addAttribute( "stylesheet", defaultStyleSheet );
 		
-		buildUI();
+		
 		openGraph();
 		
 		timer.setCoalesce( true );
@@ -217,6 +227,7 @@ public class ShowGraph extends JFrame implements ActionListener, ChangeListener
 		System.out.printf( "    -input=<file> .......... use the given file as input (you can pass a directory used by the file chooser).%n" );
 		System.out.printf( "    -css=<file> ............ use the given file as style sheet.%n" );
 		System.out.printf( "    -noLayout .............. do not automatically layout the graph.%n" );
+		System.out.printf( "    -noAntialias............ do not automatically switch antialiasing on.%n" );
 		System.out.printf( "    -h or -help ............ this help message.%n" );
 		
 		System.exit( 0 );
@@ -397,9 +408,10 @@ public class ShowGraph extends JFrame implements ActionListener, ChangeListener
 		
 		setTitle( "Show Graph" );
 		setIconImage( icon24.getImage() );
-		viewerRemote.setQuality( 4 );
-		viewerRemote.setStepsVisible( true );
-		add( (JComponent)viewer.getComponent(), BorderLayout.CENTER );
+		//viewerRemote.setQuality( 4 );
+		//viewerRemote.setStepsVisible( true );
+		GraphRenderer renderer = Viewer.newGraphRenderer();
+		add( viewer.addView( String.format( "defaultView_%d", (long)(Math.random()*10000) ), renderer, false ), BorderLayout.CENTER );
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		setSize( 400, 400 );
 		setVisible( true );
