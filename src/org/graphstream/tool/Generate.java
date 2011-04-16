@@ -30,37 +30,16 @@
  */
 package org.graphstream.tool;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.Reader;
 
-import org.graphstream.algorithm.generator.DorogovtsevMendesGenerator;
-import org.graphstream.algorithm.generator.FullGenerator;
 import org.graphstream.algorithm.generator.Generator;
-import org.graphstream.algorithm.generator.GridGenerator;
-import org.graphstream.algorithm.generator.IncompleteGridGenerator;
-import org.graphstream.algorithm.generator.PointsOfInterestGenerator;
-import org.graphstream.algorithm.generator.PreferentialAttachmentGenerator;
-import org.graphstream.algorithm.generator.RandomEuclideanGenerator;
-import org.graphstream.algorithm.generator.RandomFixedDegreeDynamicGraphGenerator;
-import org.graphstream.algorithm.generator.RandomGenerator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.ElementSink;
 import org.graphstream.stream.file.FileSink;
-import org.graphstream.stream.file.FileSinkDGS;
-import org.graphstream.stream.file.FileSinkDOT;
-import org.graphstream.stream.file.FileSinkGML;
-import org.graphstream.stream.file.FileSinkImages;
-import org.graphstream.stream.file.FileSinkSVG;
-import org.graphstream.stream.file.FileSinkTikZ;
 
 /**
  * Helper to generate graph in command line.
@@ -68,273 +47,11 @@ import org.graphstream.stream.file.FileSinkTikZ;
  * @author Guilhelm Savin
  * 
  */
-public class Generate {
-
-	/**
-	 * Type of generator used.
-	 * 
-	 */
-	public static enum Type {
-		PREFERENTIAL_ATTACHMENT, DOROGOVTSEV_MENDES, GRID, INCOMPLETE_GRID, RANDOM, RANDOM_EUCLIDEAN, RANDOM_FIXED_DEGREE_DYNAMIC_GRAPH, FULL, POINTS_OF_INTEREST
-	}
-
-	/**
-	 * Output format.
-	 * 
-	 */
-	public static enum Format {
-		DGS(true), TIKZ(false), DOT(true), GML(false), SVG(false), IMAGES(true,
-				"prefix", "outputType", "outputPolicy", "resolution",
-				"layoutPolicy", "quality", "stylesheet")
-
-		;
-
-		private boolean dynamic;
-		private String[] options;
-
-		private Format(boolean dynamic, String... options) {
-			this.dynamic = dynamic;
-			this.options = options;
-		}
-
-		public boolean hasDynamicSupport() {
-			return dynamic;
-		}
-
-		public boolean isValidOption(String key) {
-			if (options == null)
-				return false;
-
-			for (int i = 0; i < options.length; i++)
-				if (options[i].equals(key))
-					return true;
-
-			return false;
-		}
-
-		public int getOptionCount() {
-			if (options == null)
-				return 0;
-			return options.length;
-		}
-
-		public String getOption(int i) {
-			if (options == null || i >= options.length || i < 0)
-				return null;
-
-			return options[i];
-		}
-	}
-
-	/**
-	 * Create a generator type with given options.
-	 * 
-	 * @param type
-	 *            type of generator
-	 * @param options
-	 *            options passed to the generator.
-	 * @return a generator
-	 */
-	public static Generator generatorFor(Type type, String[][] options) {
-		Generator gen = null;
-
-		switch (type) {
-		case PREFERENTIAL_ATTACHMENT:
-			gen = new PreferentialAttachmentGenerator();
-			break;
-		case DOROGOVTSEV_MENDES:
-			gen = new DorogovtsevMendesGenerator();
-			break;
-		case GRID:
-			gen = new GridGenerator();
-			break;
-		case INCOMPLETE_GRID:
-			gen = new IncompleteGridGenerator();
-			break;
-		case RANDOM:
-			gen = new RandomGenerator();
-			break;
-		case RANDOM_EUCLIDEAN:
-			gen = new RandomEuclideanGenerator();
-			break;
-		case RANDOM_FIXED_DEGREE_DYNAMIC_GRAPH:
-			gen = new RandomFixedDegreeDynamicGraphGenerator();
-			break;
-		case FULL:
-			gen = new FullGenerator();
-			break;
-		case POINTS_OF_INTEREST:
-			gen = new PointsOfInterestGenerator();
-			break;
-		}
-
-		return gen;
-	}
-
-	/**
-	 * Get a sink of format with given options.
-	 * 
-	 * @param format
-	 *            format of the sink
-	 * @param options
-	 *            options passed to the sink
-	 * @return a sink
-	 */
-	public static FileSink sinkFor(Format format, String[][] options) {
-		FileSink sink = null;
-
-		switch (format) {
-		case DGS:
-			sink = new FileSinkDGS();
-			break;
-		case DOT:
-			sink = new FileSinkDOT();
-			break;
-		case GML:
-			sink = new FileSinkGML();
-			break;
-		case IMAGES: {
-			String prefix = "";
-			FileSinkImages.OutputType outputType = FileSinkImages.OutputType.JPG;
-			FileSinkImages.Resolution resolution = FileSinkImages.Resolutions.VGA;
-			FileSinkImages.OutputPolicy policy = FileSinkImages.OutputPolicy.ByStepOutput;
-			FileSinkImages.Quality quality = FileSinkImages.Quality.MEDIUM;
-			FileSinkImages.LayoutPolicy layout = FileSinkImages.LayoutPolicy.NoLayout;
-			String stylesheet = null;
-
-			if (options != null) {
-				for (int i = 0; i < options.length; i++) {
-					if (options[i][0].equals("prefix")) {
-						prefix = options[i][1];
-					} else if (options[i][0].equals("outputType")) {
-						try {
-							outputType = FileSinkImages.OutputType
-									.valueOf(options[i][1]);
-						} catch (IllegalArgumentException e) {
-							System.err
-									.printf("Invalid outputType. Use one of:\n");
-							for (FileSinkImages.OutputType t : FileSinkImages.OutputType
-									.values())
-								System.err.printf("- %s\n", t);
-							System.exit(1);
-						}
-					} else if (options[i][0].equals("resolution")) {
-						if (options[i][1].matches("\\d+x\\d+")) {
-							int width = Integer.parseInt(options[i][1]
-									.substring(0, options[i][1].indexOf('x')));
-							int height = Integer.parseInt(options[i][1]
-									.substring(options[i][1].indexOf('x') + 1));
-
-							resolution = new FileSinkImages.CustomResolution(
-									width, height);
-						} else {
-							try {
-								resolution = FileSinkImages.Resolutions
-										.valueOf(options[i][1]);
-							} catch (IllegalArgumentException e) {
-								System.err
-										.printf("Invalid outputType. Use \"withxheight\" or one of:\n");
-								for (FileSinkImages.Resolutions t : FileSinkImages.Resolutions
-										.values())
-									System.err.printf("- %s\n", t);
-								System.exit(1);
-							}
-						}
-					} else if (options[i][0].equals("outputPolicy")) {
-						try {
-							policy = FileSinkImages.OutputPolicy
-									.valueOf(options[i][1]);
-						} catch (IllegalArgumentException e) {
-							System.err.printf("Invalid policy. Use one of:\n");
-							for (FileSinkImages.OutputPolicy t : FileSinkImages.OutputPolicy
-									.values())
-								System.err.printf("- %s\n", t);
-							System.exit(1);
-						}
-					} else if (options[i][0].equals("layoutPolicy")) {
-						try {
-							layout = FileSinkImages.LayoutPolicy
-									.valueOf(options[i][1]);
-						} catch (IllegalArgumentException e) {
-							System.err
-									.printf("Invalid layout policy. Use one of:\n");
-							for (FileSinkImages.LayoutPolicy t : FileSinkImages.LayoutPolicy
-									.values())
-								System.err.printf("- %s\n", t);
-							System.exit(1);
-						}
-					} else if (options[i][0].equals("stylesheet")) {
-						try {
-							stylesheet = loadFileContent(options[i][1]);
-						} catch (IOException e) {
-							System.err
-									.printf("Can not load stylesheet content : \"%s\".\n",
-											options[i][1]);
-							System.err.printf("Error is %s : %s\n", e
-									.getClass().getName(), e.getMessage());
-							System.exit(1);
-						}
-					}
-				}
-			}
-
-			sink = new FileSinkImages(prefix, outputType, resolution, policy);
-
-			((FileSinkImages) sink).setQuality(quality);
-			((FileSinkImages) sink).setLayoutPolicy(layout);
-
-			if (stylesheet != null)
-				((FileSinkImages) sink).setStyleSheet(stylesheet);
-		}
-			break;
-		case SVG:
-			sink = new FileSinkSVG();
-			break;
-		case TIKZ:
-			sink = new FileSinkTikZ();
-			break;
-		}
-
-		return sink;
-	}
-
-	/**
-	 * Load file/url content into one string.
-	 * 
-	 * @param url
-	 *            url or path
-	 * @return content
-	 * @throws IOException
-	 */
-	private static String loadFileContent(String url) throws IOException {
-		Reader reader = null;
-		File f = new File(url);
-
-		if (f.exists())
-			reader = new FileReader(f);
-		else {
-			InputStream in = Generate.class.getClassLoader()
-					.getResourceAsStream(url);
-			if (in != null)
-				reader = new InputStreamReader(in);
-		}
-
-		if (reader == null)
-			throw new FileNotFoundException(url);
-
-		StringBuilder builder = new StringBuilder();
-		char[] buffer = new char[128];
-		int r;
-
-		while ((r = reader.read(buffer, 0, 128)) > 0)
-			builder.append(buffer, 0, r);
-
-		return builder.toString();
-	}
+public class Generate implements ToolsCommon {
 
 	public static void main(String... args) {
-		Type type = Type.PREFERENTIAL_ATTACHMENT;
-		Format format = Format.DGS;
+		GeneratorType type = GeneratorType.PREFERENTIAL_ATTACHMENT;
+		SinkFormat format = SinkFormat.DGS;
 		String[][] generatorOptions = null;
 		String[][] formatOptions = null;
 
@@ -358,17 +75,7 @@ public class Generate {
 			System.exit(1);
 		}
 
-		//
-		// Remove shortcut
-		//
-		for (int k = 0; k < args.length; k++) {
-			for (int l = 0; l < shortcuts.length; l++) {
-				if (shortcuts[l][0].equals(args[k])) {
-					args[k] = shortcuts[l][1];
-					break;
-				}
-			}
-		}
+		Tools.removeShortcuts(args, shortcuts);
 
 		for (int k = 0; k < args.length; k++) {
 			if (args[k].matches("^--\\w+(-\\w+)*(=.*)?$")) {
@@ -389,7 +96,7 @@ public class Generate {
 
 				if (key.equals("type")) {
 					try {
-						type = Type.valueOf(value);
+						type = GeneratorType.valueOf(value);
 					} catch (IllegalArgumentException e) {
 						System.err.printf("Invalid generator type : \"%s\".\n",
 								value);
@@ -397,7 +104,7 @@ public class Generate {
 					}
 				} else if (key.equals("format")) {
 					try {
-						format = Format.valueOf(value);
+						format = SinkFormat.valueOf(value);
 					} catch (IllegalArgumentException e) {
 						System.err.printf("Invalid output format : \"%s\".\n",
 								value);
@@ -426,43 +133,26 @@ public class Generate {
 						System.exit(1);
 					}
 				} else if (key.equals("generator-options")) {
-					String[] options = value.split("\\s+;\\s+");
-
-					if (options != null) {
-						generatorOptions = new String[options.length][2];
-						for (int i = 0; i < options.length; i++) {
-							if (options[i].indexOf('=') > 0) {
-								generatorOptions[i][0] = options[i].substring(
-										0, options[i].indexOf('='));
-								generatorOptions[i][1] = options[i]
-										.substring(options[i].indexOf('=') + 1);
-							} else {
-								System.err.printf("Invalid options : %s.\n",
-										options[i]);
-								System.err.printf("Format is : key=value.\n");
-								System.exit(1);
-							}
-						}
+					try {
+						generatorOptions = Tools.getKeyValue(value);
+					} catch (IllegalArgumentException e) {
+						System.err
+								.printf("Invalid options : %s.\nFormat is : key=value.\n",
+										e.getMessage());
+						System.exit(1);
+					} catch (NullPointerException e) {
+						System.err
+								.printf("--generator-options is done but value is null.\n");
 					}
 				} else if (key.equals("output-options")) {
-					String[] options = value.split("\\s*;\\s*");
-
-					if (options != null) {
-						formatOptions = new String[options.length][2];
-						for (int i = 0; i < options.length; i++) {
-							if (options[i].indexOf('=') > 0) {
-								formatOptions[i][0] = options[i].substring(0,
-										options[i].indexOf('='));
-								formatOptions[i][1] = options[i]
-										.substring(options[i].indexOf('=') + 1);
-							} else {
-								System.err.printf("Invalid options : %s.\n",
-										options[i]);
-								System.err.printf("Format is : key=value.\n");
-								System.exit(1);
-							}
-						}
-					} else {
+					try {
+						formatOptions = Tools.getKeyValue(value);
+					} catch (IllegalArgumentException e) {
+						System.err
+								.printf("Invalid options : %s.\nFormat is : key=value.\n",
+										e.getMessage());
+						System.exit(1);
+					} catch (NullPointerException e) {
 						System.err
 								.printf("--output-options is done but value is null.\n");
 					}
@@ -503,6 +193,12 @@ public class Generate {
 			}
 		}
 
+		if (size == 0 && iteration == 0 && !force) {
+			System.err.printf("Neither --size or --iteration have been defined.\n");
+			System.err.printf("Add --force to bypass this protection.\n");
+			System.exit(1);
+		}
+
 		if (!export && !format.hasDynamicSupport() && !force) {
 			System.err.printf("The format \"%s\" is not dynamic. ",
 					format.name());
@@ -528,8 +224,8 @@ public class Generate {
 
 		Graph exportGraph = null;
 
-		gen = generatorFor(type, generatorOptions);
-		sink = sinkFor(format, formatOptions);
+		gen = Tools.generatorFor(type, generatorOptions);
+		sink = Tools.sinkFor(format, formatOptions);
 		gen.addElementSink(counter);
 
 		if (export) {
@@ -607,10 +303,10 @@ public class Generate {
 		out.printf("with OUT is the output file path, or empty for stdout.\n");
 		out.printf("with OPTIONS:\n");
 		out.printf("\t--type=X                    : type of generator\n");
-		for (Type t : Type.values())
+		for (GeneratorType t : GeneratorType.values())
 			out.printf("\t\t%s%n", t.name());
 		out.printf("\t--format=X                  : output format\n");
-		for (Format f : Format.values())
+		for (SinkFormat f : SinkFormat.values())
 			out.printf("\t\t%s%n", f.name());
 		out.printf("\t--iteration=xxx             : iteration of the generator\n");
 		out.printf("\t--size=xxx                  : size of graph\n");

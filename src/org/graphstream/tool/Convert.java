@@ -33,70 +33,23 @@ package org.graphstream.tool;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.LinkedList;
 
 import org.graphstream.stream.file.FileSink;
-import org.graphstream.stream.file.FileSinkDGS;
-import org.graphstream.stream.file.FileSinkDOT;
-import org.graphstream.stream.file.FileSinkGML;
-import org.graphstream.stream.file.FileSinkTikZ;
 import org.graphstream.stream.file.FileSource;
-import org.graphstream.stream.file.FileSourceDGS;
-import org.graphstream.stream.file.FileSourceDOT;
-import org.graphstream.stream.file.FileSourceGML;
-import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.layout.springbox.SpringBox;
 
 /**
  * A tool to convert from various formats to various formats...
  * 
  * @author Guilhelm Savin
  */
-public class Convert {
+public class Convert implements ToolsCommon {
 
-	/**
-	 * Conversion type.
-	 *
-	 */
-	public static enum Type {
-		DGS2TIKZ("width", "height", "stylesheet"), DGS2DOT, DGS2GML, DOT2DGS, DOT2GML, GML2DGS
-
-		;
-
-		String[] options;
-
-		private Type(String... options) {
-			this.options = options;
-		}
-
-		public int getOptionCount() {
-			return options == null ? 0 : options.length;
-		}
-
-		public String getOption(int i) {
-			if (options == null || i < 0 || i >= options.length)
-				return null;
-
-			return options[i];
-		}
-
-		public boolean isValidOption(String option) {
-			if (options == null)
-				return false;
-
-			for (int i = 0; i < options.length; i++)
-				if (options[i].equals(option))
-					return true;
-
-			return false;
-		}
-	}
-
-	protected static void convert(InputStream in, FileSource source,
+	public static void convert(InputStream in, FileSource source,
 			OutputStream out, FileSink sink) throws IOException {
 		source.addSink(sink);
 
@@ -110,152 +63,25 @@ public class Convert {
 		source.removeSink(sink);
 	}
 
-	public static void convert_dgs2dot(InputStream in, OutputStream out,
-			String[][] options) throws IOException {
-		FileSourceDGS source = new FileSourceDGS();
-		FileSinkDOT sink = new FileSinkDOT();
-
-		convert(in, source, out, sink);
-	}
-
-	public static void convert_dgs2gml(InputStream in, OutputStream out,
-			String[][] options) throws IOException {
-		FileSourceDGS source = new FileSourceDGS();
-		FileSinkGML sink = new FileSinkGML();
-
-		convert(in, source, out, sink);
-	}
-
-	public static void convert_dgs2tikz(InputStream in, OutputStream out,
-			String[][] options) throws IOException {
-
-		boolean layout = false;
-		String css = null;
-		double width = 10;
-		double height = 10;
-
-		if (options != null) {
-			for (int o = 0; o < options.length; o++) {
-				String key = options[o][0];
-				String value = options[o][1];
-
-				if (key.equals("stylesheet")) {
-					css = value;
-				} else if (key.equals("layout")) {
-					layout = true;
-				} else if (key.equals("width")) {
-					if (value == null || !value.matches("^\\d+([.]\\d+)?$")) {
-						System.err.printf("Invalid width : %s%n", value);
-						System.exit(1);
-					}
-
-					width = Double.parseDouble(value);
-				} else if (key.equals("height")) {
-					if (value == null || !value.matches("^\\d+([.]\\d+)?$")) {
-						System.err.printf("Invalid height : %s%n", value);
-						System.exit(1);
-					}
-
-					height = Double.parseDouble(value);
-				}
-			}
-		}
-
-		FileSourceDGS dgs = new FileSourceDGS();
-		GraphicGraph g = new GraphicGraph("dgs2tikz");
-		FileSinkTikZ tikz = new FileSinkTikZ();
-		SpringBox sbox = null;
-
-		if (layout) {
-			sbox = new SpringBox();
-
-			g.addSink(sbox);
-			sbox.addAttributeSink(g);
-		}
-
-		dgs.addSink(g);
-		dgs.readAll(in);
-		dgs.removeSink(g);
-		dgs = null;
-
-		if (layout) {
-			do
-				sbox.compute();
-			while (sbox.getStabilization() < 0.9);
-
-			g.removeSink(sbox);
-			sbox.removeAttributeSink(g);
-
-			sbox = null;
-		}
-
-		if (css != null) {
-			File f = new File(css);
-
-			if (f.exists()) {
-				FileReader reader = new FileReader(f);
-				StringBuilder stylesheet = new StringBuilder();
-				char[] buffer = new char[128];
-				int r;
-
-				while (reader.ready()) {
-					r = reader.read(buffer, 0, buffer.length);
-					stylesheet.append(buffer, 0, r);
-				}
-
-				reader.close();
-				css = stylesheet.toString();
-			}
-
-			g.addAttribute("ui.stylesheet", css);
-		}
-
-		if (!Double.isNaN(width))
-			g.addAttribute(FileSinkTikZ.WIDTH_ATTR, width);
-
-		if (!Double.isNaN(height))
-			g.addAttribute(FileSinkTikZ.HEIGHT_ATTR, height);
-
-		tikz.writeAll(g, out);
-	}
-
-	public static void convert_dot2dgs(InputStream in, OutputStream out,
-			String[][] options) throws IOException {
-		FileSourceDOT source = new FileSourceDOT();
-		FileSinkDGS sink = new FileSinkDGS();
-
-		convert(in, source, out, sink);
-	}
-
-	public static void convert_dot2gml(InputStream in, OutputStream out,
-			String[][] options) throws IOException {
-		FileSourceDOT source = new FileSourceDOT();
-		FileSinkGML sink = new FileSinkGML();
-
-		convert(in, source, out, sink);
-	}
-
-	public static void convert_gml2dgs(InputStream in, OutputStream out,
-			String[][] options) throws IOException {
-		FileSourceGML source = new FileSourceGML();
-		FileSinkDGS sink = new FileSinkDGS();
-
-		convert(in, source, out, sink);
-	}
+	protected static final String[][] shortcuts = { { "-h", "--help" } };
 
 	public static void main(String... args) {
 		InputStream in = System.in;
 		OutputStream out = System.out;
-		String[][] options = new String[0][2];
-		Type conv = null;
+
+		SourceFormat sourceFormat = null;
+		SinkFormat sinkFormat = null;
+		String[][] sourceOptions = null;
+		String[][] sinkOptions = null;
 
 		if (args == null) {
-			usage();
+			usage(System.err);
 			System.exit(1);
 		}
 
+		Tools.removeShortcuts(args, shortcuts);
+
 		LinkedList<String> noArg = new LinkedList<String>();
-		LinkedList<String[]> optionsTMP = new LinkedList<String[]>();
 
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].matches("^--\\w+(-\\w+)*(=.*)?$")) {
@@ -274,31 +100,88 @@ public class Convert {
 				if (value != null && value.matches("^\".*\"$"))
 					value = value.substring(1, value.length() - 1);
 
-				if (key.equals("type")) {
+				if (key.equals("help")) {
+					usage(System.out);
+					System.exit(0);
+				} else if (key.equals("source")) {
 					try {
-						conv = Type.valueOf(value);
+						sourceFormat = SourceFormat.valueOf(value);
 					} catch (IllegalArgumentException e) {
-						System.err.printf("Invalid conversion type \"%s\".\n",
-								value);
+						System.err.printf("Bad source format \"%s\".\n", value);
+						Tools.printChoice(System.err, SourceFormat.class, "");
 						System.exit(1);
 					}
-				} else if (key.equals("help")) {
-					usage();
-					System.exit(0);
+				} else if (key.equals("sink")) {
+					try {
+						sinkFormat = SinkFormat.valueOf(value);
+					} catch (IllegalArgumentException e) {
+						System.err.printf("Bad sink format \"%s\".\n", value);
+						Tools.printChoice(System.err, SinkFormat.class, "");
+						System.exit(1);
+					}
+				} else if (key.equals("source-options")) {
+					try {
+						sourceOptions = Tools.getKeyValue(value);
+					} catch (IllegalArgumentException e) {
+						System.err
+								.printf("Invalid options : %s.\nFormat is : key=value.\n",
+										e.getMessage());
+						System.exit(1);
+					} catch (NullPointerException e) {
+						System.err
+								.printf("--source-options is done but value is null.\n");
+					}
+				} else if (key.equals("sink-options")) {
+					try {
+						sinkOptions = Tools.getKeyValue(value);
+					} catch (IllegalArgumentException e) {
+						System.err
+								.printf("Invalid options : %s.\nFormat is : key=value.\n",
+										e.getMessage());
+						System.exit(1);
+					} catch (NullPointerException e) {
+						System.err
+								.printf("--sink-options is done but value is null.\n");
+					}
 				} else {
-					optionsTMP.add(new String[] {key, value});
+					System.err.printf("Invalid option : %s.\n", key);
+					usage(System.err);
+					System.exit(1);
 				}
 			} else {
 				noArg.add(args[i]);
 			}
 		}
 
-		if (conv == null) {
-			System.err.printf("No conversion type specified.\n");
+		/*
+		 * if (conv == null) {
+		 * System.err.printf("No conversion type specified.\n"); System.exit(1);
+		 * }
+		 */
+		if (sourceFormat == null) {
+			System.err.printf("Source format not specified.\n");
 			System.exit(1);
 		}
 
-		options = optionsTMP.toArray(options);
+		if (sinkFormat == null) {
+			System.err.printf("Sink format not specified.\n");
+			System.exit(1);
+		}
+
+		if (!Tools.check(sourceFormat, sourceOptions)) {
+			System.err.printf("Invalid source options.\n");
+			System.exit(1);
+		}
+
+		if (!Tools.check(sinkFormat, sinkOptions)) {
+			System.err.printf("Invalid sink options.\n");
+			System.exit(1);
+		}
+		
+		FileSource source = Tools.sourceFor(sourceFormat, sourceOptions);
+		FileSink sink = Tools.sinkFor(sinkFormat, sinkOptions);
+
+		// options = optionsTMP.toArray(options);
 
 		boolean inputIsFile = false;
 		boolean outputIsFile = false;
@@ -314,7 +197,7 @@ public class Convert {
 				inputIsFile = true;
 			break;
 		default:
-			usage();
+			usage(System.err);
 			System.exit(1);
 		}
 
@@ -356,26 +239,7 @@ public class Convert {
 		}
 
 		try {
-			switch (conv) {
-			case DGS2DOT:
-				convert_dgs2dot(in, out, options);
-				break;
-			case DGS2GML:
-				convert_dgs2gml(in, out, options);
-				break;
-			case DGS2TIKZ:
-				convert_dgs2tikz(in, out, options);
-				break;
-			case DOT2DGS:
-				convert_dot2dgs(in, out, options);
-				break;
-			case DOT2GML:
-				convert_dot2dgs(in, out, options);
-				break;
-			case GML2DGS:
-				convert_gml2dgs(in, out, options);
-				break;
-			}
+			convert(in, source, out, sink);
 		} catch (IOException ioe) {
 			System.err.printf("Failed to convert. %s : %s%n", ioe.getClass()
 					.getName(), ioe.getMessage());
@@ -385,19 +249,21 @@ public class Convert {
 		System.exit(0);
 	}
 
-	public static void usage() {
-		System.out.printf("Usage: java %s [OPTIONS] IN OUT\n\n",
+	public static void usage(PrintStream out) {
+		out.printf("Usage: java %s --source=.. --sink=.. [OPTIONS] IN OUT\n\n",
 				Convert.class.getName());
-		System.out.printf("with OPTIONS:%n");
-		System.out
-				.printf("\t--stylesheet=\"css code or css file path\"%n\t--do-layout%n");
-		System.out.printf("\t--width=xx.xx%n\t--height=xx.xx%n");
-		System.out.printf("IN OUT can be:%n");
-		System.out.printf("\t\"\" or \"- -\" : use system input/output%n");
-		System.out
-				.printf("\tifile       : read ifile and write to system output%n");
-		System.out
-				.printf("\t- ofile     : read system input and write to ofile%n");
-		System.out.printf("\tifile ofile : read ifile and write to ofile%n");
+
+		out.printf("IN OUT can be:%n");
+		out.printf("\t\"\" or \"- -\" : use system input/output%n");
+		out.printf("\tifile       : read ifile and write to system output%n");
+		out.printf("\t- ofile     : read system input and write to ofile%n");
+		out.printf("\tifile ofile : read ifile and write to ofile%n");
+		out.printf("OPTIONS :\n");
+		out.printf("\t--source=..             : format of the source\n");
+		Tools.printChoice(out, SourceFormat.class, "\t| ");
+		out.printf("\t--sink=..               : format of the sink\n");
+		Tools.printChoice(out, SinkFormat.class, "\t| ");
+		out.printf("\t--source-options=\"..\" : options passed to the source\n");
+		out.printf("\t--sink-options=\"..\"   : options passed to the sink\n");
 	}
 }
