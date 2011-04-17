@@ -30,14 +30,11 @@
  */
 package org.graphstream.tool;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.LinkedList;
 
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
@@ -73,6 +70,7 @@ public class Convert implements ToolsCommon {
 		SinkFormat sinkFormat = null;
 		String[][] sourceOptions = null;
 		String[][] sinkOptions = null;
+		Options options = new Options();
 
 		if (args == null) {
 			usage(System.err);
@@ -80,120 +78,60 @@ public class Convert implements ToolsCommon {
 		}
 
 		Tools.removeShortcuts(args, shortcuts);
+		Tools.parseArgs(args, options);
 
-		LinkedList<String> noArg = new LinkedList<String>();
-
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].matches("^--\\w+(-\\w+)*(=.*)?$")) {
-				int idx = args[i].indexOf('=');
-				String key;
-				String value;
-
-				if (idx < 0) {
-					key = args[i].substring(2);
-					value = null;
-				} else {
-					key = args[i].substring(2, idx);
-					value = args[i].substring(idx + 1).trim();
-				}
-
-				if (value != null && value.matches("^\".*\"$"))
-					value = value.substring(1, value.length() - 1);
-
-				if (key.equals("help")) {
-					usage(System.out);
-					System.exit(0);
-				} else if (key.equals("source")) {
-					try {
-						sourceFormat = SourceFormat.valueOf(value);
-					} catch (IllegalArgumentException e) {
-						System.err.printf("Bad source format \"%s\".\n", value);
-						Tools.printChoice(System.err, SourceFormat.class, "");
-						System.exit(1);
-					}
-				} else if (key.equals("sink")) {
-					try {
-						sinkFormat = SinkFormat.valueOf(value);
-					} catch (IllegalArgumentException e) {
-						System.err.printf("Bad sink format \"%s\".\n", value);
-						Tools.printChoice(System.err, SinkFormat.class, "");
-						System.exit(1);
-					}
-				} else if (key.equals("source-options")) {
-					try {
-						sourceOptions = Tools.getKeyValue(value);
-					} catch (IllegalArgumentException e) {
-						System.err
-								.printf("Invalid options : %s.\nFormat is : key=value.\n",
-										e.getMessage());
-						System.exit(1);
-					} catch (NullPointerException e) {
-						System.err
-								.printf("--source-options is done but value is null.\n");
-					}
-				} else if (key.equals("sink-options")) {
-					try {
-						sinkOptions = Tools.getKeyValue(value);
-					} catch (IllegalArgumentException e) {
-						System.err
-								.printf("Invalid options : %s.\nFormat is : key=value.\n",
-										e.getMessage());
-						System.exit(1);
-					} catch (NullPointerException e) {
-						System.err
-								.printf("--sink-options is done but value is null.\n");
-					}
-				} else {
-					System.err.printf("Invalid option : %s.\n", key);
-					usage(System.err);
-					System.exit(1);
-				}
-			} else {
-				noArg.add(args[i]);
-			}
-		}
-
-		/*
-		 * if (conv == null) {
-		 * System.err.printf("No conversion type specified.\n"); System.exit(1);
-		 * }
-		 */
-		if (sourceFormat == null) {
-			System.err.printf("Source format not specified.\n");
+		if (!options.checkAllowedOptions(SOURCE_FORMAT_KEY, SOURCE_OPTIONS_KEY,
+				SINK_FORMAT_KEY, SINK_OPTIONS_KEY, HELP_KEY)) {
+			System.err.printf("Invalid options.\n");
+			usage(System.err);
 			System.exit(1);
 		}
 
-		if (sinkFormat == null) {
-			System.err.printf("Sink format not specified.\n");
+		options.checkSourceOptions(System.err, true);
+		options.checkSinkOptions(System.err, true);
+		options.checkHelp(System.err, true);
+
+		options.checkNotOptions(0, 2, System.err, true);
+
+		if (options.isHelpNeeded()) {
+			usage(System.out);
+			System.exit(0);
+		}
+
+		if (!options.contains(SOURCE_FORMAT_KEY)) {
+			System.err.printf("Source format missing.\n");
 			System.exit(1);
 		}
 
-		if (!Tools.check(sourceFormat, sourceOptions)) {
-			System.err.printf("Invalid source options.\n");
-			System.exit(1);
-		}
-
-		if (!Tools.check(sinkFormat, sinkOptions)) {
-			System.err.printf("Invalid sink options.\n");
+		if (!options.contains(SINK_FORMAT_KEY)) {
+			System.err.printf("Sink format missing.\n");
 			System.exit(1);
 		}
 		
+		sourceFormat = options.getEnum(SOURCE_FORMAT_KEY, SourceFormat.class);
+
+		if (options.contains(SOURCE_OPTIONS_KEY))
+			sourceOptions = Tools.getKeyValue(options.get(SOURCE_OPTIONS_KEY));
+
+		sinkFormat = options.getEnum(SINK_FORMAT_KEY, SinkFormat.class);
+
+		if (options.contains(SINK_OPTIONS_KEY))
+			sinkOptions = Tools.getKeyValue(options.get(SINK_OPTIONS_KEY));
+
 		FileSource source = Tools.sourceFor(sourceFormat, sourceOptions);
 		FileSink sink = Tools.sinkFor(sinkFormat, sinkOptions);
-
-		// options = optionsTMP.toArray(options);
 
 		boolean inputIsFile = false;
 		boolean outputIsFile = false;
 
-		switch (noArg.size()) {
+		switch (options.getNotOptionsCount()) {
 		case 0:
 			break;
 		case 2:
-			if (!noArg.get(1).equals("-"))
+			if (!options.getNotOption(1).equals("-"))
 				outputIsFile = true;
 		case 1:
-			if (!noArg.get(0).equals("-"))
+			if (!options.getNotOption(0).equals("-"))
 				inputIsFile = true;
 			break;
 		default:
@@ -203,37 +141,24 @@ public class Convert implements ToolsCommon {
 
 		if (inputIsFile) {
 			try {
-				File f = new File(noArg.get(0));
-
-				if (!f.exists()) {
-					in = Convert.class.getResourceAsStream(noArg.get(0));
-
-					if (in == null) {
-						System.err.printf(
-								"Input file \"%s\" does not exists.\n",
-								noArg.get(0));
-						System.exit(1);
-					}
-				}
-
-				in = new FileInputStream(f);
+				Tools.getInput(options.getNotOption(0));
 			} catch (IOException ioe) {
 				System.err
 						.printf("Failed to open input file \"%s\".\nCause is %s : %s%n",
-								noArg.get(0), ioe.getClass().getName(),
-								ioe.getMessage());
+								options.getNotOption(0), ioe.getClass()
+										.getName(), ioe.getMessage());
 				System.exit(1);
 			}
 		}
 
 		if (outputIsFile) {
 			try {
-				out = new FileOutputStream(noArg.get(1));
+				out = new FileOutputStream(options.getNotOption(1));
 			} catch (IOException ioe) {
 				System.err
 						.printf("Failed to open output file \"%s\".\nCause is %s : %s%n",
-								noArg.get(1), ioe.getClass().getName(),
-								ioe.getMessage());
+								options.getNotOption(1), ioe.getClass()
+										.getName(), ioe.getMessage());
 				System.exit(1);
 			}
 		}
@@ -245,8 +170,6 @@ public class Convert implements ToolsCommon {
 					.getName(), ioe.getMessage());
 			System.exit(1);
 		}
-
-		System.exit(0);
 	}
 
 	public static void usage(PrintStream out) {
@@ -259,11 +182,9 @@ public class Convert implements ToolsCommon {
 		out.printf("\t- ofile     : read system input and write to ofile%n");
 		out.printf("\tifile ofile : read ifile and write to ofile%n");
 		out.printf("OPTIONS :\n");
-		out.printf("\t--source=..             : format of the source\n");
-		Tools.printChoice(out, SourceFormat.class, "\t| ");
-		out.printf("\t--sink=..               : format of the sink\n");
-		Tools.printChoice(out, SinkFormat.class, "\t| ");
-		out.printf("\t--source-options=\"..\" : options passed to the source\n");
-		out.printf("\t--sink-options=\"..\"   : options passed to the sink\n");
+		out.printf("\t--source-format=X     : format of the source, use X=? to list choices\n");
+		out.printf("\t--source-options=..   : options passed to the source\n");
+		out.printf("\t--sink-format=X       : format of the sink, use X=? to list choices\n");
+		out.printf("\t--sink-options=..     : options passed to the sink\n");
 	}
 }

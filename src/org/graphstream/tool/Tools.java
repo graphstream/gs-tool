@@ -1,6 +1,7 @@
 package org.graphstream.tool;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -84,6 +85,8 @@ public class Tools implements ToolsCommon {
 			FileSinkImages.Quality quality = FileSinkImages.Quality.MEDIUM;
 			FileSinkImages.LayoutPolicy layout = FileSinkImages.LayoutPolicy.NoLayout;
 			String stylesheet = null;
+			int spf = -1;
+			int sas = -1;
 
 			if (options != null) {
 				for (int i = 0; i < options.length; i++) {
@@ -157,6 +160,24 @@ public class Tools implements ToolsCommon {
 									.getClass().getName(), e.getMessage());
 							System.exit(1);
 						}
+					} else if (options[i][0].equals("layoutStepPerFrame")) {
+						if (options[i][1].matches("\\d+"))
+							spf = Integer.parseInt(options[i][1]);
+						else {
+							System.err.printf("Bad stepPerFrame value : %s\n",
+									options[i][1]);
+							System.exit(1);
+						}
+					} else if (options[i][0]
+							.equals("layoutStepAfterStabilization")) {
+						if (options[i][1].matches("\\d+"))
+							sas = Integer.parseInt(options[i][1]);
+						else {
+							System.err.printf(
+									"Bad stepAfterStabilization value : %s\n",
+									options[i][1]);
+							System.exit(1);
+						}
 					}
 				}
 			}
@@ -168,6 +189,12 @@ public class Tools implements ToolsCommon {
 
 			if (stylesheet != null)
 				((FileSinkImages) sink).setStyleSheet(stylesheet);
+
+			if (spf >= 0)
+				((FileSinkImages) sink).setLayoutStepPerFrame(spf);
+
+			if (sas >= 0)
+				((FileSinkImages) sink).setLayoutStepAfterStabilization(sas);
 		}
 			break;
 		case SVG:
@@ -327,7 +354,7 @@ public class Tools implements ToolsCommon {
 
 		out.printf("%s%s values:\n", prefix, choices.getSimpleName());
 		for (T c : choices.getEnumConstants())
-			out.printf("%s\t- %s\n", prefix, c);
+			out.printf("%s  - %s\n", prefix, c);
 	}
 
 	public static boolean check(Optionable opt, String[][] options) {
@@ -341,6 +368,48 @@ public class Tools implements ToolsCommon {
 		return true;
 	}
 
+	public static boolean checkSourceOptions(Options options, PrintStream err,
+			boolean exitOnFailed) {
+		boolean r = true;
+
+		r = r
+				&& options.checkEnum(SOURCE_FORMAT_KEY, true, false,
+						SourceFormat.class, err, exitOnFailed);
+		r = r
+				&& options.check(SOURCE_OPTIONS_KEY, true, true,
+						OPTIONS_MATCHER, err, exitOnFailed);
+
+		return r;
+	}
+
+	public static boolean checkSinkOptions(Options options, PrintStream err,
+			boolean exitOnFailed) {
+		boolean r = true;
+
+		r = r
+				&& options.checkEnum(SINK_FORMAT_KEY, true, false,
+						SinkFormat.class, err, exitOnFailed);
+		r = r
+				&& options.check(SINK_OPTIONS_KEY, true, true, OPTIONS_MATCHER,
+						err, exitOnFailed);
+
+		return r;
+	}
+
+	public static boolean checkGeneratorOptions(Options options,
+			PrintStream err, boolean exitOnFailed) {
+		boolean r = true;
+
+		r = r
+				&& options.checkEnum(GENERATOR_TYPE_KEY, true, false,
+						GeneratorType.class, err, exitOnFailed);
+		r = r
+				&& options.check(GENERATOR_OPTIONS_KEY, true, true,
+						OPTIONS_MATCHER, err, exitOnFailed);
+
+		return r;
+	}
+
 	public static void removeShortcuts(String[] args, String[][] shortcuts) {
 		for (int k = 0; k < args.length; k++) {
 			for (int l = 0; l < shortcuts.length; l++) {
@@ -350,5 +419,46 @@ public class Tools implements ToolsCommon {
 				}
 			}
 		}
+	}
+
+	public static void parseArgs(String[] args, Options options) {
+		for (int k = 0; k < args.length; k++) {
+			if (args[k].matches("^--\\w+(-\\w+)*(=.*)?$")) {
+				int idx = args[k].indexOf('=');
+				String key;
+				String value;
+
+				if (idx < 0) {
+					key = args[k].substring(2);
+					value = null;
+				} else {
+					key = args[k].substring(2, idx);
+					value = args[k].substring(idx + 1).trim();
+				}
+
+				if (value != null && value.matches("^\".*\"$"))
+					value = value.substring(1, value.length() - 1);
+
+				options.registerOption(key, value);
+			} else {
+				options.registerNotOption(args[k]);
+			}
+		}
+	}
+
+	public static InputStream getInput(String url) throws IOException {
+		File f = new File(url);
+		InputStream in = null;
+
+		if (!f.exists()) {
+			in = Convert.class.getResourceAsStream(url);
+
+			if (in == null)
+				throw new FileNotFoundException(String.format(
+						"Input file \"%s\" does not exists.\n", url));
+		} else
+			in = new FileInputStream(f);
+
+		return in;
 	}
 }

@@ -70,118 +70,68 @@ public class Generate implements ToolsCommon {
 
 		String path = null;
 
+		Options options = new Options();
+
 		if (args == null) {
 			usage(System.err);
 			System.exit(1);
 		}
 
 		Tools.removeShortcuts(args, shortcuts);
+		Tools.parseArgs(args, options);
 
-		for (int k = 0; k < args.length; k++) {
-			if (args[k].matches("^--\\w+(-\\w+)*(=.*)?$")) {
-				int idx = args[k].indexOf('=');
-				String key;
-				String value;
-
-				if (idx < 0) {
-					key = args[k].substring(2);
-					value = null;
-				} else {
-					key = args[k].substring(2, idx);
-					value = args[k].substring(idx + 1).trim();
-				}
-
-				if (value != null && value.matches("^\".*\"$"))
-					value = value.substring(1, value.length() - 1);
-
-				if (key.equals("type")) {
-					try {
-						type = GeneratorType.valueOf(value);
-					} catch (IllegalArgumentException e) {
-						System.err.printf("Invalid generator type : \"%s\".\n",
-								value);
-						System.exit(1);
-					}
-				} else if (key.equals("format")) {
-					try {
-						format = SinkFormat.valueOf(value);
-					} catch (IllegalArgumentException e) {
-						System.err.printf("Invalid output format : \"%s\".\n",
-								value);
-						System.exit(1);
-					}
-				} else if (key.equals("size")) {
-					if (value.matches("^\\d+$")) {
-						size = Integer.parseInt(value);
-					} else {
-						System.err.printf("Invalid size : %s.\n", value);
-						System.exit(1);
-					}
-				} else if (key.equals("iteration")) {
-					if (value.matches("^\\d+$")) {
-						iteration = Integer.parseInt(value);
-					} else {
-						System.err.printf("Invalid iteration count : %s.\n",
-								value);
-						System.exit(1);
-					}
-				} else if (key.equals("delay")) {
-					if (value.matches("^\\d+$")) {
-						delay = Long.parseLong(value);
-					} else {
-						System.err.printf("Invalid delay : %s.\n", value);
-						System.exit(1);
-					}
-				} else if (key.equals("generator-options")) {
-					try {
-						generatorOptions = Tools.getKeyValue(value);
-					} catch (IllegalArgumentException e) {
-						System.err
-								.printf("Invalid options : %s.\nFormat is : key=value.\n",
-										e.getMessage());
-						System.exit(1);
-					} catch (NullPointerException e) {
-						System.err
-								.printf("--generator-options is done but value is null.\n");
-					}
-				} else if (key.equals("output-options")) {
-					try {
-						formatOptions = Tools.getKeyValue(value);
-					} catch (IllegalArgumentException e) {
-						System.err
-								.printf("Invalid options : %s.\nFormat is : key=value.\n",
-										e.getMessage());
-						System.exit(1);
-					} catch (NullPointerException e) {
-						System.err
-								.printf("--output-options is done but value is null.\n");
-					}
-				} else if (key.equals("export")) {
-					export = true;
-				} else if (key.equals("force")) {
-					force = true;
-				} else {
-					System.err.printf("Unknown option : \"%s\".\n", key);
-					usage(System.err);
-					System.exit(1);
-				}
-			} else if (args[k].matches("--help|-h")) {
-				usage(System.out);
-				System.exit(0);
-			} else if (args[k].startsWith("--")) {
-				System.err.printf("Unknown option : \"%s\"\n", args[k]);
-				usage(System.err);
-				System.exit(1);
-			} else if (path == null) {
-				path = args[k];
-			} else {
-				System.err
-						.printf("Just one path is allowed. Previous is \"%s\".\n",
-								path);
-				usage(System.err);
-				System.exit(1);
-			}
+		if (!options.checkAllowedOptions(SINK_FORMAT_KEY, SINK_OPTIONS_KEY,
+				GENERATOR_TYPE_KEY, GENERATOR_OPTIONS_KEY, "size", "iteration",
+				"delay", "export", "force", HELP_KEY)) {
+			System.err.printf("Invalid options.\n");
+			usage(System.err);
+			System.exit(1);
 		}
+
+		options.checkSinkOptions(System.err, true);
+		options.checkGeneratorOptions(System.err, true);
+
+		options.check("size", true, false, INT_MATCHER, System.err, true);
+		options.check("iteration", true, false, INT_MATCHER, System.err, true);
+		options.check("delay", true, false, INT_MATCHER, System.err, true);
+		options.check("export", true, true, BOOL_MATCHER, System.err, true);
+		options.check("force", true, true, BOOL_MATCHER, System.err, true);
+		options.checkHelp(System.err, true);
+
+		options.checkNotOptions(0, 1, System.err, true);
+
+		if (options.isHelpNeeded()) {
+			usage(System.out);
+			System.exit(0);
+		}
+
+		if (options.contains("size"))
+			size = options.getInt("size");
+
+		if (options.contains("iteration"))
+			iteration = options.getInt("iteration");
+
+		if (options.contains("delay"))
+			delay = options.getLong("delay");
+
+		if (options.contains(GENERATOR_TYPE_KEY))
+			type = options.getEnum(GENERATOR_TYPE_KEY, GeneratorType.class);
+
+		if (options.contains(GENERATOR_OPTIONS_KEY))
+			generatorOptions = Tools.getKeyValue(options
+					.get(GENERATOR_OPTIONS_KEY));
+
+		if (options.contains(SINK_FORMAT_KEY))
+			format = options.getEnum(SINK_FORMAT_KEY, SinkFormat.class);
+
+		if (options.contains(SINK_OPTIONS_KEY))
+			formatOptions = Tools.getKeyValue(options.get(SINK_OPTIONS_KEY));
+
+		export = options.contains("export");
+		force = options.contains("force");
+
+		if (options.getNotOptionsCount() > 0)
+			path = options.getNotOption(0);
 
 		if (path != null) {
 			try {
@@ -194,7 +144,8 @@ public class Generate implements ToolsCommon {
 		}
 
 		if (size == 0 && iteration == 0 && !force) {
-			System.err.printf("Neither --size or --iteration have been defined.\n");
+			System.err
+					.printf("Neither --size or --iteration have been defined.\n");
 			System.err.printf("Add --force to bypass this protection.\n");
 			System.exit(1);
 		}
@@ -285,12 +236,14 @@ public class Generate implements ToolsCommon {
 	}
 
 	private static final String[][] shortcuts = {
-			{ "-pa", "--type=PREFERENTIAL_ATTACHMENT" },
-			{ "-dm", "--type=DOROGOVTSEV_MENDES" }, { "-f", "--type=FULL" },
-			{ "-r", "--type=RANDOM" }, { "-g", "--type=GRID" },
-			{ "-dgs", "--format=DGS" }, { "-dot", "--format=DOT" },
-			{ "-gml", "--format=GML" }, { "-tikz", "--format=TIKZ" },
-			{ "-i", "--format=IMAGES" }, { "-e", "--export" },
+			{ "-pa", "--generator-type=PREFERENTIAL_ATTACHMENT" },
+			{ "-dm", "--generator-type=DOROGOVTSEV_MENDES" },
+			{ "-f", "--generator-type=FULL" },
+			{ "-r", "--generator-type=RANDOM" },
+			{ "-g", "--generator-type=GRID" }, { "-dgs", "--sink-format=DGS" },
+			{ "-dot", "--sink-format=DOT" }, { "-gml", "--sink-format=GML" },
+			{ "-tikz", "--sink-format=TIKZ" },
+			{ "-i", "--sink-format=IMAGES" }, { "-e", "--export" },
 			{ "-H", "--size=100" }, { "-K", "--size=1000" },
 			{ "-M", "--size=1000000" } };
 
@@ -302,19 +255,15 @@ public class Generate implements ToolsCommon {
 				Generate.class.getName());
 		out.printf("with OUT is the output file path, or empty for stdout.\n");
 		out.printf("with OPTIONS:\n");
-		out.printf("\t--type=X                    : type of generator\n");
-		for (GeneratorType t : GeneratorType.values())
-			out.printf("\t\t%s%n", t.name());
-		out.printf("\t--format=X                  : output format\n");
-		for (SinkFormat f : SinkFormat.values())
-			out.printf("\t\t%s%n", f.name());
+		out.printf("\t--generator-type=X          : type of generator, use X=? to see types\n");
+		out.printf("\t--generator-options=...     : options given to the generator\n");
+		out.printf("\t--sink-format=X             : output format, use X=? to see formats\n");
+		out.printf("\t--sink-options=...          : options given to the output\n");
 		out.printf("\t--iteration=xxx             : iteration of the generator\n");
 		out.printf("\t--size=xxx                  : size of graph\n");
-		out.printf("\t--generator-options=\"...\" : options given to the generator\n");
-		out.printf("\t--output-options=\"...\"    : options given to the output\n");
 		out.printf("\t--delay=xxx                 : delay between iteration (ms)\n");
 		out.printf("\t--export                    : export the graph after the generation.\n");
-		out.printf("Shortcuts :\n");
+		out.printf("\nShortcuts :\n");
 		for (int i = 0; i < shortcuts.length; i++)
 			out.printf("\t\"%s\"\t: \"%s\"\n", shortcuts[i][0], shortcuts[i][1]);
 	}
