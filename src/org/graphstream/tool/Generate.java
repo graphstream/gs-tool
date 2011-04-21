@@ -30,10 +30,8 @@
  */
 package org.graphstream.tool;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 
 import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.graph.Graph;
@@ -47,136 +45,82 @@ import org.graphstream.stream.file.FileSink;
  * @author Guilhelm Savin
  * 
  */
-public class Generate implements ToolsCommon {
+public class Generate extends Tool implements ToolsCommon {
 
-	public static void main(String... args) {
-		GeneratorType type = GeneratorType.PREFERENTIAL_ATTACHMENT;
-		SinkFormat format = SinkFormat.DGS;
-		String[][] generatorOptions = null;
-		String[][] formatOptions = null;
+	public Generate() {
+		super("generate", null, false, true);
 
-		int size = 0;
-		int ite = 0;
-		long delay = 0;
-		boolean loop = true;
-		int iteration = 0;
-		boolean export = false;
-		boolean force = false;
+		addGeneratorOption(true);
+		addHelpOption();
 
-		OutputStream out = System.out;
-		Generator gen = null;
-		FileSink sink = null;
-		ElementCounter counter = new ElementCounter();
+		addOption("size", "average amount of nodes before stop", true,
+				ToolOption.Type.INT);
+		addOption("iteration", "iteration count before stop", true,
+				ToolOption.Type.INT);
+		addOption("delay", "delay between iteration (ms)", true,
+				ToolOption.Type.INT);
+		addOption("export", "export the graph after the generation", true,
+				ToolOption.Type.FLAG);
+		addOption("force", "", true, ToolOption.Type.FLAG);
 
-		String path = null;
+		setShortcuts(shortcuts);
+	}
 
-		Options options = new Options();
+	public boolean check() {
+		if (!super.check())
+			return false;
 
-		if (args == null) {
-			usage(System.err);
-			System.exit(1);
-		}
-
-		Tools.removeShortcuts(args, shortcuts);
-		Tools.parseArgs(args, options);
-
-		if (!options.checkAllowedOptions(SINK_FORMAT_KEY, SINK_OPTIONS_KEY,
-				GENERATOR_TYPE_KEY, GENERATOR_OPTIONS_KEY, "size", "iteration",
-				"delay", "export", "force", HELP_KEY)) {
-			System.err.printf("Invalid options.\n");
-			usage(System.err);
-			System.exit(1);
-		}
-
-		options.checkSinkOptions(System.err, true);
-		options.checkGeneratorOptions(System.err, true);
-
-		options.check("size", true, false, INT_MATCHER, System.err, true);
-		options.check("iteration", true, false, INT_MATCHER, System.err, true);
-		options.check("delay", true, false, INT_MATCHER, System.err, true);
-		options.check("export", true, true, BOOL_MATCHER, System.err, true);
-		options.check("force", true, true, BOOL_MATCHER, System.err, true);
-		options.checkHelp(System.err, true);
-
-		options.checkNotOptions(0, 1, System.err, true);
-
-		if (options.isHelpNeeded()) {
-			usage(System.out);
-			System.exit(0);
-		}
-
-		if (options.contains("size"))
-			size = options.getInt("size");
-
-		if (options.contains("iteration"))
-			iteration = options.getInt("iteration");
-
-		if (options.contains("delay"))
-			delay = options.getLong("delay");
-
-		if (options.contains(GENERATOR_TYPE_KEY))
-			type = options.getEnum(GENERATOR_TYPE_KEY, GeneratorType.class);
-
-		if (options.contains(GENERATOR_OPTIONS_KEY))
-			generatorOptions = Tools.getKeyValue(options
-					.get(GENERATOR_OPTIONS_KEY));
-
-		if (options.contains(SINK_FORMAT_KEY))
-			format = options.getEnum(SINK_FORMAT_KEY, SinkFormat.class);
-
-		if (options.contains(SINK_OPTIONS_KEY))
-			formatOptions = Tools.getKeyValue(options.get(SINK_OPTIONS_KEY));
-
-		export = options.contains("export");
-		force = options.contains("force");
-
-		if (options.getNotOptionsCount() > 0)
-			path = options.getNotOption(0);
-
-		if (path != null) {
-			try {
-				out = new FileOutputStream(path);
-			} catch (IOException e) {
-				System.err.printf("Error with file \"%s\".\n", path);
-				System.err.printf("Message is : %s.\n", e.getMessage());
-				System.exit(1);
-			}
-		}
+		int size = getIntOption("size", 0);
+		int iteration = getIntOption("iteration", 0);
+		boolean export = getFlagOption("export");
+		boolean force = getFlagOption("force");
 
 		if (size == 0 && iteration == 0 && !force) {
-			System.err
-					.printf("Neither --size or --iteration have been defined.\n");
-			System.err.printf("Add --force to bypass this protection.\n");
-			System.exit(1);
+			err.printf("Neither --size or --iteration have been defined.\n");
+			err.printf("Add --force to bypass this protection.\n");
+
+			if (exitOnFailed)
+				System.exit(1);
+
+			return false;
 		}
 
-		if (!export && !format.hasDynamicSupport() && !force) {
-			System.err.printf("The format \"%s\" is not dynamic. ",
-					format.name());
-			System.err
-					.printf("Use --export to export the whole at the end of the generation ");
-			System.err
-					.printf("or use --force to force the dynamic generation.\n");
-			System.exit(1);
+		if (!export && !getSinkFormat(SinkFormat.DGS).hasDynamicSupport()
+				&& !force) {
+			err.printf("The format \"%s\" is not dynamic. ",
+					getSinkFormat(SinkFormat.DGS).name());
+			err.printf("Use --export to export the whole at the end of the generation ");
+			err.printf("or use --force to force the dynamic generation.\n");
+
+			if (exitOnFailed)
+				System.exit(1);
+
+			return false;
 		}
 
-		if (formatOptions != null) {
-			for (int i = 0; i < formatOptions.length; i++) {
-				if (!format.isValidOption(formatOptions[i][0])) {
-					System.err.printf(
-							"Invalid option \"%s\" for output. Options are:\n",
-							formatOptions[i][0]);
-					for (int k = 0; k < format.getOptionCount(); k++)
-						System.err.printf("- %s\n", format.getOption(k));
-					System.exit(1);
-				}
-			}
-		}
+		return true;
+	}
 
+	public void run() {
+		int size = 0;
+		long delay = 0;
+		int iteration = 0;
+		boolean export = false;
+
+		size = getIntOption("size", 0);
+		iteration = getIntOption("iteration", 0);
+		delay = getIntOption("delay", 0);
+		export = getFlagOption("export");
+
+		boolean loop = true;
+		int ite = 0;
+
+		FileSink sink = getSink(SinkFormat.DGS);
+		OutputStream out = getOutput();
+		Generator gen = getGenerator(GeneratorType.BARABASI_ALBERT);
+		ElementCounter counter = new ElementCounter();
 		Graph exportGraph = null;
 
-		gen = Tools.generatorFor(type, generatorOptions);
-		sink = Tools.sinkFor(format, formatOptions);
 		gen.addElementSink(counter);
 
 		if (export) {
@@ -188,8 +132,8 @@ public class Generate implements ToolsCommon {
 			try {
 				sink.begin(out);
 			} catch (IOException e1) {
-				System.err.printf("Cannot begin the sink.\n");
-				System.err.printf("Message is : %s.\n", e1.getMessage());
+				err.printf("Cannot begin the sink.\n");
+				err.printf("Message is : %s.\n", e1.getMessage());
 				System.exit(1);
 			}
 		}
@@ -229,10 +173,16 @@ public class Generate implements ToolsCommon {
 				sink.end();
 			}
 		} catch (IOException e) {
-			System.err.printf("Cannot end the sink.\n");
-			System.err.printf("Message is : %s.\n", e.getMessage());
+			err.printf("Cannot end the sink.\n");
+			err.printf("Message is : %s.\n", e.getMessage());
 			System.exit(1);
 		}
+	}
+
+	public static void main(String... args) {
+		Generate gen = new Generate();
+		gen.init(args);
+		gen.run();
 	}
 
 	private static final String[][] shortcuts = {
@@ -245,28 +195,7 @@ public class Generate implements ToolsCommon {
 			{ "-tikz", "--sink-format=TIKZ" },
 			{ "-i", "--sink-format=IMAGES" }, { "-e", "--export" },
 			{ "-H", "--size=100" }, { "-K", "--size=1000" },
-			{ "-M", "--size=1000000" } };
-
-	/**
-	 * Usage of this class.
-	 */
-	public static void usage(PrintStream out) {
-		out.printf("Usage: java %s [OPTIONS] [OUT]\n\n",
-				Generate.class.getName());
-		out.printf("with OUT is the output file path, or empty for stdout.\n");
-		out.printf("with OPTIONS:\n");
-		out.printf("\t--generator-type=X          : type of generator, use X=? to see types\n");
-		out.printf("\t--generator-options=...     : options given to the generator\n");
-		out.printf("\t--sink-format=X             : output format, use X=? to see formats\n");
-		out.printf("\t--sink-options=...          : options given to the output\n");
-		out.printf("\t--iteration=xxx             : iteration of the generator\n");
-		out.printf("\t--size=xxx                  : size of graph\n");
-		out.printf("\t--delay=xxx                 : delay between iteration (ms)\n");
-		out.printf("\t--export                    : export the graph after the generation.\n");
-		out.printf("\nShortcuts :\n");
-		for (int i = 0; i < shortcuts.length; i++)
-			out.printf("\t\"%s\"\t: \"%s\"\n", shortcuts[i][0], shortcuts[i][1]);
-	}
+			{ "-M", "--size=1000000" }, { "#1", "--sink=%s" } };
 
 	private static class ElementCounter implements ElementSink {
 

@@ -1,3 +1,33 @@
+/*
+ * Copyright 2006 - 2011 
+ *     Julien Baudry	<julien.baudry@graphstream-project.org>
+ *     Antoine Dutot	<antoine.dutot@graphstream-project.org>
+ *     Yoann Pigné		<yoann.pigne@graphstream-project.org>
+ *     Guilhelm Savin	<guilhelm.savin@graphstream-project.org>
+ * 
+ * This file is part of GraphStream <http://graphstream-project.org>.
+ * 
+ * GraphStream is a library whose purpose is to handle static or dynamic
+ * graph, create them from scratch, file or any source and display them.
+ * 
+ * This program is free software distributed under the terms of two licenses, the
+ * CeCILL-C license that fits European law, and the GNU Lesser General Public
+ * License. You can  use, modify and/ or redistribute the software under the terms
+ * of the CeCILL-C license as circulated by CEA, CNRS and INRIA at the following
+ * URL <http://www.cecill.info> or under the terms of the GNU LGPL as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
+ */
 package org.graphstream.tool;
 
 import java.io.File;
@@ -9,17 +39,54 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.util.LinkedList;
 
+import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
+import org.graphstream.algorithm.generator.ChvatalGenerator;
 import org.graphstream.algorithm.generator.DorogovtsevMendesGenerator;
+import org.graphstream.algorithm.generator.FlowerSnarkGenerator;
 import org.graphstream.algorithm.generator.FullGenerator;
 import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.algorithm.generator.GridGenerator;
 import org.graphstream.algorithm.generator.IncompleteGridGenerator;
+import org.graphstream.algorithm.generator.LCFGenerator;
+import org.graphstream.algorithm.generator.LobsterGenerator;
+import org.graphstream.algorithm.generator.PetersenGraphGenerator;
 import org.graphstream.algorithm.generator.PointsOfInterestGenerator;
 import org.graphstream.algorithm.generator.PreferentialAttachmentGenerator;
 import org.graphstream.algorithm.generator.RandomEuclideanGenerator;
 import org.graphstream.algorithm.generator.RandomFixedDegreeDynamicGraphGenerator;
 import org.graphstream.algorithm.generator.RandomGenerator;
+import org.graphstream.algorithm.generator.lcf.Balaban10CageGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.Balaban11CageGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.BidiakisCubeGenerator;
+import org.graphstream.algorithm.generator.lcf.BiggsSmithGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.CubicalGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.DesarguesGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.DodecahedralGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.DyckGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.F26AGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.FosterGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.FranklinGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.FruchtGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.GrayGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.HarriesGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.HarriesWongGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.HeawoodGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.LjubljanaGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.McGeeGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.MobiusKantorGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.NauruGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.PappusGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.TetrahedralGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.TruncatedCubicalGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.TruncatedDodecahedralGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.TruncatedOctahedralGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.TruncatedTetrahedralGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.Tutte12CageGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.TutteCoxeterGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.UtilityGraphGenerator;
+import org.graphstream.algorithm.generator.lcf.WagnerGraphGenerator;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSinkDGS;
 import org.graphstream.stream.file.FileSinkDOT;
@@ -276,6 +343,117 @@ public class Tools implements ToolsCommon {
 		case POINTS_OF_INTEREST:
 			gen = new PointsOfInterestGenerator();
 			break;
+		case BARABASI_ALBERT:
+			gen = new BarabasiAlbertGenerator();
+			break;
+		case CHVATAL:
+			gen = new ChvatalGenerator();
+			break;
+		case FLOWER_SNARK:
+			gen = new FlowerSnarkGenerator();
+			break;
+		case LCF:
+			gen = new LCFGenerator(null, 0, false);
+			break;
+		case LOBSTER:
+			gen = new LobsterGenerator(2);
+			break;
+		case CATERPILLAR:
+			gen = new LobsterGenerator(1);
+			break;
+		case PETERSEN:
+			gen = new PetersenGraphGenerator();
+			break;
+		case BALABAN_10_CAGE:
+			gen = new Balaban10CageGraphGenerator();
+			break;
+		case BALABAN_11_CAGE:
+			gen = new Balaban11CageGraphGenerator();
+			break;
+		case BIDIAKIS_CUBE:
+			gen = new BidiakisCubeGenerator();
+			break;
+		case BIGGS_SMITH:
+			gen = new BiggsSmithGraphGenerator();
+			break;
+		case CUBICAL:
+			gen = new CubicalGraphGenerator();
+			break;
+		case DESARGUES:
+			gen = new DesarguesGraphGenerator();
+			break;
+		case DODECAHEDRAL:
+			gen = new DodecahedralGraphGenerator();
+			break;
+		case DYCK:
+			gen = new DyckGraphGenerator();
+			break;
+		case F26A:
+			gen = new F26AGraphGenerator();
+			break;
+		case FOSTER:
+			gen = new FosterGraphGenerator();
+			break;
+		case FRANKLIN:
+			gen = new FranklinGraphGenerator();
+			break;
+		case FRUCHT:
+			gen = new FruchtGraphGenerator();
+			break;
+		case GRAY:
+			gen = new GrayGraphGenerator();
+			break;
+		case HARRIES:
+			gen = new HarriesGraphGenerator();
+			break;
+		case HARRIES_WONG:
+			gen = new HarriesWongGraphGenerator();
+			break;
+		case HEAWOOD:
+			gen = new HeawoodGraphGenerator();
+			break;
+		case LJUBLJANA:
+			gen = new LjubljanaGraphGenerator();
+			break;
+		case MCGEE:
+			gen = new McGeeGraphGenerator();
+			break;
+		case MOBIUS_KANTOR:
+			gen = new MobiusKantorGraphGenerator();
+			break;
+		case NAURU:
+			gen = new NauruGraphGenerator();
+			break;
+		case PAPPUS:
+			gen = new PappusGraphGenerator();
+			break;
+		case TETRAHEDRAL:
+			gen = new TetrahedralGraphGenerator();
+			break;
+		case TRUNCATED_CUBICAL:
+			gen = new TruncatedCubicalGraphGenerator();
+			break;
+		case TRUNCATED_DODECAHEDRAL:
+			gen = new TruncatedDodecahedralGraphGenerator();
+			break;
+		case TRUNCATED_OCTAHEDRAL:
+			gen = new TruncatedOctahedralGraphGenerator();
+			break;
+		case TRUNCATED_TETRAHEDRAL:
+			gen = new TruncatedTetrahedralGraphGenerator();
+			break;
+		case TUTTE_12_CAGE:
+			gen = new Tutte12CageGraphGenerator();
+			break;
+		case TUTTE_COXETER:
+			gen = new TutteCoxeterGraphGenerator();
+			break;
+		case UTILITY:
+			gen = new UtilityGraphGenerator();
+			break;
+		case WAGNER:
+			gen = new WagnerGraphGenerator();
+			break;
 		}
 
 		return gen;
@@ -286,6 +464,19 @@ public class Tools implements ToolsCommon {
 			return loadFileContent(url);
 		} catch (IOException e) {
 			return url;
+		}
+	}
+
+	public static InputStream getFileOrUrlAsStream(String url) throws FileNotFoundException {
+		File f = new File(url);
+
+		if (f.exists())
+			return new FileInputStream(f);
+		else {
+			InputStream in = Tools.class.getClassLoader().getResourceAsStream(
+					url);
+
+			return in;
 		}
 	}
 
@@ -368,49 +559,9 @@ public class Tools implements ToolsCommon {
 		return true;
 	}
 
-	public static boolean checkSourceOptions(Options options, PrintStream err,
-			boolean exitOnFailed) {
-		boolean r = true;
-
-		r = r
-				&& options.checkEnum(SOURCE_FORMAT_KEY, true, false,
-						SourceFormat.class, err, exitOnFailed);
-		r = r
-				&& options.check(SOURCE_OPTIONS_KEY, true, true,
-						OPTIONS_MATCHER, err, exitOnFailed);
-
-		return r;
-	}
-
-	public static boolean checkSinkOptions(Options options, PrintStream err,
-			boolean exitOnFailed) {
-		boolean r = true;
-
-		r = r
-				&& options.checkEnum(SINK_FORMAT_KEY, true, false,
-						SinkFormat.class, err, exitOnFailed);
-		r = r
-				&& options.check(SINK_OPTIONS_KEY, true, true, OPTIONS_MATCHER,
-						err, exitOnFailed);
-
-		return r;
-	}
-
-	public static boolean checkGeneratorOptions(Options options,
-			PrintStream err, boolean exitOnFailed) {
-		boolean r = true;
-
-		r = r
-				&& options.checkEnum(GENERATOR_TYPE_KEY, true, false,
-						GeneratorType.class, err, exitOnFailed);
-		r = r
-				&& options.check(GENERATOR_OPTIONS_KEY, true, true,
-						OPTIONS_MATCHER, err, exitOnFailed);
-
-		return r;
-	}
-
 	public static void removeShortcuts(String[] args, String[][] shortcuts) {
+		LinkedList<Integer> nonKey = null;
+
 		for (int k = 0; k < args.length; k++) {
 			for (int l = 0; l < shortcuts.length; l++) {
 				if (shortcuts[l][0].equals(args[k])) {
@@ -418,10 +569,29 @@ public class Tools implements ToolsCommon {
 					break;
 				}
 			}
+
+			if (!args[k].startsWith("--")) {
+				if (nonKey == null)
+					nonKey = new LinkedList<Integer>();
+
+				nonKey.add(k);
+			}
+		}
+
+		if (nonKey != null) {
+			for (int i = 0; i < nonKey.size(); i++) {
+				for (int l = 0; l < shortcuts.length; l++) {
+					if (shortcuts[l][0].matches(String.format("#%d", i + 1))) {
+						args[nonKey.get(i)] = String.format(shortcuts[l][1],
+								args[nonKey.get(i)]);
+						break;
+					}
+				}
+			}
 		}
 	}
 
-	public static void parseArgs(String[] args, Options options) {
+	public static void parseArgs(String[] args, ToolOption.ParsedOptions options) {
 		for (int k = 0; k < args.length; k++) {
 			if (args[k].matches("^--\\w+(-\\w+)*(=.*)?$")) {
 				int idx = args[k].indexOf('=');
