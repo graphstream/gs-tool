@@ -467,7 +467,8 @@ public class Tools implements ToolsCommon {
 		}
 	}
 
-	public static InputStream getFileOrUrlAsStream(String url) throws FileNotFoundException {
+	public static InputStream getFileOrUrlAsStream(String url)
+			throws FileNotFoundException {
 		File f = new File(url);
 
 		if (f.exists())
@@ -570,7 +571,7 @@ public class Tools implements ToolsCommon {
 				}
 			}
 
-			if (!args[k].startsWith("--")) {
+			if (args[k].charAt(0) != '-') {
 				if (nonKey == null)
 					nonKey = new LinkedList<Integer>();
 

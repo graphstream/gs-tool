@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- Fichier de textes pour GraphStream. Ceci est la version française de 
+	la base commune aux outils. @date 04/21/2011 @author Guilhelm Savin -->
+<properties>
+	<!-- Description de l'outil -->
+	<entry key="__description__">Ceci ne devrait pas apparaitre !</entry>
+
+	<!-- Début des textes liés aux exceptions -->
+	<entry key="exception:file_not_found">Le fichier "{1}" est introuvable</entry>
+	<entry key="exception:io">Une erreur d'E/S s'est produite</entry>
+
+	<!-- Textes des erreurs -->
+	<entry key="error:get_stylesheet">Impossible de charger la feuille de style css</entry>
+	<entry key="error:unknown_option">Option "{1}" inconnue</entry>
+	<entry key="error:invalid_option">Option "{1}" invalide</entry>
+	<entry key="error:missing_option">Option "{1}" manquante</entry>
+	<entry key="error:bad_arg_count">Nombre d'arguments invalide</entry>
+
+	<!-- Texte de la description des options -->
+	<entry key="option:source_format">définit le format de la source. Utilisez X=? pour
+		afficher les formats disponibles</entry>
+	<entry key="option:source_options">définit les options qui seront envoyées à la source</entry>
+	<entry key="option:sink_format">définit le format de la sink. Utilisez X=? pour
+		afficher les formats disponibles</entry>
+	<entry key="option:sink_options">définit les options qui seront envoyées à la sink</entry>
+	<entry key="option:generator_type">définit le type du générateur. Utilisez X=? pour
+		afficher les types disponibles</entry>
+	<entry key="option:generator_options">définit les options qui seront envoyées au générateur</entry>
+	<entry key="option:stylesheet">définit une feuille de style. Cela peut être du code
+		css ou une url vers un fichier css</entry>
+	<entry key="option:help">affiche cette aide</entry>
+	<entry key="option:shortcuts">et les raccourcis (#n indique le nième argument qui
+		n'est pas une option)</entry>
+		<entry key="option:locale">définit la locale par défaut</entry>
+
+	<!-- Simple textes -->
+	<entry key="with">avec {1}</entry>
+	<entry key="Usage">Usage</entry>
+</properties>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- GraphStream strings file. This is original strings for the "tool" domain. 
+	Default language is english. Other languages should include a "__parent__" 
+	entry with "org.graphstream.tool.i18n.tool" value. @date{04/21/2011} @author{ 
+	Guilhelm Savin} -->
+<properties>
+	<!-- Description of the tool -->
+	<entry key="__description__">This should not appear !</entry>
+
+	<!-- Exception strings -->
+	<entry key="exception:file_not_found">File not found "{1}"</entry>
+	<entry key="exception:io">An I/O error occured</entry>
+
+	<!-- Error strings -->
+	<entry key="error:get_stylesheet">Unable to load css stylesheet</entry>
+	<entry key="error:unknown_option">Unknown option "{1}"</entry>
+	<entry key="error:invalid_option">Invalid option "{1}"</entry>
+	<entry key="error:missing_option">Missing option "{1}"</entry>
+	<entry key="error:bad_arg_count">Invalid args count</entry>
+
+	<!-- Options description -->
+	<entry key="option:source">set the source input. If not set, standard input is used</entry>
+	<entry key="option:source_format">define the sink format. Use X=? to list available
+		formats</entry>
+	<entry key="option:source_options">define options that will be sent to the source</entry>
+	<entry key="option:sink">set the sink output. If not set, standard output is used</entry>
+	<entry key="option:sink_format">define the sink format. Use X=? to list available
+		formats</entry>
+	<entry key="option:sink_options">define options that will be sent to the sink</entry>
+	<entry key="option:generator_type">define the generator type. Use X=? to list available
+		types</entry>
+	<entry key="option:generator_options">define options that will be sent to the generator</entry>
+	<entry key="option:stylesheet">define a stylesheet. This can be css code or url to a
+		css file</entry>
+	<entry key="option:help">display this help</entry>
+	<entry key="option:shortcuts">and shortcuts (#n indicate the nth non-option arg)</entry>
+	<entry key="option:locale">set the default locale'</entry>
+
+	<!-- Simple strings -->
+	<entry key="with">with {1}</entry>
+	<entry key="Usage">Usage</entry>
+</properties>

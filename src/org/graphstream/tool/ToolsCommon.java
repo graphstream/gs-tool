@@ -234,24 +234,26 @@ public interface ToolsCommon {
 	public static final String SOURCE_KEY = "source";
 	public static final String SOURCE_FORMAT_KEY = "source-format";
 	public static final String SOURCE_OPTIONS_KEY = "source-options";
-	public static final String SOURCE_DESCRIPTION = "";
-	public static final String SOURCE_FORMAT_DESCRIPTION = "format of the source, use X=? to list choices";
-	public static final String SOURCE_OPTIONS_DESCRIPTION = "options passed to the source";
+	public static final String SOURCE_DESCRIPTION = "option:source";
+	public static final String SOURCE_FORMAT_DESCRIPTION = "option:source_format";
+	public static final String SOURCE_OPTIONS_DESCRIPTION = "option:source_options";
 	public static final String SINK_KEY = "sink";
 	public static final String SINK_FORMAT_KEY = "sink-format";
 	public static final String SINK_OPTIONS_KEY = "sink-options";
-	public static final String SINK_DESCRIPTION = "";
-	public static final String SINK_FORMAT_DESCRIPTION = "sink format, use X=? to see formats";
-	public static final String SINK_OPTIONS_DESCRIPTION = "options given to the sink";
+	public static final String SINK_DESCRIPTION = "option:sink";
+	public static final String SINK_FORMAT_DESCRIPTION = "option:sink_format";
+	public static final String SINK_OPTIONS_DESCRIPTION = "option:sink_options";
 	public static final String GENERATOR_TYPE_KEY = "generator-type";
 	public static final String GENERATOR_OPTIONS_KEY = "generator-options";
-	public static final String GENERATOR_TYPE_DESCRIPTION = "type of generator, use X=? to see types";
-	public static final String GENERATOR_OPTIONS_DESCRIPTION = "options given to the generator";
+	public static final String GENERATOR_TYPE_DESCRIPTION = "option:generator_type";
+	public static final String GENERATOR_OPTIONS_DESCRIPTION = "option:generator_options";
 	public static final String STYLESHEET_KEY = "stylesheet";
-	public static final String STYLESHEET_DESCRIPTION = "";
+	public static final String STYLESHEET_DESCRIPTION = "option:stylesheet";
 	public static final String HELP_KEY = "help";
-	public static final String HELP_DESCRIPTION = "this help";
-
+	public static final String HELP_DESCRIPTION = "option:help";
+	public static final String LOCALE_KEY = "locale";
+	public static final String LOCALE_DESCRIPTION = "option:locale";
+	
 	public static final String INT_MATCHER = "\\d+";
 	public static final String REAL_MATCHER = "\\d+([.]\\d+)?";
 	public static final String BOOL_MATCHER = "true|false";

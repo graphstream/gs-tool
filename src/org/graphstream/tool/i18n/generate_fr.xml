@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- Fichier de textes pour GraphStream. Textes pour l'outils 'generate'. 
+	@date{04/21/2011} @author{Guilhelm Savin} -->
+<properties>
+	<!-- Étend org.graphstream.tool.i18n.tool -->
+	<entry key="__parent__">org.graphstream.tool.i18n.tool</entry>
+
+	<!-- Description de l'outil -->
+	<entry key="__description__">
+Cet outil permet de générer des graphs. Le flux généré
+peut être dirigé vers un fichier ou sur la sortie standard. Il y a
+beaucoup de types de générateurs qui peuvent être listés en utilisant
+l'option --generator-type=?. La génération peut être dynamique ou
+statique en utilisant l'option --export. Si la génération est
+dynamique, l'outil generate va produire des événements jusqu'à
+atteindre le bon nombre d'itérations ou à atteindre la taille de
+graphe désirée.
+		</entry>
+
+	<!-- Options description -->
+	<entry key="option:size">nombre moyen de noeuds avant de stopper la génération</entry>
+	<entry key="option:iteration">nombre d'itérations du générateur</entry>
+	<entry key="option:delay">délai entre les itérations (ms)</entry>
+	<entry key="option:export">génération statique, le graphe est généré puis son
+		état est exporté</entry>
+	<entry key="option:force">forcer les actions normalement interdites</entry>
+
+	<!-- Error strings -->
+	<entry key="error:infinite">Ni --size ni --iteration n'ont été défini.\nUtilisez --force pour outrepasser cette protection.</entry>
+	<entry key="error:not_dynamic">Le format \"{1}\" n'est pas dynamique. Utilisez
+		--export pour exporter statiquement le graphe ou --force pour forcer
+		la génération dynamique.</entry>
+</properties>

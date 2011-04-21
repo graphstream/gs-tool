@@ -28,61 +28,19 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL-C and LGPL licenses and that you accept their terms.
  */
-package org.graphstream.tool;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.graphstream.stream.file.FileSink;
-import org.graphstream.stream.file.FileSource;
+package org.graphstream.tool.i18n;
 
 /**
- * A tool to convert from various formats to various formats...
+ * Defines objects that support internationalization.
  * 
  * @author Guilhelm Savin
+ * 
  */
-public class Convert extends Tool {
-
-	public Convert() {
-		super("convert", "", true, true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.tool.Tool#getDomain()
+public interface I18nSupport {
+	/**
+	 * Get the base name for bundles of this object.
+	 * 
+	 * @return bundles base name
 	 */
-	public String getDomain() {
-		return "org.graphstream.tool.i18n.convert";
-	}
-	
-	public void run() {
-		FileSource source = getSource(SourceFormat.DGS);
-		FileSink sink = getSink(SinkFormat.DGS);
-		InputStream input = getInput();
-		OutputStream output = getOutput();
-
-		source.addSink(sink);
-
-		try {
-			sink.begin(output);
-			source.begin(input);
-			while (source.nextStep())
-				;
-			source.end();
-			sink.end();
-		} catch (IOException e) {
-			err.printf("%s\n", i18n("exception:io"));
-			System.exit(1);
-		}
-
-		source.removeSink(sink);
-	}
-
-	public static void main(String... args) {
-		Convert conv = new Convert();
-		conv.init(args);
-		conv.run();
-	}
-
+	String getDomain();
 }

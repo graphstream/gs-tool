@@ -37,14 +37,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.tool.ToolOption.ToolEnumOption;
 import org.graphstream.tool.ToolOption.Type;
+import org.graphstream.tool.i18n.I18n;
+import org.graphstream.tool.i18n.I18nSupport;
 
-public abstract class Tool implements ToolsCommon {
+public abstract class Tool implements ToolsCommon, I18nSupport {
 	protected static final String[][] commonShortcuts = { { "-h", "--help" } };
 
 	protected String name;
@@ -61,6 +65,8 @@ public abstract class Tool implements ToolsCommon {
 	protected PrintStream err;
 	protected boolean exitOnFailed;
 
+	protected ResourceBundle i18n;
+
 	public Tool(String name, String description, boolean input, boolean output) {
 		this.name = name;
 		this.description = description;
@@ -70,12 +76,28 @@ public abstract class Tool implements ToolsCommon {
 		this.nonOptions = 0;
 		this.allowedOptions = new HashMap<String, ToolOption>();
 		this.exitOnFailed = true;
+		this.i18n = I18n.load(getDomain());
 
 		if (input)
 			addSourceOption();
 
 		if (output)
 			addSinkOption();
+
+		addHelpOption();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.tool.i18n.I18nSupport#getDomain()
+	 */
+	public String getDomain() {
+		return "org.graphstream.tool.i18n.tool";
+	}
+
+	protected String i18n(String key, String... objects) {
+		return I18n._(i18n, key, objects);
 	}
 
 	protected void setErr(PrintStream err) {
@@ -88,31 +110,37 @@ public abstract class Tool implements ToolsCommon {
 
 	protected void addSourceOption() {
 		addOption(SOURCE_KEY, SOURCE_DESCRIPTION, true, Type.STRING);
-		addOption(SOURCE_FORMAT_KEY, SOURCE_FORMAT_DESCRIPTION, true,
+		addOption(SOURCE_FORMAT_KEY, i18n(SOURCE_FORMAT_DESCRIPTION), true,
 				SourceFormat.class);
-		addOption(SOURCE_OPTIONS_KEY, SOURCE_OPTIONS_DESCRIPTION, true,
+		addOption(SOURCE_OPTIONS_KEY, i18n(SOURCE_OPTIONS_DESCRIPTION), true,
 				Type.STRING);
 	}
 
 	protected void addSinkOption() {
 		addOption(SINK_KEY, SINK_DESCRIPTION, true, Type.STRING);
-		addOption(SINK_FORMAT_KEY, SINK_FORMAT_DESCRIPTION, true,
+		addOption(SINK_FORMAT_KEY, i18n(SINK_FORMAT_DESCRIPTION), true,
 				SinkFormat.class);
-		addOption(SINK_OPTIONS_KEY, SINK_OPTIONS_DESCRIPTION, true, Type.STRING);
+		addOption(SINK_OPTIONS_KEY, i18n(SINK_OPTIONS_DESCRIPTION), true,
+				Type.STRING);
 	}
 
 	protected void addGeneratorOption(boolean optional) {
-		addOption(GENERATOR_TYPE_KEY, GENERATOR_TYPE_DESCRIPTION, optional,
-				GeneratorType.class);
+		addOption(GENERATOR_TYPE_KEY, i18n(GENERATOR_TYPE_DESCRIPTION),
+				optional, GeneratorType.class);
 		addOption(GENERATOR_OPTIONS_KEY, "", optional, Type.STRING);
 	}
 
 	protected void addStyleOption(boolean optional) {
-		addOption(STYLESHEET_KEY, STYLESHEET_DESCRIPTION, optional, Type.STRING);
+		addOption(STYLESHEET_KEY, i18n(STYLESHEET_DESCRIPTION), optional,
+				Type.STRING);
 	}
 
 	protected void addHelpOption() {
-		addOption(HELP_KEY, HELP_DESCRIPTION, true, Type.FLAG);
+		addOption(HELP_KEY, i18n(HELP_DESCRIPTION), true, Type.FLAG);
+	}
+
+	protected void addLocaleOption() {
+		addOption(LOCALE_KEY, i18n(LOCALE_DESCRIPTION), true, Type.STRING);
 	}
 
 	protected void addOption(String key, String description, boolean optional,
@@ -133,9 +161,33 @@ public abstract class Tool implements ToolsCommon {
 
 		if (shortcuts != null)
 			Tools.removeShortcuts(args, shortcuts);
-		
+
 		Tools.removeShortcuts(args, commonShortcuts);
 		Tools.parseArgs(args, options);
+
+		if (options.contains(LOCALE_KEY)) {
+			String[] c = options.get(LOCALE_KEY).split("_");
+
+			if (c != null) {
+				String lang = c[0];
+				String country = c.length > 1 ? c[1] : "";
+				String variant = c.length > 2 ? c[2] : "";
+				Locale locale = null;
+
+				for (Locale l : Locale.getAvailableLocales()) {
+					if (l.getLanguage().equals(lang)
+							&& l.getCountry().equals(country)
+							&& l.getVariant().equals(variant))
+						locale = l;
+				}
+				
+				if( locale == null)
+					locale = new Locale(lang, country, variant);
+				
+				Locale.setDefault(locale);
+				i18n = I18n.load(getDomain());
+			}
+		}
 
 		if (options.isHelpNeeded()) {
 			usage(System.out);
@@ -201,7 +253,7 @@ public abstract class Tool implements ToolsCommon {
 				InputStream in = Tools.getFileOrUrlAsStream(url);
 				return in;
 			} catch (FileNotFoundException e) {
-				err.printf("File not found \"%s\"\n", url);
+				err.printf("%s\n", i18n("exception:file_not_found", url));
 				System.exit(1);
 			}
 		}
@@ -216,7 +268,7 @@ public abstract class Tool implements ToolsCommon {
 			try {
 				return new FileOutputStream(path);
 			} catch (FileNotFoundException e) {
-				err.printf("Can no write to \"%s\"\n", path);
+				err.printf("%s\n", i18n("exception:file_not_found", path));
 				System.exit(1);
 			}
 		}
@@ -234,8 +286,7 @@ public abstract class Tool implements ToolsCommon {
 			} catch (FileNotFoundException e) {
 				// Ignore
 			} catch (IOException e) {
-				err.printf("Error while getting style sheet %s : %s\n", e
-						.getClass().getSimpleName(), e.getMessage());
+				err.printf("%s\n", i18n("error:get_stylesheet"));
 				System.exit(1);
 			}
 
@@ -288,7 +339,7 @@ public abstract class Tool implements ToolsCommon {
 	public boolean check() {
 		for (String key : options) {
 			if (!allowedOptions.containsKey(key)) {
-				err.printf("unknown options \"%s\".\n", key);
+				err.printf("%s\n", i18n("error:unknown_option", key));
 
 				if (exitOnFailed)
 					System.exit(1);
@@ -300,14 +351,14 @@ public abstract class Tool implements ToolsCommon {
 		for (ToolOption opt : allowedOptions.values()) {
 			switch (options.check(opt)) {
 			case INVALID:
-				err.printf("Invalid option \"%s\".\n", opt.key);
+				err.printf("%s\n", i18n("error:invalid_option", opt.key));
 
 				if (exitOnFailed)
 					System.exit(1);
 
 				return false;
 			case MISSING:
-				err.printf("Missing option \"%s\".\n", opt.key);
+				err.printf("%s\n", i18n("error:missing_option", opt.key));
 
 				if (exitOnFailed)
 					System.exit(1);
@@ -322,7 +373,7 @@ public abstract class Tool implements ToolsCommon {
 		}
 
 		if (!options.checkNotOptions(nonOptions)) {
-			err.printf("Invalid args count.\n");
+			err.printf("%s.\n", i18n("error:bad_arg_count"));
 			usage(err);
 
 			if (exitOnFailed)
@@ -337,9 +388,10 @@ public abstract class Tool implements ToolsCommon {
 	public abstract void run();
 
 	public void usage(PrintStream out) {
-		out.printf("Usage : java %s [OPTION]\n", getClass().getName());
-		out.printf("\n%s\n", description);
-		out.printf("with OPTIONS :\n");
+		out.printf("%s : java %s [OPTIONS]\n", i18n("Usage"), getClass()
+				.getName());
+		out.printf("\n%s\n", i18n("__description__"));
+		out.printf("\n%s :\n", i18n("with", "OPTIONS"));
 
 		int s = 0;
 
@@ -352,7 +404,7 @@ public abstract class Tool implements ToolsCommon {
 			out.printf(format, opt.key, opt.description);
 
 		if (shortcuts != null) {
-			out.printf("\nand shortcuts (#n indicate the nth non-option arg):\n");
+			out.printf("\n%s:\n", i18n("option:shortcuts"));
 
 			s = 0;
 

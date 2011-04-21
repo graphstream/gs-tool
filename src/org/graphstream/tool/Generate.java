@@ -51,19 +51,23 @@ public class Generate extends Tool implements ToolsCommon {
 		super("generate", null, false, true);
 
 		addGeneratorOption(true);
-		addHelpOption();
 
-		addOption("size", "average amount of nodes before stop", true,
+		addOption("size", i18n("option:size"), true, ToolOption.Type.INT);
+		addOption("iteration", i18n("option:iteration"), true,
 				ToolOption.Type.INT);
-		addOption("iteration", "iteration count before stop", true,
-				ToolOption.Type.INT);
-		addOption("delay", "delay between iteration (ms)", true,
-				ToolOption.Type.INT);
-		addOption("export", "export the graph after the generation", true,
-				ToolOption.Type.FLAG);
-		addOption("force", "", true, ToolOption.Type.FLAG);
+		addOption("delay", i18n("option:delay"), true, ToolOption.Type.INT);
+		addOption("export", i18n("option:export"), true, ToolOption.Type.FLAG);
+		addOption("force", i18n("option:force"), true, ToolOption.Type.FLAG);
 
 		setShortcuts(shortcuts);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.graphstream.tool.Tool#getDomain()
+	 */
+	public String getDomain() {
+		return "org.graphstream.tool.i18n.generate";
 	}
 
 	public boolean check() {
@@ -76,8 +80,7 @@ public class Generate extends Tool implements ToolsCommon {
 		boolean force = getFlagOption("force");
 
 		if (size == 0 && iteration == 0 && !force) {
-			err.printf("Neither --size or --iteration have been defined.\n");
-			err.printf("Add --force to bypass this protection.\n");
+			err.printf("%s\n", i18n("error:infinite"));
 
 			if (exitOnFailed)
 				System.exit(1);
@@ -87,10 +90,10 @@ public class Generate extends Tool implements ToolsCommon {
 
 		if (!export && !getSinkFormat(SinkFormat.DGS).hasDynamicSupport()
 				&& !force) {
-			err.printf("The format \"%s\" is not dynamic. ",
-					getSinkFormat(SinkFormat.DGS).name());
-			err.printf("Use --export to export the whole at the end of the generation ");
-			err.printf("or use --force to force the dynamic generation.\n");
+			err.printf(
+					"%s\n",
+					i18n("error:not_dynamics", getSinkFormat(SinkFormat.DGS)
+							.name()));
 
 			if (exitOnFailed)
 				System.exit(1);
@@ -132,8 +135,7 @@ public class Generate extends Tool implements ToolsCommon {
 			try {
 				sink.begin(out);
 			} catch (IOException e1) {
-				err.printf("Cannot begin the sink.\n");
-				err.printf("Message is : %s.\n", e1.getMessage());
+				err.printf(i18n("exception:io"));
 				System.exit(1);
 			}
 		}
@@ -173,8 +175,7 @@ public class Generate extends Tool implements ToolsCommon {
 				sink.end();
 			}
 		} catch (IOException e) {
-			err.printf("Cannot end the sink.\n");
-			err.printf("Message is : %s.\n", e.getMessage());
+			err.printf(i18n("exception:io"));
 			System.exit(1);
 		}
 	}

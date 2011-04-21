@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- GraphStream strings file. Strings for the generate tool. @date{04/21/2011} 
+	@author{Guilhelm Savin} -->
+<properties>
+	<!-- Extends org.graphstream.tool.i18n.tool -->
+	<entry key="__parent__">org.graphstream.tool.i18n.tool</entry>
+
+	<!-- Tool description -->
+	<entry key="__description__">This tool aims to generate graph. The generated stream
+		can be directed to a file or on standard output. There are many
+		generator types that can be listed using the --generator-type=?
+		option.\nGeneration can be dynamic or static using --export. If
+		dynamic, generate will produce events until iterations count has been
+		reached or until graph node count has reached size.</entry>
+
+	<!-- Options description -->
+	<entry key="option:size">average amount of nodes before stop</entry>
+	<entry key="option:iteration">iteration count before stop</entry>
+	<entry key="option:delay">delay between iteration (ms)</entry>
+	<entry key="option:export">export the graph after the generation</entry>
+	<entry key="option:force">force prohibited actions</entry>
+
+	<!-- Error strings -->
+	<entry key="error:infinite">Neither --size or --iteration have been defined.\nAdd
+		--force to bypass this protection.</entry>
+	<entry key="error:not_dynamic">The format \"{1}\" is not dynamic. Use --export to
+		export the whole at the end of the generation or use --force to force
+		the dynamic generation.</entry>
+</properties>

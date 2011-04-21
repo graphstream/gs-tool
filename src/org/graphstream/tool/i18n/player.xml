@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- GraphStream strings file. Strings for the player tool. @date{04/21/2011} 
+	@author{Guilhelm Savin} -->
+<properties>
+	<!-- Extends org.graphstream.tool.i18n.tool -->
+	<entry key="__parent__">org.graphstream.tool.i18n.tool</entry>
+
+	<!-- Tool description -->
+	<entry key="__description__">This tool aims to display graph. It takes a file or
+		the standard input as a stream that is displayed. A layout can be
+		enable to position nodes.</entry>
+
+	<!-- Option description -->
+	<entry key="option:quality">enable quality of rendering</entry>
+	<entry key="option:antialiasing">enable antialiasing of rendering</entry>
+	<entry key="option:scala">use the scala renderer (gs-ui package is needed)</entry>
+	<entry key="option:autolayout">enable the layout</entry>
+	<entry key="option:next_action">action used to pump event (STEP or EVENTS)</entry>
+	<entry key="option:step_delay">delay between source step</entry>
+
+	<!-- Error strings -->
+	<entry key="error:scala_missing">Scala renderer is enable but not in classpath.</entry>
+</properties>

@@ -41,21 +41,28 @@ public class Player extends Tool {
 	public Player() {
 		super("play", "", true, false);
 
-		addHelpOption();
 		addSourceOption();
 		addStyleOption(true);
 
-		addOption("quality", "enable quality of rendering", true,
+		addOption("scala", i18n("option:scala"), true, ToolOption.Type.FLAG);
+		addOption("nextAction", i18n("option:next_action"), true, Next.class);
+		addOption("quality", i18n("option:quality"), true, ToolOption.Type.FLAG);
+		addOption("antialiasing", i18n("option:antialiasing"), true,
 				ToolOption.Type.FLAG);
-		addOption("antialiasing", "enable antialiasing of rendering", true,
+		addOption("stepDelay", i18n("option:step_delay"), true,
 				ToolOption.Type.FLAG);
-		addOption("stepDelay", "delay between source step", true,
+		addOption("autolayout", i18n("option:autolayout"), true,
 				ToolOption.Type.FLAG);
-		addOption("autolayout", "enable the layout", true, ToolOption.Type.FLAG);
-		addOption("scala", "use the scala renderer", true, ToolOption.Type.FLAG);
-		addOption("nextAction", "action used to pump event", true, Next.class);
-		
+
 		setShortcuts(shortcuts);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.graphstream.tool.Tool#getDomain()
+	 */
+	public String getDomain() {
+		return "org.graphstream.tool.i18n.player";
 	}
 
 	public boolean check() {
@@ -68,7 +75,7 @@ public class Player extends Tool {
 			try {
 				Class.forName("org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 			} catch (ClassNotFoundException e) {
-				err.printf("Scala renderer is enable but not in classpath.\n");
+				err.printf("%s\n", i18n("error:scala_missing"));
 
 				if (exitOnFailed)
 					System.exit(1);
@@ -121,8 +128,7 @@ public class Player extends Tool {
 		try {
 			source.begin(in);
 		} catch (IOException e) {
-			err.printf("Can not start the source.\nError is %s : %s.\n", e
-					.getClass().getName(), e.getMessage());
+			err.printf("%s\n", i18n("exception:io"));
 			System.exit(1);
 		}
 
@@ -135,16 +141,14 @@ public class Player extends Tool {
 				}
 			}
 		} catch (IOException e) {
-			err.printf("Can not step the source.\nError is %s : %s.\n", e
-					.getClass().getName(), e.getMessage());
+			err.printf("%s\n", i18n("exception:io"));
 			System.exit(1);
 		}
 
 		try {
 			source.end();
 		} catch (IOException e) {
-			err.printf("Can not end the source.\nError is %s : %s.\n", e
-					.getClass().getName(), e.getMessage());
+			err.printf("%s\n", i18n("exception:io"));
 			System.exit(1);
 		}
 

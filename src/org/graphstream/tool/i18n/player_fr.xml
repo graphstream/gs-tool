@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- Fichier de textes GraphStream. Textes pour l'outil player. @date{04/21/2011} 
+	@author{Guilhelm Savin} -->
+<properties>
+	<!-- Étend org.graphstream.tool.i18n.tool -->
+	<entry key="__parent__">org.graphstream.tool.i18n.tool</entry>
+
+	<!-- Description de l'outil -->
+	<entry key="__description__">Cet outil a pour but d'afficher des graphes. Il peut
+		utiliser un fichier ou l'entrée standard comme flux qui sera affiché.
+		Un layout peut être activé pour le positionnement des noeuds.</entry>
+
+	<!-- Description des options -->
+	<entry key="option:quality">active un rendu de qualité</entry>
+	<entry key="option:antialiasing">active l'antialiasing dans le moteur de rendu</entry>
+	<entry key="option:scala">utiliser le moteur de rendu scala (le package gs-ui
+		est nécessaire)</entry>
+	<entry key="option:autolayout">active le layout</entry>
+	<entry key="option:next_action">défini l'action pour envoyer les événements (STEP ou
+		EVENTS)</entry>
+	<entry key="option:step_delay">délai entre les itérations de la source</entry>
+
+	<!-- Texte des erreurs -->
+	<entry key="error:scala_missing">Le moteur de rendu Scala n'est pas dans le classpath.</entry>
+</properties>
