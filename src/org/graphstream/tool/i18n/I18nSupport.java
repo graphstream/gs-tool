@@ -30,6 +30,8 @@
  */
 package org.graphstream.tool.i18n;
 
+import java.util.Locale;
+
 /**
  * Defines objects that support internationalization.
  * 
@@ -43,4 +45,19 @@ public interface I18nSupport {
 	 * @return bundles base name
 	 */
 	String getDomain();
+
+	/**
+	 * Access to the locale of the object.
+	 * 
+	 * @return the locale
+	 */
+	Locale getLocale();
+
+	/**
+	 * Set the locale of the object.
+	 * 
+	 * @param locale
+	 *            the new locale.
+	 */
+	void setLocale(Locale locale);
 }

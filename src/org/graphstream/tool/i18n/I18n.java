@@ -65,7 +65,7 @@ public class I18n {
 	 * @return
 	 */
 	public static ResourceBundle load(I18nSupport i18nObject) {
-		return load(i18nObject.getDomain());
+		return load(i18nObject.getDomain(), i18nObject.getLocale());
 	}
 
 	/**
@@ -77,7 +77,21 @@ public class I18n {
 	 * @return a bundle
 	 */
 	public static ResourceBundle load(String domain) {
-		return ResourceBundle.getBundle(domain, new Controler());
+		return load(domain, Locale.getDefault());
+	}
+
+	/**
+	 * Get the resource bundle for a domain. Default locale is used to determine
+	 * language.
+	 * 
+	 * @param domain
+	 *            base name of the bundle
+	 * @param locale
+	 *            the locale to use
+	 * @return a bundle
+	 */
+	public static ResourceBundle load(String domain, Locale locale) {
+		return ResourceBundle.getBundle(domain, locale, new Controler());
 	}
 
 	/**
