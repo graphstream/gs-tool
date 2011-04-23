@@ -195,6 +195,11 @@ public interface ToolsCommon {
 		}
 	}
 
+	/**
+	 * Defines format of the source. This is used by tools to choice the format
+	 * of input data.
+	 * 
+	 */
 	public static enum SourceFormat implements Optionable {
 		DGS(true), GML(false), DOT(false)
 
@@ -206,6 +211,13 @@ public interface ToolsCommon {
 			this.options = options;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.graphstream.tool.ToolsCommon.Optionable#isValidOption(java.lang
+		 * .String)
+		 */
 		public boolean isValidOption(String key) {
 			if (options == null)
 				return false;
@@ -217,12 +229,22 @@ public interface ToolsCommon {
 			return false;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.graphstream.tool.ToolsCommon.Optionable#getOptionCount()
+		 */
 		public int getOptionCount() {
 			if (options == null)
 				return 0;
 			return options.length;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.graphstream.tool.ToolsCommon.Optionable#getOption(int)
+		 */
 		public String getOption(int i) {
 			if (options == null || i >= options.length || i < 0)
 				return null;
@@ -231,34 +253,49 @@ public interface ToolsCommon {
 		}
 	}
 
+	/**
+	 * Unique identifiant of the option used to set the source.
+	 */
 	public static final String SOURCE_KEY = "source";
+	/**
+	 * Unique identifiant of the option used to define the format of the source.
+	 */
 	public static final String SOURCE_FORMAT_KEY = "source-format";
+	/**
+	 * Unique identifiant of the option used to define options that can be
+	 * passed to the source.
+	 */
 	public static final String SOURCE_OPTIONS_KEY = "source-options";
 	public static final String SOURCE_DESCRIPTION = "option:source";
 	public static final String SOURCE_FORMAT_DESCRIPTION = "option:source_format";
 	public static final String SOURCE_OPTIONS_DESCRIPTION = "option:source_options";
+
 	public static final String SINK_KEY = "sink";
 	public static final String SINK_FORMAT_KEY = "sink-format";
 	public static final String SINK_OPTIONS_KEY = "sink-options";
 	public static final String SINK_DESCRIPTION = "option:sink";
 	public static final String SINK_FORMAT_DESCRIPTION = "option:sink_format";
 	public static final String SINK_OPTIONS_DESCRIPTION = "option:sink_options";
+
 	public static final String GENERATOR_TYPE_KEY = "generator-type";
 	public static final String GENERATOR_OPTIONS_KEY = "generator-options";
 	public static final String GENERATOR_TYPE_DESCRIPTION = "option:generator_type";
 	public static final String GENERATOR_OPTIONS_DESCRIPTION = "option:generator_options";
+
 	public static final String STYLESHEET_KEY = "stylesheet";
 	public static final String STYLESHEET_DESCRIPTION = "option:stylesheet";
+
 	public static final String HELP_KEY = "help";
 	public static final String HELP_DESCRIPTION = "option:help";
+
 	public static final String LOCALE_KEY = "locale";
 	public static final String LOCALE_DESCRIPTION = "option:locale";
-	
+
 	public static final String INT_MATCHER = "\\d+";
 	public static final String REAL_MATCHER = "\\d+([.]\\d+)?";
 	public static final String BOOL_MATCHER = "true|false";
 	public static final String OPTIONS_MATCHER = "([^=]+=[^=]+(;[^=]+=[^=])*)?";
-	
+
 	public static enum CheckResult {
 		VALID, MISSING, INVALID, HELP
 	}

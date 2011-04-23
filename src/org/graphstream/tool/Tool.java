@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -87,11 +88,11 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	/**
 	 * Define if the tool has an input.
 	 */
-	protected final boolean hasInput;
+	public final boolean hasInput;
 	/**
 	 * Define if the tool has an output.
 	 */
-	protected final boolean hasOutput;
+	public final boolean hasOutput;
 	/**
 	 * Count of non-options args.
 	 */
@@ -134,6 +135,14 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 			addSinkOption();
 
 		addHelpOption();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getDescription() {
+		return i18n("__description__");
 	}
 
 	/**
@@ -376,6 +385,10 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 		}
 
 		check();
+	}
+
+	public Iterable<ToolOption> getEachToolOption() {
+		return Collections.unmodifiableCollection(allowedOptions.values());
 	}
 
 	/**

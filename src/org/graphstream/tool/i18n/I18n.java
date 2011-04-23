@@ -119,10 +119,12 @@ public class I18n {
 						objects[i]);
 		}
 
-		return string.replace("\n", "").replace("\\n", "\n")
+		return string.replace("\n", " ").replace("\\n", "\n")
 				.replaceAll("\\s{2,}", " ");
 	}
 
+	// --- Private start here --------------
+	
 	private static class Controler extends ResourceBundle.Control {
 		public List<String> getFormats(String baseName) {
 			if (baseName == null)
