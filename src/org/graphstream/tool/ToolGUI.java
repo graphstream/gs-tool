@@ -37,23 +37,28 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
+import javax.swing.ComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import org.graphstream.tool.gui.ConfigurationPanel;
 import org.graphstream.tool.gui.IconButton;
 import org.graphstream.tool.gui.LabelOptions;
 import org.graphstream.tool.gui.MainTitledPanel;
-import org.graphstream.tool.gui.OptionSetter;
 import org.graphstream.tool.gui.PathSelector;
 import org.graphstream.tool.gui.Resources;
 
@@ -68,16 +73,23 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 	 */
 	private static final long serialVersionUID = -8646940433915429831L;
 
-	protected static final int ICON_SIZE = 28;
+	public static final int ICON_SIZE = 28;
 
 	protected static final Color COLOR_1 = new Color(74, 90, 123);
 	protected static final Color COLOR_2 = new Color(52, 75, 121);
+
+	public static void error(String title, String message) {
+		JOptionPane.showMessageDialog(null, message, title,
+				JOptionPane.ERROR_MESSAGE);
+	}
 
 	protected Tool tool;
 	protected JFrame frame;
 	protected PathSelector inputSelector, outputSelector;
 	protected ConfigurationPanel configuration;
 	protected Dimension frameDimension;
+	protected ComboBoxModel sourceFormat, sinkFormat;
+	protected String sourceOptions, sinkOptions;
 
 	public ToolGUI(Tool tool) {
 		super(tool.getName());
@@ -108,26 +120,28 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 
 		add(about, c);
 
-		ImageIcon source1 = new ImageIcon(Resources.getImage(
-				Resources.SOURCE_OFF, 30, 30, true));
-		ImageIcon source2 = new ImageIcon(Resources.getImage(
-				Resources.SOURCE_ON, 30, 30, true));
-		ImageIcon source3 = new ImageIcon(Resources.getImage(
-				Resources.SOURCE_CLICK, 30, 30, true));
-		IconButton source = new IconButton(null, source2, source1, source3);
+		IconButton source = createIconButton(IconButton.Type.SOURCE, 30, null,
+				new SetSourceOptionsAction());
+		IconButton sink = createIconButton(IconButton.Type.SINK, 30, null,
+				new SetSinkOptionsAction());
 
-		ImageIcon sink1 = new ImageIcon(Resources.getImage(Resources.SINK_OFF,
-				30, 30, true));
-		ImageIcon sink2 = new ImageIcon(Resources.getImage(Resources.SINK_ON,
-				30, 30, true));
-		ImageIcon sink3 = new ImageIcon(Resources.getImage(
-				Resources.SINK_CLICK, 30, 30, true));
-		IconButton sink = new IconButton(null, sink2, sink1, sink3);
+		JComboBox sourceFormats = new JComboBox(SourceFormat.values());
+		JComboBox sinkFormats = new JComboBox(SinkFormat.values());
 
-		inputSelector = new PathSelector(new LabelOptions<SourceFormat>(source,
-				SourceFormat.class));
-		outputSelector = new PathSelector(new LabelOptions<SinkFormat>(sink,
-				SinkFormat.class));
+		this.sourceFormat = sourceFormats.getModel();
+		this.sinkFormat = sinkFormats.getModel();
+
+		int w = Math.max(sourceFormats.getPreferredSize().width,
+				sinkFormats.getPreferredSize().width);
+
+		int h = Math.max(sourceFormats.getPreferredSize().height,
+				sinkFormats.getPreferredSize().height);
+
+		sourceFormats.setPreferredSize(new Dimension(w, h));
+		sinkFormats.setSize(new Dimension(w, h));
+
+		inputSelector = new PathSelector(source, sourceFormats);
+		outputSelector = new PathSelector(sink, sinkFormats);
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 2;
@@ -144,7 +158,8 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 
 		JPanel bottomButtons = new JPanel();
 
-		IconButton run = createIconButton(IconButton.Type.RUN, 24, "Run", null);
+		IconButton run = createIconButton(IconButton.Type.RUN, 24, "Run",
+				new RunAction());
 		IconButton config = createIconButton(IconButton.Type.CONFIG, 24,
 				"Configuration", new ShowConfigurationPanelAction());
 
@@ -160,7 +175,7 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 
 		add(bottomButtons, c);
 
-		configuration = new ConfigurationPanel(tool);
+		configuration = createConfigurationPanel();
 
 		c.gridwidth = 2;
 		c.gridy++;
@@ -180,6 +195,34 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 		frame.setIconImage(getImage(Resources.GS_ICON, 32, 32, false));
 	}
 
+	protected ConfigurationPanel createConfigurationPanel() {
+		int maxWidth = 0;
+		HashSet<String> filter = new HashSet<String>();
+		LinkedList<ToolOption> options = new LinkedList<ToolOption>();
+
+		filter.add("help");
+		filter.add("source");
+		filter.add("source-format");
+		filter.add("source-options");
+		filter.add("sink");
+		filter.add("sink-format");
+		filter.add("sink-options");
+
+		for (ToolOption option : tool.getEachToolOption()) {
+			if (!filter.contains(option.key)) {
+				JLabel l = new JLabel(option.key);
+				maxWidth = Math.max(maxWidth, l.getPreferredSize().width);
+				options.add(option);
+			}
+		}
+
+		ToolOption[] optionsArray = options.toArray(new ToolOption[0]);
+
+		return new ConfigurationPanel(frame, false, "Configuration",
+				String.format("Configure %s", tool.getName()), optionsArray,
+				maxWidth);
+	}
+
 	public JFrame display() {
 		frame.setVisible(true);
 		return frame;
@@ -194,64 +237,6 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 
 			g2d.setPaint(Resources.getBackgroundPaint());
 			g2d.fillRect(0, 0, getWidth(), getHeight());
-		}
-	}
-
-	class ConfigurationPanel extends JDialog {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 141408222742689371L;
-
-		public ConfigurationPanel(Tool tool) {
-			super(frame, "Configuration", false);
-			setContentPane(new MainTitledPanel("Options for " + tool.getName(),
-					100));
-
-			HashSet<String> filter = new HashSet<String>();
-			filter.add("help");
-			filter.add("source");
-			filter.add("source-format");
-			filter.add("sink");
-			filter.add("sink-format");
-
-			int maxWidth = 0;
-			for (ToolOption option : tool.getEachToolOption()) {
-				if (!filter.contains(option.key)) {
-					JLabel l = new JLabel(option.key);
-					maxWidth = Math.max(maxWidth, l.getPreferredSize().width);
-				}
-			}
-
-			GridBagConstraints c = new GridBagConstraints();
-
-			c.fill = GridBagConstraints.HORIZONTAL;
-			c.gridwidth = 2;
-			c.weightx = 1.0;
-			c.weighty = 1.0;
-			c.gridx = 1;
-			c.gridy = 1;
-			c.insets = new Insets(2, 5, 3, 5);
-
-			for (ToolOption option : tool.getEachToolOption()) {
-				if (!filter.contains(option.key)) {
-					OptionSetter setter = OptionSetter.create(option, maxWidth);
-					add(setter, c);
-
-					c.gridy++;
-				}
-			}
-
-			pack();
-		}
-
-		public void display() {
-			setLocation(frame.getWidth() / 2, frame.getHeight() / 2);
-			setVisible(true);
-		}
-
-		public String[] getOptionsAsArguments() {
-			return null;
 		}
 	}
 
@@ -325,8 +310,114 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 		}
 	}
 
+	class RunAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6986878124049013848L;
+
+		public void actionPerformed(ActionEvent e) {
+			if (tool.hasInput && inputSelector.getPath().length() == 0) {
+				error("No input selected", "You have to select an input file.");
+				return;
+			}
+
+			if (tool.hasOutput && outputSelector.getPath().length() == 0) {
+				error("No output selected",
+						"You have to select an output file.");
+				return;
+			}
+
+			LinkedList<String> args = new LinkedList<String>();
+
+			if (tool.hasInput) {
+				args.add(String.format("--source=%s", inputSelector.getPath()));
+				args.add(String.format("--source-format=%s",
+						sourceFormat.getSelectedItem()));
+
+				if (sourceOptions != null)
+					args.add(String
+							.format("--source-options=%s", sourceOptions));
+			}
+
+			if (tool.hasOutput) {
+				args.add(String.format("--sink=%s", outputSelector.getPath()));
+				args.add(String.format("--sink-format=%s",
+						sinkFormat.getSelectedItem()));
+
+				if (sinkOptions != null)
+					args.add(String.format("--sink-options=%s", sinkOptions));
+			}
+
+			args.addAll(configuration.getOptionsAsList());
+
+			tool.init(args.toArray(new String[0]));
+			tool.run();
+		}
+	}
+
+	class SetSourceOptionsAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5550179564623219227L;
+
+		public void actionPerformed(ActionEvent e) {
+			String v = JOptionPane.showInputDialog(null, String.format(
+					"%s\n\nUse a list of \"key=value\" separate by \";\".",
+					"source-options-description"), "Source options",
+					JOptionPane.QUESTION_MESSAGE);
+
+			if (v != null)
+				sourceOptions = v;
+		}
+	}
+
+	class SetSinkOptionsAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5550179564623219227L;
+
+		public void actionPerformed(ActionEvent e) {
+			String v = JOptionPane.showInputDialog(null, String.format(
+					"%s\n\nUse a list of \"key=value\" separate by \";\".",
+					"sink-options-description"), "Sink options",
+					JOptionPane.QUESTION_MESSAGE);
+
+			if (v != null)
+				sinkOptions = v;
+		}
+	}
+
 	public static void main(String... args) {
-		ToolGUI gui = new ToolGUI(new Generate());
-		gui.display();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				boolean showUiKeys = false;
+
+				if (showUiKeys) {
+					java.util.Enumeration<?> keys = javax.swing.UIManager
+							.getDefaults().keys();
+					LinkedList<String> strings = new LinkedList<String>();
+					while (keys.hasMoreElements()) {
+						Object key = keys.nextElement();
+						strings.add(key.toString());
+					}
+
+					java.util.Collections.sort(strings);
+
+					for (int i = 0; i < strings.size(); i++)
+						if (strings.get(i).matches(".*button.*"))
+							System.out.printf(
+									"+ %s : %s\n",
+									strings.get(i),
+									javax.swing.UIManager.getDefaults().get(
+											strings.get(i)));
+				}
+
+				ToolGUI gui = new ToolGUI(new Generate());
+				gui.display();
+			}
+		});
 	}
 }

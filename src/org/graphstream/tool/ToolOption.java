@@ -35,17 +35,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class ToolOption implements ToolsCommon {
-	public static enum Type {
-		FLAG, INT, REAL, BOOL, STRING, ENUM, OPTIONS
-	}
-
 	public final String key;
 	public final String description;
 	public final boolean optional;
-	public final Type type;
+	public final OptionType type;
 
 	public ToolOption(String key, String description, boolean optional,
-			Type type) {
+			OptionType type) {
 		this.key = key;
 		this.description = description;
 		this.optional = optional;
@@ -57,7 +53,7 @@ public class ToolOption implements ToolsCommon {
 
 		public ToolEnumOption(String key, String description, boolean optional,
 				Class<T> choices) {
-			super(key, description, optional, Type.ENUM);
+			super(key, description, optional, OptionType.ENUM);
 			this.choices = choices;
 		}
 	}
@@ -82,7 +78,7 @@ public class ToolOption implements ToolsCommon {
 		public void registerNotOption(String arg) {
 			notOptions.add(arg);
 		}
-		
+
 		public CheckResult check(ToolOption opt) {
 			if (!opt.optional && !contains(opt.key))
 				return CheckResult.MISSING;
@@ -93,7 +89,7 @@ public class ToolOption implements ToolsCommon {
 			String v = get(opt.key);
 
 			if (v == null) {
-				if (opt.type != Type.FLAG)
+				if (opt.type != OptionType.FLAG)
 					return CheckResult.INVALID;
 				else
 					return CheckResult.VALID;
@@ -149,11 +145,11 @@ public class ToolOption implements ToolsCommon {
 
 			return CheckResult.VALID;
 		}
-		
+
 		public boolean checkNotOptions(int s) {
 			return notOptions.size() == s;
 		}
-		
+
 		public boolean isHelpNeeded() {
 			return keyValues.containsKey(ToolsCommon.HELP_KEY);
 		}
@@ -181,7 +177,7 @@ public class ToolOption implements ToolsCommon {
 		public String[][] getOptions(String key) {
 			return Tools.getKeyValue(keyValues.get(key));
 		}
-		
+
 		public String get(String key) {
 			return keyValues.get(key);
 		}

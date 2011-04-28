@@ -30,68 +30,113 @@
  */
 package org.graphstream.tool.gui;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
-import java.awt.event.ActionListener;
 
-import javax.swing.ComboBoxEditor;
-import javax.swing.JComboBox;
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
 
+import org.graphstream.tool.ToolGUI;
 import org.graphstream.tool.ToolOption;
 import org.graphstream.tool.ToolOption.ToolEnumOption;
+import org.graphstream.tool.gui.Resources.ColorType;
 
-public abstract class OptionSetter extends JPanel {
+public class OptionSetter extends JPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5595243256883567683L;
 
-	static Color border = new Color(0, 0, 0);
-	static Color background = new Color(74, 90, 123);
-	static Color text = new Color(240, 240, 240);
-	static Color labelback = new Color(30, 30, 30);
-
-	public static OptionSetter create(ToolOption option, int maxWidth) {
-		OptionSetter setter = null;
+	public static OptionSetter create(ToolOption option, int maxWidth,
+			Action removeAction) {
+		String value = null;
 
 		switch (option.type) {
-		case ENUM:
-			setter = new EnumOptionSetter(option, maxWidth);
+		case FLAG:
+			value = "";
 			break;
-		default:
-			setter = new StringOptionSetter(option, maxWidth);
+		case INT:
+			value = JOptionPane.showInputDialog(null, option.description,
+					String.format("Value of \"%s\" ?", option.key),
+					JOptionPane.QUESTION_MESSAGE);
+			try {
+				if (value != null)
+					Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				ToolGUI.error("Invalid integer format",
+						"You should enter an integer for this option.");
+				value = null;
+			}
+
+			break;
+		case REAL:
+			value = JOptionPane.showInputDialog(null, option.description,
+					String.format("Value of \"%s\" ?", option.key),
+					JOptionPane.QUESTION_MESSAGE);
+			try {
+				if (value != null)
+					Double.parseDouble(value);
+			} catch (NumberFormatException e) {
+				ToolGUI.error("Invalid real format",
+						"You should enter a real for this option.");
+				value = null;
+			}
+
+			break;
+		case STRING:
+			value = JOptionPane.showInputDialog(null, option.description,
+					String.format("Value of \"%s\" ?", option.key),
+					JOptionPane.QUESTION_MESSAGE);
+			break;
+		case OPTIONS:
+			value = JOptionPane.showInputDialog(null, String.format(
+					"%s\n\nUse a list of \"key=value\" separate by \";\".",
+					option.description), String.format("Value of \"%s\" ?",
+					option.key), JOptionPane.QUESTION_MESSAGE);
+			break;
+		case ENUM:
+			value = "enum";
+			ToolEnumOption<?> enumOption = (ToolEnumOption<?>) option;
+			Enum<?> r = (Enum<?>) JOptionPane.showInputDialog(null,
+					option.description,
+					String.format("Value of \"%s\" ?", option.key),
+					JOptionPane.QUESTION_MESSAGE, null,
+					enumOption.choices.getEnumConstants(),
+					enumOption.choices.getEnumConstants()[0]);
+			value = r == null ? null : r.name();
 			break;
 		}
 
-		return setter;
+		if (value == null)
+			return null;
+
+		return new OptionSetter(option, maxWidth, value, removeAction);
 	}
 
 	int labelWidth;
 	ToolOption option;
-	JComponent value;
+	JComponent valueLabel;
+	String value;
 
-	public OptionSetter(ToolOption option, int w) {
+	public OptionSetter(ToolOption option, int w, String value,
+			Action removeAction) {
 		this.option = option;
-		
+		this.value = value;
+
 		GridBagConstraints c = new GridBagConstraints();
 		JLabel label = new JLabel(option.key, JLabel.RIGHT);
 
 		labelWidth = Math.max(w, label.getPreferredSize().width);
 
 		label.setToolTipText(option.description);
-		label.setForeground(text);
+		label.setForeground(Resources.getColor(ColorType.COMPONENT_TEXT));
 		label.setSize(labelWidth, 20);
 		label.setPreferredSize(label.getSize());
 		label.setFont(Resources.getRegularFont(14.0f));
@@ -99,40 +144,41 @@ public abstract class OptionSetter extends JPanel {
 		setLayout(new GridBagLayout());
 
 		c.weightx = 0.0;
-		c.fill = GridBagConstraints.NONE;
+		c.fill = GridBagConstraints.VERTICAL;
 		c.gridwidth = 1;
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 5, 0, 10);
+		c.insets = new Insets(0, 5, 0, 8);
 
 		add(label, c);
 
-		value = getValueComponent();// new JTextField(20);
-		value.setForeground(text);
-		value.setBorder(null);
-		value.setOpaque(false);
-		value.setFont(Resources.getRegularFont(14.0f));
-		// value.setCaretColor(text);
-		// value.setHorizontalAlignment(JTextField.RIGHT);
-		value.setEnabled(option.type != ToolOption.Type.FLAG);
+		JLabel valueLabel = new JLabel(value);
+		valueLabel.setForeground(Resources
+				.getColor(ColorType.COMPONENT_LABEL_TEXT));
+		valueLabel.setBackground(Resources
+				.getColor(ColorType.COMPONENT_LABEL_BACKGROUND));
+		valueLabel.setFont(Resources.getRegularFont(12.0f));
 
 		c.weightx = 1.0;
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.ipady = 2;
+		c.fill = GridBagConstraints.BOTH;
 		c.gridwidth = 1;
 		c.gridx = 1;
 		c.gridy = 0;
+		c.weighty = 0.0;
+		c.insets = new Insets(0, 5, 0, 2);
 
-		add(value, c);
+		add(valueLabel, c);
 
 		IconButton close = IconButton.createIconButton(IconButton.Type.CLOSE,
-				28, null, null);
+				28, null, removeAction);
 
 		c.weightx = 0.0;
 		c.fill = GridBagConstraints.NONE;
 		c.gridwidth = 1;
 		c.gridx = 2;
 		c.gridy = 0;
-		c.insets = new Insets(0, 5, 0, 2);
+		c.insets = new Insets(0, 0, 0, 2);
 
 		add(close, c);
 	}
@@ -140,7 +186,7 @@ public abstract class OptionSetter extends JPanel {
 	protected void paintComponent(Graphics g) {
 		int s = labelWidth + 10;// Math.max(60, label.getPreferredSize().width)
 								// + 10;
-		int width = getWidth() - 8 - s;
+		int width = getWidth() - 1;
 
 		if (g instanceof Graphics2D) {
 			Graphics2D g2d = (Graphics2D) g;
@@ -149,78 +195,15 @@ public abstract class OptionSetter extends JPanel {
 					RenderingHints.VALUE_ANTIALIAS_ON);
 		}
 
-		g.setColor(labelback);
+		g.setColor(Resources.getColor(ColorType.COMPONENT_LABEL_BACKGROUND));
 		g.fillRoundRect(0, 0, 14, getHeight() - 1, 7, 7);
 		g.fillRect(7, 0, s - 7, getHeight() - 1);
 
-		g.setColor(background);
-		g.fillRect(s, 0, width, getHeight() - 1);
-		g.fillRoundRect(getWidth() - 15, 0, 14, getHeight() - 1, 7, 7);
+		g.setColor(Resources.getColor(ColorType.COMPONENT_BACKGROUND));
+		g.fillRect(s, 0, width - 7 - s, getHeight() - 1);
+		g.fillRoundRect(width - 14, 0, 14, getHeight() - 1, 7, 7);
 
-		g.setColor(border);
-		g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 7, 7);
-	}
-
-	public abstract String getOptionValue();
-
-	public abstract JComponent getValueComponent();
-
-	static class StringOptionSetter extends OptionSetter {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -7435967932756156539L;
-
-		public StringOptionSetter(ToolOption option, int w) {
-			super(option, w);
-		}
-
-		public String getOptionValue() {
-			return ((JTextField) value).getText();
-		}
-
-		public JComponent getValueComponent() {
-			JTextField f = new JTextField(20);
-			f.setCaretColor(text);
-			f.setHorizontalAlignment(JTextField.RIGHT);
-
-			return f;
-		}
-	}
-
-	static class EnumOptionSetter extends OptionSetter {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -4624286114488086653L;
-
-		public EnumOptionSetter(ToolOption option, int w) {
-			super(option, w);
-		}
-
-		public String getOptionValue() {
-			return ((JComboBox) value).getSelectedItem().toString();
-		}
-
-		public JComponent getValueComponent() {
-			JComboBox box = new JComboBox(
-					((ToolEnumOption<?>) option).choices.getEnumConstants());
-			box.setRenderer(new InternalComboBoxRenderer());
-			return box;
-		}
-	}
-	
-	static class InternalComboBoxRenderer implements ListCellRenderer {
-
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-			JLabel l = new JLabel(value.toString());
-			l.setForeground(text);
-			l.setBorder(null);
-			l.setOpaque(false);
-			l.setFont(Resources.getRegularFont(14.0f));
-			
-			return l;
-		}
+		g.setColor(Resources.getColor(ColorType.COMPONENT_BORDER));
+		g.drawRoundRect(0, 0, width, getHeight() - 1, 7, 7);
 	}
 }

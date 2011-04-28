@@ -52,12 +52,12 @@ public class Generate extends Tool implements ToolsCommon {
 
 		addGeneratorOption(true);
 
-		addOption("size", i18n("option:size"), true, ToolOption.Type.INT);
+		addOption("size", i18n("option:size"), true, ToolOption.OptionType.INT);
 		addOption("iteration", i18n("option:iteration"), true,
-				ToolOption.Type.INT);
-		addOption("delay", i18n("option:delay"), true, ToolOption.Type.INT);
-		addOption("export", i18n("option:export"), true, ToolOption.Type.FLAG);
-		addOption("force", i18n("option:force"), true, ToolOption.Type.FLAG);
+				ToolOption.OptionType.INT);
+		addOption("delay", i18n("option:delay"), true, ToolOption.OptionType.INT);
+		addOption("export", i18n("option:export"), true, ToolOption.OptionType.FLAG);
+		addOption("force", i18n("option:force"), true, ToolOption.OptionType.FLAG);
 
 		setShortcuts(shortcuts);
 	}

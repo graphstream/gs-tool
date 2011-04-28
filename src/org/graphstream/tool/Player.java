@@ -44,15 +44,15 @@ public class Player extends Tool {
 		addSourceOption();
 		addStyleOption(true);
 
-		addOption("scala", i18n("option:scala"), true, ToolOption.Type.FLAG);
+		addOption("scala", i18n("option:scala"), true, ToolOption.OptionType.FLAG);
 		addOption("nextAction", i18n("option:next_action"), true, Next.class);
-		addOption("quality", i18n("option:quality"), true, ToolOption.Type.FLAG);
+		addOption("quality", i18n("option:quality"), true, ToolOption.OptionType.FLAG);
 		addOption("antialiasing", i18n("option:antialiasing"), true,
-				ToolOption.Type.FLAG);
+				ToolOption.OptionType.FLAG);
 		addOption("stepDelay", i18n("option:step_delay"), true,
-				ToolOption.Type.FLAG);
+				ToolOption.OptionType.FLAG);
 		addOption("autolayout", i18n("option:autolayout"), true,
-				ToolOption.Type.FLAG);
+				ToolOption.OptionType.FLAG);
 
 		setShortcuts(shortcuts);
 	}

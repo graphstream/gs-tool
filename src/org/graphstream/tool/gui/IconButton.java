@@ -54,7 +54,9 @@ public class IconButton extends JLabel implements MouseListener {
 				Resources.SOURCE_OFF, Resources.SOURCE_ON,
 				Resources.SOURCE_CLICK), SINK(Resources.SINK_OFF,
 				Resources.SINK_ON, Resources.SINK_CLICK), CLOSE(
-				Resources.CLOSE_OFF, Resources.CLOSE_ON, Resources.CLOSE_CLICK)
+				Resources.CLOSE_OFF, Resources.CLOSE_ON, Resources.CLOSE_CLICK), DOWN(
+				Resources.DOWN_OFF, Resources.DOWN_ON, Resources.DOWN_CLICK), ADD(
+				Resources.ADD_OFF, Resources.ADD_ON, Resources.ADD_CLICK)
 
 		;
 

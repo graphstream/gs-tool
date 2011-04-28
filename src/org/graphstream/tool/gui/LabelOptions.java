@@ -1,5 +1,6 @@
 package org.graphstream.tool.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -7,6 +8,7 @@ import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -26,7 +28,8 @@ public class LabelOptions<T extends Enum<T>> extends JPanel
 	public LabelOptions(JComponent icon, Class<T> options) {
 		setOpaque(false);
 		setLayout(new GridBagLayout());
-
+		setBorder(BorderFactory.createLineBorder(Color.RED));
+		
 		GridBagConstraints c = new GridBagConstraints();
 
 		optionsBox = new JComboBox(options.getEnumConstants());

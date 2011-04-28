@@ -38,8 +38,12 @@ import java.awt.Paint;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.EnumMap;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.graphstream.tool.ToolGUI;
 
@@ -48,6 +52,9 @@ public class Resources {
 	public static final String GS_ICON = "org/graphstream/tool/resources/gs-icon.png";
 
 	public static final String LINES = "org/graphstream/tool/resources/lines.png";
+	
+	public static final String QUESTION = "org/graphstream/tool/resources/question.png";
+	public static final String ERROR = "org/graphstream/tool/resources/error.png";
 
 	public static final String ABOUT_OFF = "org/graphstream/tool/resources/about.png";
 	public static final String ABOUT_ON = "org/graphstream/tool/resources/about_on.png";
@@ -77,6 +84,14 @@ public class Resources {
 	public static final String CLOSE_ON = "org/graphstream/tool/resources/close_on.png";
 	public static final String CLOSE_CLICK = "org/graphstream/tool/resources/close_click.png";
 
+	public static final String DOWN_OFF = "org/graphstream/tool/resources/down.png";
+	public static final String DOWN_ON = "org/graphstream/tool/resources/down_on.png";
+	public static final String DOWN_CLICK = "org/graphstream/tool/resources/down_click.png";
+
+	public static final String ADD_OFF = "org/graphstream/tool/resources/add.png";
+	public static final String ADD_ON = "org/graphstream/tool/resources/add_on.png";
+	public static final String ADD_CLICK = "org/graphstream/tool/resources/add_click.png";
+
 	public static final String FONT_BOLD = "org/graphstream/tool/resources/Ubuntu-B.ttf";
 	public static final String FONT_REGULAR = "org/graphstream/tool/resources/Ubuntu-R.ttf";
 
@@ -85,7 +100,24 @@ public class Resources {
 
 	protected static Paint backgroundPaint;
 
+	public static enum ColorType {
+		BACKGROUND_LEFT, BACKGROUND_RIGHT, COMPONENT_BACKGROUND, COMPONENT_BACKGROUND_ALT, COMPONENT_BORDER, COMPONENT_TEXT, COMPONENT_LABEL_BACKGROUND, COMPONENT_LABEL_TEXT
+	}
+
+	private static final EnumMap<ColorType, Color> colors;
+
 	static {
+		colors = new EnumMap<ColorType, Color>(ColorType.class);
+
+		colors.put(ColorType.BACKGROUND_LEFT, new Color(224, 230, 237));
+		colors.put(ColorType.BACKGROUND_RIGHT, new Color(238, 238, 238));
+		colors.put(ColorType.COMPONENT_BACKGROUND, new Color(126,136,157));//74, 90, 123));
+		colors.put(ColorType.COMPONENT_BACKGROUND_ALT, new Color(52, 75, 121));
+		colors.put(ColorType.COMPONENT_BORDER, Color.BLACK);
+		colors.put(ColorType.COMPONENT_TEXT, Color.WHITE);
+		colors.put(ColorType.COMPONENT_LABEL_BACKGROUND, new Color(30, 30, 30));
+		colors.put(ColorType.COMPONENT_LABEL_TEXT, Color.WHITE);
+
 		try {
 			InputStream boldInput = ToolGUI.class.getClassLoader()
 					.getResourceAsStream(FONT_BOLD);
@@ -104,14 +136,31 @@ public class Resources {
 
 			fontBold = Font.createFont(Font.TRUETYPE_FONT, boldInput);
 			fontRegular = Font.createFont(Font.TRUETYPE_FONT, regularInput);
+			
+			UIManager.put("OptionPane.font", fontRegular.deriveFont(12.0f));
+			UIManager.put("TextPane.font", fontRegular.deriveFont(12.0f));
+			UIManager.put("TextArea.font", fontRegular.deriveFont(12.0f));
+			UIManager.put("Label.font", fontRegular.deriveFont(12.0f));
+			UIManager.put("ComboBox.font", fontRegular.deriveFont(12.0f));
+			UIManager.put("FileChooser.font", fontRegular.deriveFont(12.0f));
+			UIManager.put("Button.font", fontRegular.deriveFont(12.0f));
+			UIManager.put("List.font", fontRegular.deriveFont(12.0f));
+			JOptionPane.getRootFrame().setIconImage(getImage(GS_ICON, 32, 32, false));
+			UIManager.put("OptionPane.questionIcon", new ImageIcon(getImage(QUESTION, 40, 40, true)));
+			UIManager.put("OptionPane.errorIcon", new ImageIcon(getImage(ERROR, 40, 40, true)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		Color[] colors = { new Color(224, 230, 237), new Color(238, 238, 238) };
+		Color[] colors = { getColor(ColorType.BACKGROUND_LEFT),
+				getColor(ColorType.BACKGROUND_RIGHT) };
 		float[] fractions = { 0.25f, 0.75f };
 		backgroundPaint = new LinearGradientPaint(0, 0, 600, 500, fractions,
 				colors);
+	}
+
+	public static Color getColor(ColorType type) {
+		return colors.get(type);
 	}
 
 	public static Image getImage(String url, int width, int height,

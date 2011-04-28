@@ -45,7 +45,6 @@ import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.tool.ToolOption.ToolEnumOption;
-import org.graphstream.tool.ToolOption.Type;
 import org.graphstream.tool.i18n.I18n;
 import org.graphstream.tool.i18n.I18nSupport;
 
@@ -116,6 +115,16 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 */
 	protected Locale locale;
 
+	/**
+	 * The default input used if no source has been given.
+	 */
+	protected InputStream defaultInput;
+
+	/**
+	 * The default output used if no sink has been given.
+	 */
+	protected OutputStream defaultOutput;
+
 	public Tool(String name, String description, boolean input, boolean output) {
 		this.name = name;
 		this.description = description;
@@ -127,6 +136,8 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 		this.exitOnFailed = true;
 		this.locale = Locale.getDefault();
 		this.i18n = I18n.load(this);
+		this.defaultInput = System.in;
+		this.defaultOutput = System.out;
 
 		if (input)
 			addSourceOption();
@@ -242,22 +253,22 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 * Add the source option.
 	 */
 	protected void addSourceOption() {
-		addOption(SOURCE_KEY, SOURCE_DESCRIPTION, true, Type.STRING);
+		addOption(SOURCE_KEY, SOURCE_DESCRIPTION, true, OptionType.STRING);
 		addOption(SOURCE_FORMAT_KEY, i18n(SOURCE_FORMAT_DESCRIPTION), true,
 				SourceFormat.class);
 		addOption(SOURCE_OPTIONS_KEY, i18n(SOURCE_OPTIONS_DESCRIPTION), true,
-				Type.STRING);
+				OptionType.OPTIONS);
 	}
 
 	/**
 	 * Add the sink option.
 	 */
 	protected void addSinkOption() {
-		addOption(SINK_KEY, SINK_DESCRIPTION, true, Type.STRING);
+		addOption(SINK_KEY, SINK_DESCRIPTION, true, OptionType.STRING);
 		addOption(SINK_FORMAT_KEY, i18n(SINK_FORMAT_DESCRIPTION), true,
 				SinkFormat.class);
 		addOption(SINK_OPTIONS_KEY, i18n(SINK_OPTIONS_DESCRIPTION), true,
-				Type.STRING);
+				OptionType.OPTIONS);
 	}
 
 	/**
@@ -269,7 +280,7 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	protected void addGeneratorOption(boolean optional) {
 		addOption(GENERATOR_TYPE_KEY, i18n(GENERATOR_TYPE_DESCRIPTION),
 				optional, GeneratorType.class);
-		addOption(GENERATOR_OPTIONS_KEY, "", optional, Type.STRING);
+		addOption(GENERATOR_OPTIONS_KEY, "", optional, OptionType.OPTIONS);
 	}
 
 	/**
@@ -280,21 +291,21 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 */
 	protected void addStyleOption(boolean optional) {
 		addOption(STYLESHEET_KEY, i18n(STYLESHEET_DESCRIPTION), optional,
-				Type.STRING);
+				OptionType.STRING);
 	}
 
 	/**
 	 * Add the help option. This is called in the default constructor of tools.
 	 */
 	protected void addHelpOption() {
-		addOption(HELP_KEY, i18n(HELP_DESCRIPTION), true, Type.FLAG);
+		addOption(HELP_KEY, i18n(HELP_DESCRIPTION), true, OptionType.FLAG);
 	}
 
 	/**
 	 * Add the locale option.
 	 */
 	protected void addLocaleOption() {
-		addOption(LOCALE_KEY, i18n(LOCALE_DESCRIPTION), true, Type.STRING);
+		addOption(LOCALE_KEY, i18n(LOCALE_DESCRIPTION), true, OptionType.STRING);
 	}
 
 	/**
@@ -312,7 +323,7 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 *            the type of value or FLAG is there is no value
 	 */
 	protected void addOption(String key, String description, boolean optional,
-			Type type) {
+			OptionType type) {
 		ToolOption to = new ToolOption(key, description, optional, type);
 		allowedOptions.put(key, to);
 	}
@@ -385,6 +396,10 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 		}
 
 		check();
+	}
+
+	public ToolOption getToolOption(String key) {
+		return allowedOptions.get(key);
 	}
 
 	public Iterable<ToolOption> getEachToolOption() {
@@ -492,7 +507,11 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 			}
 		}
 
-		return System.in;
+		return defaultInput;
+	}
+
+	public void setDefaultInput(InputStream input) {
+		this.defaultInput = input;
 	}
 
 	/**
@@ -512,7 +531,11 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 			}
 		}
 
-		return System.out;
+		return defaultOutput;
+	}
+
+	public void setDefaultOutput(OutputStream output) {
+		this.defaultOutput = output;
 	}
 
 	/**

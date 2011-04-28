@@ -32,7 +32,6 @@ package org.graphstream.tool.gui;
 
 import static org.graphstream.tool.gui.IconButton.createIconButton;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -54,37 +53,37 @@ public class PathSelector extends JPanel {
 	 */
 	private static final long serialVersionUID = 7164150016018758398L;
 
-	static Color border = new Color(0, 0, 0);
-	static Color background = new Color(74, 90, 123);
-	static Color text = new Color(240, 240, 240);
-	static Color labelback = new Color(30, 30, 30);
-	static Color filled = new Color(52, 75, 121);
-
 	JTextField path;
 	IconButton find;
-	JComponent label;
+	//JComponent label;
+	int labelWidth;
 	int available;
 	int loaded;
 
 	public PathSelector(String label, int size) {
 		JLabel theLabel = new JLabel(label, JLabel.RIGHT);
-		theLabel.setForeground(text);
+		theLabel.setForeground(Resources
+				.getColor(Resources.ColorType.COMPONENT_LABEL_TEXT));
 		theLabel.setSize(Math.max(size, theLabel.getWidth()), 20);
 		theLabel.setPreferredSize(theLabel.getSize());
 
 		init(theLabel);
 	}
 
-	public PathSelector(JComponent label) {
-		init(label);
+	public PathSelector(JComponent... labels) {
+		init(labels);
 	}
 
+	public String getPath() {
+		return path.getText();
+	}
+	
 	public void initLoadProgress(int available) {
 		this.available = available;
 		this.loaded = 100;
 	}
 
-	protected void init(JComponent l) {
+	protected void init(JComponent... l) {
 		setLayout(new GridBagLayout());
 
 		available = 0;
@@ -92,30 +91,37 @@ public class PathSelector extends JPanel {
 
 		GridBagConstraints c = new GridBagConstraints();
 
-		label = l;
+		//label = l;
 
 		path = new JTextField(30);
 		find = createIconButton(IconButton.Type.FIND, 28, null,
 				new ChoosePathAction(this));
 
-		path.setForeground(text);
+		path.setForeground(Resources
+				.getColor(Resources.ColorType.COMPONENT_TEXT));
 		path.setBorder(null);
 		path.setOpaque(false);
 		path.setFont(Resources.getRegularFont(14.0f));
-		path.setCaretColor(text);
+		path.setCaretColor(Resources
+				.getColor(Resources.ColorType.COMPONENT_TEXT));
 
 		if (l != null) {
-			int labelSize = Math.max(60, l.getPreferredSize().width);
+			labelWidth = 0;
+
+			for (int i = 0; i < l.length; i++)
+				labelWidth += l[i].getPreferredSize().width;
+
+			labelWidth = Math.max(60, labelWidth) + 10;
 
 			c.weightx = 0.0;
 			c.gridwidth = 1;
-			c.insets = new Insets(2, 5, 2, labelSize
-					- l.getPreferredSize().width + 2);
+			c.insets = new Insets(2, 5, 2, 1);
 
-			add(l, c);
+			for (int i = 0; i < l.length; i++)
+				add(l[i], c);
 		}
 
-		c.insets = new Insets(2, 7, 2, 2);
+		c.insets = new Insets(2, 15, 2, 2);
 		c.weightx = 1.0;
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -130,7 +136,7 @@ public class PathSelector extends JPanel {
 	}
 
 	protected void paintComponent(Graphics g) {
-		int s = Math.max(60, label.getPreferredSize().width) + 10;
+		int s = labelWidth + 10;
 		int width = getWidth() - 8 - s;
 
 		if (g instanceof Graphics2D) {
@@ -140,7 +146,8 @@ public class PathSelector extends JPanel {
 					RenderingHints.VALUE_ANTIALIAS_ON);
 		}
 
-		g.setColor(labelback);
+		g.setColor(Resources
+				.getColor(Resources.ColorType.COMPONENT_LABEL_BACKGROUND));
 		g.fillRoundRect(0, 0, 14, getHeight() - 1, 7, 7);
 		g.fillRect(7, 0, s - 7, getHeight() - 1);
 
@@ -148,23 +155,26 @@ public class PathSelector extends JPanel {
 			float ratio = loaded / (float) available;
 			ratio = Math.max(0, Math.min(1, ratio));
 
-			g.setColor(filled);
+			g.setColor(Resources
+					.getColor(Resources.ColorType.COMPONENT_BACKGROUND_ALT));
 			g.fillRect(s, 0, (int) (ratio * width), getHeight() - 1);
 
 			if (ratio < 1) {
-				g.setColor(background);
+				g.setColor(Resources
+						.getColor(Resources.ColorType.COMPONENT_BACKGROUND));
 				g.fillRect(s + (int) (ratio * width), 0,
 						(int) ((1 - ratio) * width), getHeight() - 1);
 			}
 
 			g.fillRoundRect(getWidth() - 15, 0, 14, getHeight() - 1, 7, 7);
 		} else {
-			g.setColor(background);
+			g.setColor(Resources
+					.getColor(Resources.ColorType.COMPONENT_BACKGROUND));
 			g.fillRect(s, 0, width, getHeight() - 1);
 			g.fillRoundRect(getWidth() - 15, 0, 14, getHeight() - 1, 7, 7);
 		}
 
-		g.setColor(border);
+		g.setColor(Resources.getColor(Resources.ColorType.COMPONENT_BORDER));
 		g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 7, 7);
 	}
 

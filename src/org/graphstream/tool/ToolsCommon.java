@@ -35,6 +35,10 @@ package org.graphstream.tool;
  */
 public interface ToolsCommon {
 
+	public static enum OptionType {
+		FLAG, INT, REAL, BOOL, STRING, ENUM, OPTIONS
+	}
+
 	/**
 	 * Defined an object that can be producing according to a set of options.
 	 * 
