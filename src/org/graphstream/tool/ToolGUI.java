@@ -31,15 +31,18 @@
 package org.graphstream.tool;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
@@ -57,17 +60,20 @@ import javax.swing.text.StyleConstants;
 
 import org.graphstream.tool.gui.ConfigurationPanel;
 import org.graphstream.tool.gui.IconButton;
-import org.graphstream.tool.gui.LabelOptions;
 import org.graphstream.tool.gui.MainTitledPanel;
 import org.graphstream.tool.gui.PathSelector;
 import org.graphstream.tool.gui.Resources;
+import org.graphstream.tool.gui.WriterToWindow;
+import org.graphstream.tool.i18n.I18n;
+import org.graphstream.tool.i18n.I18nSupport;
 
 import static org.graphstream.tool.gui.IconButton.createIconButton;
 import static org.graphstream.tool.gui.Resources.getImage;
 
 // -Dsun.java2d.opengl=true -Dawt.useSystemAAFontSettings=on|lcd
 
-public class ToolGUI extends MainTitledPanel implements ToolsCommon {
+public class ToolGUI extends MainTitledPanel implements ToolsCommon,
+		ToolRunnerListener, I18nSupport {
 	/**
 	 * 
 	 */
@@ -90,12 +96,51 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 	protected Dimension frameDimension;
 	protected ComboBoxModel sourceFormat, sinkFormat;
 	protected String sourceOptions, sinkOptions;
+	protected ResourceBundle i18n;
 
 	public ToolGUI(Tool tool) {
 		super(tool.getName());
 
 		this.tool = tool;
+		this.i18n = I18n.load(this);
+
 		build();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.tool.i18n.I18nSupport#getDomain()
+	 */
+	public String getDomain() {
+		return "org.graphstream.tool.i18n.gui";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.graphstream.tool.i18n.I18nSupport#setLocale(java.util.Locale)
+	 * 
+	 * @see java.awt.Component#setLocale(java.util.Locale)
+	 */
+	public void setLocale(Locale l) {
+		super.setLocale(l);
+		i18n = I18n.load(this);
+	}
+
+	/**
+	 * Print the i18n key inserting objects.
+	 * 
+	 * @param key
+	 *            key of the i18n entry
+	 * @param objects
+	 *            objects to insert in the string
+	 * @return the well formatted representation of the key
+	 * 
+	 * @see org.graphstream.tool.i18n.I18n#_(ResourceBundle, String, String...)
+	 */
+	protected String i18n(String key, String... objects) {
+		return I18n._(i18n, key, objects);
 	}
 
 	protected void build() {
@@ -150,18 +195,21 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 		c.gridx = 1;
 		c.gridy = 1;
 
-		add(inputSelector, c);
+		if (tool.hasInput) {
+			add(inputSelector, c);
+			c.gridy++;
+		}
 
-		c.gridy++;
-
-		add(outputSelector, c);
+		if (tool.hasOutput)
+			add(outputSelector, c);
 
 		JPanel bottomButtons = new JPanel();
 
-		IconButton run = createIconButton(IconButton.Type.RUN, 24, "Run",
-				new RunAction());
+		IconButton run = createIconButton(IconButton.Type.RUN, 24,
+				i18n("button:run:label"), new RunAction());
 		IconButton config = createIconButton(IconButton.Type.CONFIG, 24,
-				"Configuration", new ShowConfigurationPanelAction());
+				i18n("button:configuration:label"),
+				new ShowConfigurationPanelAction());
 
 		bottomButtons.add(run);
 		bottomButtons.add(config);
@@ -169,7 +217,7 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 		c.gridwidth = 2;
 		c.gridx = 1;
 		c.gridy++;
-		c.anchor = GridBagConstraints.EAST;
+		c.anchor = GridBagConstraints.SOUTHEAST;
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.0;
 
@@ -200,6 +248,9 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 		HashSet<String> filter = new HashSet<String>();
 		LinkedList<ToolOption> options = new LinkedList<ToolOption>();
 
+		/*
+		 * Following options are set in an other way.
+		 */
 		filter.add("help");
 		filter.add("source");
 		filter.add("source-format");
@@ -218,9 +269,10 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 
 		ToolOption[] optionsArray = options.toArray(new ToolOption[0]);
 
-		return new ConfigurationPanel(frame, false, "Configuration",
-				String.format("Configure %s", tool.getName()), optionsArray,
-				maxWidth);
+		return new ConfigurationPanel(frame, false,
+				i18n("frame:configuration:title"), i18n(
+						"frame:configuration:paneltitle", tool.getName()),
+				optionsArray, maxWidth);
 	}
 
 	public JFrame display() {
@@ -228,9 +280,13 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 		return frame;
 	}
 
-	protected void packMe() {
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.tool.gui.MainTitledPanel#paintComponent(java.awt.Graphics
+	 * )
+	 */
 	protected void paintComponent(Graphics g) {
 		if (g instanceof Graphics2D) {
 			Graphics2D g2d = (Graphics2D) g;
@@ -238,6 +294,52 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 			g2d.setPaint(Resources.getBackgroundPaint());
 			g2d.fillRect(0, 0, getWidth(), getHeight());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.tool.ToolRunnerListener#executionStart(org.graphstream
+	 * .tool.Tool)
+	 */
+	public void executionStart(Tool t) {
+		setToolGUIEnabled(false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.tool.ToolRunnerListener#initializationFailed(org.graphstream
+	 * .tool.Tool, org.graphstream.tool.ToolInitializationException)
+	 */
+	public void initializationFailed(Tool t, ToolInitializationException e) {
+		error(i18n("error:initialization_failed:title"), e.getMessage());
+		setToolGUIEnabled(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.tool.ToolRunnerListener#executionFailed(org.graphstream
+	 * .tool.Tool, org.graphstream.tool.ToolExecutionException)
+	 */
+	public void executionFailed(Tool t, ToolExecutionException e) {
+		error(i18n("error:execution_failed:title"), e.getMessage());
+		setToolGUIEnabled(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.graphstream.tool.ToolRunnerListener#executionSuccess(org.graphstream
+	 * .tool.Tool)
+	 */
+	public void executionSuccess(Tool t) {
+		setToolGUIEnabled(true);
 	}
 
 	class ShowConfigurationPanelAction extends AbstractAction {
@@ -276,11 +378,12 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 		private static final long serialVersionUID = 4468824723350853466L;
 
 		public AboutDialog(Tool tool) {
-			super(ToolGUI.this.frame, "About");
+			super(ToolGUI.this.frame, i18n("frame:about:title"));
 
 			setIconImage(getImage(Resources.GS_ICON, 32, 32, false));
 			setResizable(false);
-			setContentPane(new MainTitledPanel(tool.getName(), 100));
+			setContentPane(new MainTitledPanel(i18n("frame:about:paneltitle",
+					tool.getName()), 100));
 
 			GridBagConstraints c = new GridBagConstraints();
 
@@ -318,15 +421,13 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 
 		public void actionPerformed(ActionEvent e) {
 			if (tool.hasInput && inputSelector.getPath().length() == 0) {
-				error("No input selected", "You have to select an input file.");
+				error(i18n("error:noinput:title"),
+						i18n("error:noinput:description"));
 				return;
 			}
 
-			if (tool.hasOutput && outputSelector.getPath().length() == 0) {
-				error("No output selected",
-						"You have to select an output file.");
-				return;
-			}
+			if (tool.hasOutput && outputSelector.getPath().length() == 0)
+				tool.setDefaultOutput(new WriterToWindow(true, 300, 200));
 
 			LinkedList<String> args = new LinkedList<String>();
 
@@ -341,7 +442,10 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 			}
 
 			if (tool.hasOutput) {
-				args.add(String.format("--sink=%s", outputSelector.getPath()));
+				if (outputSelector.getPath().length() > 0)
+					args.add(String.format("--sink=%s",
+							outputSelector.getPath()));
+
 				args.add(String.format("--sink-format=%s",
 						sinkFormat.getSelectedItem()));
 
@@ -351,8 +455,11 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 
 			args.addAll(configuration.getOptionsAsList());
 
-			tool.init(args.toArray(new String[0]));
-			tool.run();
+			ToolRunner runner = new ToolRunner(tool,
+					args.toArray(new String[0]));
+
+			runner.addListener(ToolGUI.this);
+			runner.start();
 		}
 	}
 
@@ -363,9 +470,10 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 		private static final long serialVersionUID = 5550179564623219227L;
 
 		public void actionPerformed(ActionEvent e) {
-			String v = JOptionPane.showInputDialog(null, String.format(
-					"%s\n\nUse a list of \"key=value\" separate by \";\".",
-					"source-options-description"), "Source options",
+			String v = JOptionPane.showInputDialog(null,
+					String.format("%s\n%s", i18n("option:source_options"),
+							i18n("usekeyval")),
+					i18n("frame:source_options:title"),
 					JOptionPane.QUESTION_MESSAGE);
 
 			if (v != null)
@@ -381,8 +489,8 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 
 		public void actionPerformed(ActionEvent e) {
 			String v = JOptionPane.showInputDialog(null, String.format(
-					"%s\n\nUse a list of \"key=value\" separate by \";\".",
-					"sink-options-description"), "Sink options",
+					"%s\n%s", i18n("option:sink_options"), i18n("usekeyval")),
+					i18n("frame:sink_options:title"),
 					JOptionPane.QUESTION_MESSAGE);
 
 			if (v != null)
@@ -407,7 +515,7 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 					java.util.Collections.sort(strings);
 
 					for (int i = 0; i < strings.size(); i++)
-						if (strings.get(i).matches(".*button.*"))
+						if (strings.get(i).matches(".*disable.*"))
 							System.out.printf(
 									"+ %s : %s\n",
 									strings.get(i),
@@ -419,5 +527,23 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon {
 				gui.display();
 			}
 		});
+	}
+
+	protected void setToolGUIEnabled(boolean on) {
+		setEnabled(on);
+		LinkedList<Component> components = new LinkedList<Component>();
+		components.add(this);
+
+		while (components.size() > 0) {
+			Component c = components.poll();
+			c.setEnabled(on);
+
+			if (c instanceof Container) {
+				Container cont = (Container) c;
+
+				for (int i = 0; i < cont.getComponentCount(); i++)
+					components.add(cont.getComponent(i));
+			}
+		}
 	}
 }

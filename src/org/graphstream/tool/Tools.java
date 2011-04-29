@@ -100,6 +100,14 @@ import org.graphstream.stream.file.FileSourceDOT;
 import org.graphstream.stream.file.FileSourceGML;
 
 public class Tools implements ToolsCommon {
+	public static final int MAJOR_VERSION_NUMBER = 0;
+	public static final int MINOR_VERSION_NUMBER = 1;
+
+	public static String getToolsVersion() {
+		return String.format("%d.%d", MAJOR_VERSION_NUMBER,
+				MINOR_VERSION_NUMBER);
+	}
+
 	/**
 	 * Get a source of format with given options.
 	 */
@@ -467,17 +475,17 @@ public class Tools implements ToolsCommon {
 		}
 	}
 
-	public static InputStream getFileOrUrlAsStream(String url)
+	public static Reader getFileOrUrlAsStream(String url)
 			throws FileNotFoundException {
 		File f = new File(url);
 
 		if (f.exists())
-			return new FileInputStream(f);
+			return new FileReader(f);
 		else {
 			InputStream in = Tools.class.getClassLoader().getResourceAsStream(
 					url);
 
-			return in;
+			return new InputStreamReader(in);
 		}
 	}
 

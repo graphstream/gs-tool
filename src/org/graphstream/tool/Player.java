@@ -31,7 +31,7 @@
 package org.graphstream.tool;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSource;
@@ -65,9 +65,8 @@ public class Player extends Tool {
 		return "org.graphstream.tool.i18n.player";
 	}
 
-	public boolean check() {
-		if (!super.check())
-			return false;
+	public void check() throws ToolInitializationException {
+		super.check();
 
 		boolean scala = getFlagOption("scala");
 
@@ -75,19 +74,12 @@ public class Player extends Tool {
 			try {
 				Class.forName("org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 			} catch (ClassNotFoundException e) {
-				err.printf("%s\n", i18n("error:scala_missing"));
-
-				if (exitOnFailed)
-					System.exit(1);
-
-				return false;
+				throw new ToolInitializationException(e, "%s\n", i18n("error:scala_missing"));
 			}
 		}
-
-		return true;
 	}
 
-	public void run() {
+	public void run() throws ToolExecutionException {
 		boolean quality;
 		boolean antialias;
 		boolean autolayout;
@@ -109,7 +101,7 @@ public class Player extends Tool {
 					"org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
 		FileSource source = getSource(SourceFormat.DGS);
-		InputStream in = getInput();
+		Reader in = getInput();
 		DefaultGraph g = new DefaultGraph(name);
 
 		source.addSink(g);
@@ -128,8 +120,7 @@ public class Player extends Tool {
 		try {
 			source.begin(in);
 		} catch (IOException e) {
-			err.printf("%s\n", i18n("exception:io"));
-			System.exit(1);
+			throw new ToolExecutionException(e, "%s\n", i18n("exception:io"));
 		}
 
 		try {
@@ -141,15 +132,13 @@ public class Player extends Tool {
 				}
 			}
 		} catch (IOException e) {
-			err.printf("%s\n", i18n("exception:io"));
-			System.exit(1);
+			throw new ToolExecutionException(e, "%s\n", i18n("exception:io"));
 		}
 
 		try {
 			source.end();
 		} catch (IOException e) {
-			err.printf("%s\n", i18n("exception:io"));
-			System.exit(1);
+			throw new ToolExecutionException(e, "%s\n", i18n("exception:io"));
 		}
 
 	}
@@ -171,7 +160,14 @@ public class Player extends Tool {
 	 */
 	public static void main(String... args) {
 		Player player = new Player();
-		player.init(args);
-		player.run();
+		
+		ToolRunner runner = new ToolRunner(player, args);
+		runner.addListener(player);
+		
+		try {
+			runner.start().waitEndOfExecution();
+		} catch (InterruptedException e) {
+			// Ignore
+		}
 	}
 }

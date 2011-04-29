@@ -30,65 +30,25 @@
  */
 package org.graphstream.tool;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-
-import org.graphstream.stream.file.FileSink;
-import org.graphstream.stream.file.FileSource;
-
-/**
- * A tool to convert from various formats to various formats...
- * 
- * @author Guilhelm Savin
- */
-public class Convert extends Tool {
-
-	public Convert() {
-		super("convert", "", true, true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.graphstream.tool.Tool#getDomain()
+public class ToolInitializationException extends Exception {
+	/**
+	 * 
 	 */
-	public String getDomain() {
-		return "org.graphstream.tool.i18n.convert";
+	private static final long serialVersionUID = -5284040386273328613L;
+
+	public ToolInitializationException() {
+		super();
 	}
 	
-	public void run() throws ToolExecutionException {
-		FileSource source = getSource(SourceFormat.DGS);
-		FileSink sink = getSink(SinkFormat.DGS);
-		Reader input = getInput();
-		Writer output = getOutput();
-
-		source.addSink(sink);
-
-		try {
-			sink.begin(output);
-			source.begin(input);
-			while (source.nextStep())
-				;
-			source.end();
-			sink.end();
-		} catch (IOException e) {
-			throw new ToolExecutionException(e, "%s", i18n("exception:io"));
-		}
-
-		source.removeSink(sink);
+	public ToolInitializationException(String msg, Object ... args) {
+		super(String.format(msg, args));
 	}
-
-	public static void main(String... args) {
-		Convert conv = new Convert();
-		
-		ToolRunner runner = new ToolRunner(conv, args);
-		runner.addListener(conv);
-		
-		try {
-			runner.start().waitEndOfExecution();
-		} catch (InterruptedException e) {
-			// Ignore
-		}
+	
+	public ToolInitializationException(Throwable cause) {
+		super(cause);
 	}
-
+	
+	public ToolInitializationException(Throwable cause, String msg, Object ... args) {
+		super(String.format(msg, args), cause);
+	}
 }

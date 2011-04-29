@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- GraphStream strings file. This is original strings for the "gui" domain. 
+	Default language is english. @date{2011-04-29} @author{ Guilhelm Savin} -->
+<properties>
+	<!-- Extends the tool domain -->
+	<entry key="__parent__">org.graphstream.tool.i18n.tool</entry>
+
+	<!-- Error strings -->
+	<entry key="error:noinput:title">No input selected</entry>
+	<entry key="error:noinput:description">You have to select an input file.</entry>
+	<entry key="error:initialization_failed:title">Initialization failed</entry>
+	<entry key="error:execution_failed:title">Execution failed</entry>
+
+	<!-- Buttons label -->
+	<entry key="button:configuration:label">Configuration</entry>
+	<entry key="button:run:label">Run</entry>
+
+	<!-- Frames title -->
+	<entry key="frame:configuration:title">Configuration</entry>
+	<entry key="frame:configuration:paneltitle">{1} configuration</entry>
+	<entry key="frame:about:title">About</entry>
+	<entry key="frame:about:paneltitle">About {1}</entry>
+	<entry key="frame:source_options:title">Source options</entry>
+	<entry key="frame:sink_options:title">Sink options</entry>
+	
+	<!-- Misc strings -->
+	<entry key="usekeyval">Use a list of "key=value" separate by ";".</entry>
+</properties>

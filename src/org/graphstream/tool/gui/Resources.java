@@ -94,14 +94,16 @@ public class Resources {
 
 	public static final String FONT_BOLD = "org/graphstream/tool/resources/Ubuntu-B.ttf";
 	public static final String FONT_REGULAR = "org/graphstream/tool/resources/Ubuntu-R.ttf";
+	public static final String FONT_MONOSPACE = "org/graphstream/tool/resources/Ubuntu-M.ttf";
 
 	protected static Font fontBold = null;
 	protected static Font fontRegular = null;
+	protected static Font fontMonospace = null;
 
 	protected static Paint backgroundPaint;
 
 	public static enum ColorType {
-		BACKGROUND_LEFT, BACKGROUND_RIGHT, COMPONENT_BACKGROUND, COMPONENT_BACKGROUND_ALT, COMPONENT_BORDER, COMPONENT_TEXT, COMPONENT_LABEL_BACKGROUND, COMPONENT_LABEL_TEXT
+		BACKGROUND_LEFT, BACKGROUND_RIGHT, COMPONENT_BACKGROUND, COMPONENT_BACKGROUND_DISABLE, COMPONENT_BACKGROUND_ALT, COMPONENT_BORDER, COMPONENT_TEXT, COMPONENT_LABEL_BACKGROUND, COMPONENT_LABEL_TEXT
 	}
 
 	private static final EnumMap<ColorType, Color> colors;
@@ -112,6 +114,7 @@ public class Resources {
 		colors.put(ColorType.BACKGROUND_LEFT, new Color(224, 230, 237));
 		colors.put(ColorType.BACKGROUND_RIGHT, new Color(238, 238, 238));
 		colors.put(ColorType.COMPONENT_BACKGROUND, new Color(126,136,157));//74, 90, 123));
+		colors.put(ColorType.COMPONENT_BACKGROUND_DISABLE, new Color(185,196,219));
 		colors.put(ColorType.COMPONENT_BACKGROUND_ALT, new Color(52, 75, 121));
 		colors.put(ColorType.COMPONENT_BORDER, Color.BLACK);
 		colors.put(ColorType.COMPONENT_TEXT, Color.WHITE);
@@ -123,6 +126,8 @@ public class Resources {
 					.getResourceAsStream(FONT_BOLD);
 			InputStream regularInput = ToolGUI.class.getClassLoader()
 					.getResourceAsStream(FONT_REGULAR);
+			InputStream monospaceInput = ToolGUI.class.getClassLoader()
+					.getResourceAsStream(FONT_MONOSPACE);
 
 			if (boldInput == null) {
 				System.err.printf("Can not find font resource.\n");
@@ -134,13 +139,19 @@ public class Resources {
 				System.exit(1);
 			}
 
+			if (monospaceInput == null) {
+				System.err.printf("Can not find font resource.\n");
+				System.exit(1);
+			}
+
 			fontBold = Font.createFont(Font.TRUETYPE_FONT, boldInput);
 			fontRegular = Font.createFont(Font.TRUETYPE_FONT, regularInput);
+			fontMonospace = Font.createFont(Font.TRUETYPE_FONT, monospaceInput);
 			
 			UIManager.put("OptionPane.font", fontRegular.deriveFont(12.0f));
 			UIManager.put("TextPane.font", fontRegular.deriveFont(12.0f));
 			UIManager.put("TextArea.font", fontRegular.deriveFont(12.0f));
-			UIManager.put("Label.font", fontRegular.deriveFont(12.0f));
+			UIManager.put("Label.font", fontRegular.deriveFont(14.0f));
 			UIManager.put("ComboBox.font", fontRegular.deriveFont(12.0f));
 			UIManager.put("FileChooser.font", fontRegular.deriveFont(12.0f));
 			UIManager.put("Button.font", fontRegular.deriveFont(12.0f));
@@ -202,6 +213,10 @@ public class Resources {
 
 	public static Font getBoldFont(float size) {
 		return fontBold.deriveFont(size);
+	}
+
+	public static Font getMonospaceFont(float size) {
+		return fontMonospace.deriveFont(size);
 	}
 
 	public static Paint getBackgroundPaint() {

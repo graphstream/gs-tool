@@ -31,7 +31,7 @@
 package org.graphstream.tool;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.Writer;
 
 import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.graph.Graph;
@@ -55,56 +55,43 @@ public class Generate extends Tool implements ToolsCommon {
 		addOption("size", i18n("option:size"), true, ToolOption.OptionType.INT);
 		addOption("iteration", i18n("option:iteration"), true,
 				ToolOption.OptionType.INT);
-		addOption("delay", i18n("option:delay"), true, ToolOption.OptionType.INT);
-		addOption("export", i18n("option:export"), true, ToolOption.OptionType.FLAG);
-		addOption("force", i18n("option:force"), true, ToolOption.OptionType.FLAG);
+		addOption("delay", i18n("option:delay"), true,
+				ToolOption.OptionType.INT);
+		addOption("export", i18n("option:export"), true,
+				ToolOption.OptionType.FLAG);
+		addOption("force", i18n("option:force"), true,
+				ToolOption.OptionType.FLAG);
 
 		setShortcuts(shortcuts);
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.graphstream.tool.Tool#getDomain()
 	 */
 	public String getDomain() {
 		return "org.graphstream.tool.i18n.generate";
 	}
 
-	public boolean check() {
-		if (!super.check())
-			return false;
+	public void check() throws ToolInitializationException {
+		super.check();
 
 		int size = getIntOption("size", 0);
 		int iteration = getIntOption("iteration", 0);
 		boolean export = getFlagOption("export");
 		boolean force = getFlagOption("force");
 
-		if (size == 0 && iteration == 0 && !force) {
-			err.printf("%s\n", i18n("error:infinite"));
-
-			if (exitOnFailed)
-				System.exit(1);
-
-			return false;
-		}
+		if (size == 0 && iteration == 0 && !force)
+			throw new ToolInitializationException(i18n("error:infinite"));
 
 		if (!export && !getSinkFormat(SinkFormat.DGS).hasDynamicSupport()
-				&& !force) {
-			err.printf(
-					"%s\n",
-					i18n("error:not_dynamics", getSinkFormat(SinkFormat.DGS)
-							.name()));
-
-			if (exitOnFailed)
-				System.exit(1);
-
-			return false;
-		}
-
-		return true;
+				&& !force)
+			throw new ToolInitializationException(i18n("error:not_dynamics",
+					getSinkFormat(SinkFormat.DGS).name()));
 	}
 
-	public void run() {
+	public void run() throws ToolExecutionException {
 		int size = 0;
 		long delay = 0;
 		int iteration = 0;
@@ -119,7 +106,7 @@ public class Generate extends Tool implements ToolsCommon {
 		int ite = 0;
 
 		FileSink sink = getSink(SinkFormat.DGS);
-		OutputStream out = getOutput();
+		Writer out = getOutput();
 		Generator gen = getGenerator(GeneratorType.BARABASI_ALBERT);
 		ElementCounter counter = new ElementCounter();
 		Graph exportGraph = null;
@@ -135,8 +122,7 @@ public class Generate extends Tool implements ToolsCommon {
 			try {
 				sink.begin(out);
 			} catch (IOException e1) {
-				err.printf(i18n("exception:io"));
-				System.exit(1);
+				throw new ToolExecutionException(e1, i18n("exception:io"));
 			}
 		}
 
@@ -175,15 +161,21 @@ public class Generate extends Tool implements ToolsCommon {
 				sink.end();
 			}
 		} catch (IOException e) {
-			err.printf(i18n("exception:io"));
-			System.exit(1);
+			throw new ToolExecutionException(e, i18n("exception:io"));
 		}
 	}
 
 	public static void main(String... args) {
 		Generate gen = new Generate();
-		gen.init(args);
-		gen.run();
+		
+		ToolRunner runner = new ToolRunner(gen, args);
+		runner.addListener(gen);
+		
+		try {
+			runner.start().waitEndOfExecution();
+		} catch (InterruptedException e) {
+			// Ignore
+		}
 	}
 
 	private static final String[][] shortcuts = {
@@ -201,7 +193,8 @@ public class Generate extends Tool implements ToolsCommon {
 	private static class ElementCounter implements ElementSink {
 
 		int nodes = 0;
-		int edges = 0;
+
+		// int edges = 0;
 
 		public int getNodeCount() {
 			return nodes;
@@ -220,16 +213,16 @@ public class Generate extends Tool implements ToolsCommon {
 
 		public void edgeAdded(String sourceId, long timeId, String edgeId,
 				String fromNodeId, String toNodeId, boolean directed) {
-			edges++;
+			// edges++;
 		}
 
 		public void edgeRemoved(String sourceId, long timeId, String edgeId) {
-			edges--;
+			// edges--;
 		}
 
 		public void graphCleared(String sourceId, long timeId) {
 			nodes = 0;
-			edges = 0;
+			// edges = 0;
 		}
 
 		public void stepBegins(String sourceId, long timeId, double step) {

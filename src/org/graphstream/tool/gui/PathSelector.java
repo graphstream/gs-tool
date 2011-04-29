@@ -47,6 +47,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.graphstream.tool.gui.Resources.ColorType;
+
 public class PathSelector extends JPanel {
 	/**
 	 * 
@@ -55,7 +57,7 @@ public class PathSelector extends JPanel {
 
 	JTextField path;
 	IconButton find;
-	//JComponent label;
+	// JComponent label;
 	int labelWidth;
 	int available;
 	int loaded;
@@ -77,7 +79,7 @@ public class PathSelector extends JPanel {
 	public String getPath() {
 		return path.getText();
 	}
-	
+
 	public void initLoadProgress(int available) {
 		this.available = available;
 		this.loaded = 100;
@@ -91,7 +93,7 @@ public class PathSelector extends JPanel {
 
 		GridBagConstraints c = new GridBagConstraints();
 
-		//label = l;
+		// label = l;
 
 		path = new JTextField(30);
 		find = createIconButton(IconButton.Type.FIND, 28, null,
@@ -168,8 +170,10 @@ public class PathSelector extends JPanel {
 
 			g.fillRoundRect(getWidth() - 15, 0, 14, getHeight() - 1, 7, 7);
 		} else {
-			g.setColor(Resources
-					.getColor(Resources.ColorType.COMPONENT_BACKGROUND));
+			ColorType t = ColorType.COMPONENT_BACKGROUND;
+					//: ColorType.COMPONENT_BACKGROUND_DISABLE;
+
+			g.setColor(Resources.getColor(t));
 			g.fillRect(s, 0, width, getHeight() - 1);
 			g.fillRoundRect(getWidth() - 15, 0, 14, getHeight() - 1, 7, 7);
 		}

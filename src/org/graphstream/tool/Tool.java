@@ -31,11 +31,13 @@
 package org.graphstream.tool;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -57,7 +59,8 @@ import org.graphstream.tool.i18n.I18nSupport;
  * @author Guilhelm Savin
  * 
  */
-public abstract class Tool implements ToolsCommon, I18nSupport {
+public abstract class Tool implements ToolsCommon, I18nSupport,
+		ToolRunnerListener {
 	/*
 	 * Shared shortcuts.
 	 */
@@ -101,10 +104,6 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 * Stream used to push errors.
 	 */
 	protected PrintStream err;
-	/**
-	 * Define if the tool should exit when an error occured.
-	 */
-	protected boolean exitOnFailed;
 
 	/**
 	 * The i18n bundle used in this tool.
@@ -118,12 +117,12 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	/**
 	 * The default input used if no source has been given.
 	 */
-	protected InputStream defaultInput;
+	protected Reader defaultInput;
 
 	/**
 	 * The default output used if no sink has been given.
 	 */
-	protected OutputStream defaultOutput;
+	protected Writer defaultOutput;
 
 	public Tool(String name, String description, boolean input, boolean output) {
 		this.name = name;
@@ -133,11 +132,10 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 		this.err = System.err;
 		this.nonOptions = 0;
 		this.allowedOptions = new HashMap<String, ToolOption>();
-		this.exitOnFailed = true;
 		this.locale = Locale.getDefault();
 		this.i18n = I18n.load(this);
-		this.defaultInput = System.in;
-		this.defaultOutput = System.out;
+		this.defaultInput = new InputStreamReader(System.in);
+		this.defaultOutput = new OutputStreamWriter(System.out);
 
 		if (input)
 			addSourceOption();
@@ -234,8 +232,12 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 * @param err
 	 *            the new error stream
 	 */
-	protected void setErr(PrintStream err) {
+	public void setErr(PrintStream err) {
 		this.err = err;
+	}
+
+	public PrintStream getErr() {
+		return err;
 	}
 
 	/**
@@ -357,7 +359,7 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 * @param args
 	 *            the args to parse
 	 */
-	public void init(String... args) {
+	public void init(String... args) throws ToolInitializationException {
 		options = new ToolOption.ParsedOptions();
 
 		if (shortcuts != null)
@@ -494,23 +496,23 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 * 
 	 * @return the input of the program.
 	 */
-	public InputStream getInput() {
+	public Reader getInput() throws ToolExecutionException {
 		if (options.contains(SOURCE_KEY)) {
 			String url = options.get(SOURCE_KEY);
 
 			try {
-				InputStream in = Tools.getFileOrUrlAsStream(url);
+				Reader in = Tools.getFileOrUrlAsStream(url);
 				return in;
 			} catch (FileNotFoundException e) {
-				err.printf("%s\n", i18n("exception:file_not_found", url));
-				System.exit(1);
+				throw new ToolExecutionException(e, i18n(
+						"exception:file_not_found", url));
 			}
 		}
 
 		return defaultInput;
 	}
 
-	public void setDefaultInput(InputStream input) {
+	public void setDefaultInput(Reader input) {
 		this.defaultInput = input;
 	}
 
@@ -519,22 +521,25 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 * 
 	 * @return the output of the program.
 	 */
-	public OutputStream getOutput() {
+	public Writer getOutput() throws ToolExecutionException {
 		if (options.contains(SINK_KEY)) {
 			String path = options.get(SINK_KEY);
 
 			try {
-				return new FileOutputStream(path);
+				return new FileWriter(path);
 			} catch (FileNotFoundException e) {
-				err.printf("%s\n", i18n("exception:file_not_found", path));
-				System.exit(1);
+				throw new ToolExecutionException(e, i18n(
+						"exception:file_not_found", path));
+			} catch (IOException e) {
+				throw new ToolExecutionException(e, i18n(
+						"exception:io"));
 			}
 		}
 
 		return defaultOutput;
 	}
 
-	public void setDefaultOutput(OutputStream output) {
+	public void setDefaultOutput(Writer output) {
 		this.defaultOutput = output;
 	}
 
@@ -543,7 +548,7 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 * 
 	 * @return the stylesheet or ""
 	 */
-	public String getStyleSheet() {
+	public String getStyleSheet() throws ToolExecutionException {
 		if (options.contains(STYLESHEET_KEY)) {
 			String css = options.get(STYLESHEET_KEY);
 
@@ -553,8 +558,7 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 			} catch (FileNotFoundException e) {
 				// Ignore
 			} catch (IOException e) {
-				err.printf("%s\n", i18n("error:get_stylesheet"));
-				System.exit(1);
+				throw new ToolExecutionException(i18n("error:get_stylesheet"));
 			}
 
 			return css;
@@ -661,34 +665,21 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 	 * 
 	 * @return true if the check success.
 	 */
-	public boolean check() {
+	public void check() throws ToolInitializationException {
 		for (String key : options) {
-			if (!allowedOptions.containsKey(key)) {
-				err.printf("%s\n", i18n("error:unknown_option", key));
-
-				if (exitOnFailed)
-					System.exit(1);
-
-				return false;
-			}
+			if (!allowedOptions.containsKey(key))
+				throw new ToolInitializationException("%s\n", i18n(
+						"error:unknown_option", key));
 		}
 
 		for (ToolOption opt : allowedOptions.values()) {
 			switch (options.check(opt)) {
 			case INVALID:
-				err.printf("%s\n", i18n("error:invalid_option", opt.key));
-
-				if (exitOnFailed)
-					System.exit(1);
-
-				return false;
+				throw new ToolInitializationException(i18n(
+						"error:invalid_option", opt.key));
 			case MISSING:
-				err.printf("%s\n", i18n("error:missing_option", opt.key));
-
-				if (exitOnFailed)
-					System.exit(1);
-
-				return false;
+				throw new ToolInitializationException(i18n(
+						"error:missing_option", opt.key));
 			case HELP:
 				if (opt instanceof ToolEnumOption)
 					Tools.printChoice(System.out,
@@ -698,22 +689,15 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 		}
 
 		if (!options.checkNotOptions(nonOptions)) {
-			err.printf("%s.\n", i18n("error:bad_arg_count"));
 			usage(err);
-
-			if (exitOnFailed)
-				System.exit(1);
-
-			return false;
+			throw new ToolInitializationException(i18n("error:bad_arg_count"));
 		}
-
-		return true;
 	}
 
 	/**
 	 * Tools have to define this method. It defines the action of the tool.
 	 */
-	public abstract void run();
+	public abstract void run() throws ToolExecutionException;
 
 	/**
 	 * Print usage of this tool on a stream.
@@ -750,5 +734,23 @@ public abstract class Tool implements ToolsCommon, I18nSupport {
 			for (int i = 0; i < shortcuts.length; i++)
 				out.printf(format, shortcuts[i][0], shortcuts[i][1]);
 		}
+	}
+	
+	public void executionStart(Tool t) {
+		// Nothing to do.
+	}
+	
+	public void initializationFailed(Tool t, ToolInitializationException e) {
+		err.printf("%s.\n", e.getMessage());
+		System.exit(1);
+	}
+	
+	public void executionFailed(Tool t, ToolExecutionException e) {
+		err.printf("%s.\n", e.getMessage());
+		System.exit(1);
+	}
+	
+	public void executionSuccess(Tool t) {
+		// Nothing to do.
 	}
 }
