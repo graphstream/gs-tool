@@ -22,9 +22,9 @@
 	<entry key="option:force">force prohibited actions</entry>
 
 	<!-- Error strings -->
-	<entry key="error:infinite">Neither --size or --iteration have been defined.\nAdd
-		--force to bypass this protection.</entry>
-	<entry key="error:not_dynamic">The format \"{1}\" is not dynamic. Use --export to
-		export the whole at the end of the generation or use --force to force
+	<entry key="error:infinite">Neither 'size' option or 'iteration' option have been defined.\nAdd
+		'force' option to bypass this protection.</entry>
+	<entry key="error:not_dynamic">The format \"{1}\" is not dynamic. Use 'export' option to
+		export the whole at the end of the generation or use 'force' option to force
 		the dynamic generation.</entry>
 </properties>

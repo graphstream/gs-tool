@@ -71,7 +71,7 @@ public class MainTitledPanel extends JPanel {
 		TitleLabel title = new TitleLabel(t);
 
 		c.weightx = 1.0;
-		c.gridwidth = 1;
+		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridheight = 1;
 		c.gridx = 1;
 		c.gridy = 0;

@@ -41,18 +41,21 @@ import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.graphstream.tool.ToolGUI;
 import org.graphstream.tool.ToolOption;
 import org.graphstream.tool.ToolsCommon;
+import org.graphstream.tool.i18n.I18n;
 
 public class ConfigurationPanel extends JDialog implements ToolsCommon {
 	/**
@@ -68,7 +71,8 @@ public class ConfigurationPanel extends JDialog implements ToolsCommon {
 	HashMap<String, OptionSetter> setters;
 
 	public ConfigurationPanel(Frame frame, boolean modal, String dialogTitle,
-			String panelTitle, ToolOption[] options, int maxWidth) {
+			String panelTitle, ResourceBundle strings, ToolOption[] options,
+			int maxWidth) {
 		super(frame, dialogTitle, modal);
 
 		this.options = new HashMap<String, ToolOption>();
@@ -95,17 +99,30 @@ public class ConfigurationPanel extends JDialog implements ToolsCommon {
 
 		GridBagConstraints c = new GridBagConstraints();
 
+		JLabel l = new JLabel(String.format("%s:",
+				I18n._(strings, "configuration:available_options")));
+
+		c.fill = GridBagConstraints.NONE;
+		c.gridwidth = 1;
+		c.weightx = 0.0;
+		c.weighty = 0.0;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.insets = new Insets(0, 5, 0, 5);
+
+		add(l, c);
+
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 1;
 		c.weightx = 1.0;
 		c.weighty = 0.0;
-		c.gridx = 1;
+		c.gridx = 2;
 		c.gridy = 1;
 		c.insets = new Insets(2, 5, 2, 5);
 
 		add(keySelection, c);
 
-		c.gridx = 2;
+		c.gridx = 3;
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.0;
 		c.insets = new Insets(1, 1, 1, 1);
@@ -123,7 +140,7 @@ public class ConfigurationPanel extends JDialog implements ToolsCommon {
 		scroller.setOpaque(false);
 		scroller.getViewport().setOpaque(false);
 
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		c.gridx = 1;
 		c.gridy = 2;
 		c.fill = GridBagConstraints.BOTH;
@@ -165,7 +182,7 @@ public class ConfigurationPanel extends JDialog implements ToolsCommon {
 
 		return args;
 	}
-	
+
 	class AddOptionAction extends AbstractAction {
 		/**
 		 * 

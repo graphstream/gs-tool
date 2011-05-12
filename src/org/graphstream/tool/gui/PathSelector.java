@@ -85,6 +85,10 @@ public class PathSelector extends JPanel {
 		this.loaded = 100;
 	}
 
+	public void setFindToolTipText(String tt) {
+		find.setToolTipText(tt);
+	}
+	
 	protected void init(JComponent... l) {
 		setLayout(new GridBagLayout());
 

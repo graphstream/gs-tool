@@ -3,9 +3,6 @@
 <!-- GraphStream strings file. This is original strings for the "gui" domain. 
 	Default language is english. @date{2011-04-29} @author{ Guilhelm Savin} -->
 <properties>
-	<!-- Extends the tool domain -->
-	<entry key="__parent__">org.graphstream.tool.i18n.tool</entry>
-
 	<!-- Error strings -->
 	<entry key="error:noinput:title">Pas de source sélectionnée</entry>
 	<entry key="error:noinput:description">Vous devez sélectionner un fichier source.</entry>
@@ -26,4 +23,17 @@
 	
 	<!-- Misc strings -->
 	<entry key="usekeyval">Utiliser une liste de "clef=valeur" séparés par ";".</entry>
+	<entry key="configuration:available_options">Options disponibles</entry>
+	
+	<!-- Tips -->
+	<entry key="tips:about">Affiche la description de l'outil</entry>
+	<entry key="tips:run">Exécute l'outil à partir des options qui ont été définies</entry>
+	<entry key="tips:configuration">Ouvre la fenêtre de configuration</entry>
+	<entry key="tips:add_option">Ajoute une option</entry>
+	<entry key="tips:choose_source">Défini la source qui sera utilisée par l'outil</entry>
+	<entry key="tips:choose_sink">Défini la sink qui sera utilisée par l'outil</entry>
+	<entry key="tips:configure_source">Configure la source</entry>
+	<entry key="tips:configure_sink">Configure la sink</entry>
+	<entry key="tips:choose_source_format">Selectionne le format de la source</entry>
+	<entry key="tips:choose_sink_format">Selectionne le format de sortie</entry>
 </properties>

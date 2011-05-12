@@ -35,6 +35,7 @@ import java.io.Reader;
 
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSource;
+import org.graphstream.ui.swingViewer.Viewer;
 
 public class Player extends Tool {
 
@@ -50,7 +51,7 @@ public class Player extends Tool {
 		addOption("antialiasing", i18n("option:antialiasing"), true,
 				ToolOption.OptionType.FLAG);
 		addOption("stepDelay", i18n("option:step_delay"), true,
-				ToolOption.OptionType.FLAG);
+				ToolOption.OptionType.INT);
 		addOption("autolayout", i18n("option:autolayout"), true,
 				ToolOption.OptionType.FLAG);
 
@@ -115,7 +116,8 @@ public class Player extends Tool {
 		if (stylesheet != null)
 			g.addAttribute("ui.stylesheet", stylesheet);
 
-		g.display(autolayout);
+		Viewer v = g.display(autolayout);
+		v.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER);
 
 		try {
 			source.begin(in);

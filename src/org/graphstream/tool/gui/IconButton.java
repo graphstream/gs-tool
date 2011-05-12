@@ -114,7 +114,7 @@ public class IconButton extends JLabel implements MouseListener {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (action != null) {
+		if (action != null && IconButton.this.isEnabled()) {
 			ActionEvent ae = new ActionEvent(this, eventId++, command);
 			action.actionPerformed(ae);
 		}

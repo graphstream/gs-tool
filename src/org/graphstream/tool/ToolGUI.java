@@ -62,6 +62,7 @@ import org.graphstream.tool.gui.ConfigurationPanel;
 import org.graphstream.tool.gui.IconButton;
 import org.graphstream.tool.gui.MainTitledPanel;
 import org.graphstream.tool.gui.PathSelector;
+import org.graphstream.tool.gui.ReaderFromWindow;
 import org.graphstream.tool.gui.Resources;
 import org.graphstream.tool.gui.WriterToWindow;
 import org.graphstream.tool.i18n.I18n;
@@ -153,6 +154,8 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 		IconButton about = createIconButton(IconButton.Type.ABOUT, 28, null,
 				new ShowAboutAction());
 
+		about.setToolTipText(i18n("tips:about"));
+
 		c.weightx = 0.0;
 		c.weighty = 1.0;
 		c.gridwidth = 1;
@@ -161,7 +164,7 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 		c.gridy = 0;
 		c.insets = new Insets(10, 5, 15, 5);
 		c.fill = GridBagConstraints.NONE;
-		c.anchor = GridBagConstraints.NORTH;
+		c.anchor = GridBagConstraints.NORTHEAST;
 
 		add(about, c);
 
@@ -170,8 +173,14 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 		IconButton sink = createIconButton(IconButton.Type.SINK, 30, null,
 				new SetSinkOptionsAction());
 
+		source.setToolTipText(i18n("tips:configure_source"));
+		sink.setToolTipText(i18n("tips:configure_sink"));
+
 		JComboBox sourceFormats = new JComboBox(SourceFormat.values());
 		JComboBox sinkFormats = new JComboBox(SinkFormat.values());
+
+		sourceFormats.setToolTipText(i18n("tips:choose_source_format"));
+		sinkFormats.setToolTipText(i18n("tips:choose_sink_format"));
 
 		this.sourceFormat = sourceFormats.getModel();
 		this.sinkFormat = sinkFormats.getModel();
@@ -187,6 +196,9 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 
 		inputSelector = new PathSelector(source, sourceFormats);
 		outputSelector = new PathSelector(sink, sinkFormats);
+
+		inputSelector.setFindToolTipText(i18n("tips:choose_source"));
+		outputSelector.setFindToolTipText(i18n("tips:choose_sink"));
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 2;
@@ -210,6 +222,9 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 		IconButton config = createIconButton(IconButton.Type.CONFIG, 24,
 				i18n("button:configuration:label"),
 				new ShowConfigurationPanelAction());
+
+		run.setToolTipText(i18n("tips:run"));
+		config.setToolTipText(i18n("tips:configuration"));
 
 		bottomButtons.add(run);
 		bottomButtons.add(config);
@@ -272,7 +287,7 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 		return new ConfigurationPanel(frame, false,
 				i18n("frame:configuration:title"), i18n(
 						"frame:configuration:paneltitle", tool.getName()),
-				optionsArray, maxWidth);
+				i18n, optionsArray, maxWidth);
 	}
 
 	public JFrame display() {
@@ -340,6 +355,24 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 	 */
 	public void executionSuccess(Tool t) {
 		setToolGUIEnabled(true);
+	}
+
+	protected void setToolGUIEnabled(boolean on) {
+		setEnabled(on);
+		LinkedList<Component> components = new LinkedList<Component>();
+		components.add(this);
+
+		while (components.size() > 0) {
+			Component c = components.poll();
+			c.setEnabled(on);
+
+			if (c instanceof Container) {
+				Container cont = (Container) c;
+
+				for (int i = 0; i < cont.getComponentCount(); i++)
+					components.add(cont.getComponent(i));
+			}
+		}
 	}
 
 	class ShowConfigurationPanelAction extends AbstractAction {
@@ -420,11 +453,14 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 		private static final long serialVersionUID = -6986878124049013848L;
 
 		public void actionPerformed(ActionEvent e) {
-			if (tool.hasInput && inputSelector.getPath().length() == 0) {
+			if (false && tool.hasInput && inputSelector.getPath().length() == 0) {
 				error(i18n("error:noinput:title"),
 						i18n("error:noinput:description"));
 				return;
 			}
+
+			if (tool.hasInput && inputSelector.getPath().length() == 0)
+				tool.setDefaultInput(new ReaderFromWindow(300, 200));
 
 			if (tool.hasOutput && outputSelector.getPath().length() == 0)
 				tool.setDefaultOutput(new WriterToWindow(true, 300, 200));
@@ -432,7 +468,10 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 			LinkedList<String> args = new LinkedList<String>();
 
 			if (tool.hasInput) {
-				args.add(String.format("--source=%s", inputSelector.getPath()));
+				if (inputSelector.getPath().length() > 0)
+					args.add(String.format("--source=%s",
+							inputSelector.getPath()));
+
 				args.add(String.format("--source-format=%s",
 						sourceFormat.getSelectedItem()));
 
@@ -498,52 +537,36 @@ public class ToolGUI extends MainTitledPanel implements ToolsCommon,
 		}
 	}
 
+	public static enum ToolType {
+		GENERATE, CONVERT, PLAYER
+	}
+
 	public static void main(String... args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				boolean showUiKeys = false;
+				ToolType tt = (ToolType) JOptionPane.showInputDialog(null,
+						"Choose tool type:", "GraphStream Tool",
+						JOptionPane.QUESTION_MESSAGE, null, ToolType.values(),
+						ToolType.GENERATE);
 
-				if (showUiKeys) {
-					java.util.Enumeration<?> keys = javax.swing.UIManager
-							.getDefaults().keys();
-					LinkedList<String> strings = new LinkedList<String>();
-					while (keys.hasMoreElements()) {
-						Object key = keys.nextElement();
-						strings.add(key.toString());
+				if (tt != null) {
+					Tool t = null;
+
+					switch (tt) {
+					case GENERATE:
+						t = new Generate();
+						break;
+					case CONVERT:
+						t = new Convert();
+						break;
+					case PLAYER:
+						t = new Player();
+						break;
 					}
-
-					java.util.Collections.sort(strings);
-
-					for (int i = 0; i < strings.size(); i++)
-						if (strings.get(i).matches(".*disable.*"))
-							System.out.printf(
-									"+ %s : %s\n",
-									strings.get(i),
-									javax.swing.UIManager.getDefaults().get(
-											strings.get(i)));
+					ToolGUI gui = new ToolGUI(t);
+					gui.display();
 				}
-
-				ToolGUI gui = new ToolGUI(new Generate());
-				gui.display();
 			}
 		});
-	}
-
-	protected void setToolGUIEnabled(boolean on) {
-		setEnabled(on);
-		LinkedList<Component> components = new LinkedList<Component>();
-		components.add(this);
-
-		while (components.size() > 0) {
-			Component c = components.poll();
-			c.setEnabled(on);
-
-			if (c instanceof Container) {
-				Container cont = (Container) c;
-
-				for (int i = 0; i < cont.getComponentCount(); i++)
-					components.add(cont.getComponent(i));
-			}
-		}
 	}
 }

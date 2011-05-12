@@ -92,9 +92,9 @@ public class Resources {
 	public static final String ADD_ON = "org/graphstream/tool/resources/add_on.png";
 	public static final String ADD_CLICK = "org/graphstream/tool/resources/add_click.png";
 
-	public static final String FONT_BOLD = "org/graphstream/tool/resources/Ubuntu-B.ttf";
-	public static final String FONT_REGULAR = "org/graphstream/tool/resources/Ubuntu-R.ttf";
-	public static final String FONT_MONOSPACE = "org/graphstream/tool/resources/Ubuntu-M.ttf";
+	public static final String FONT_B = "org/graphstream/tool/resources/Ubuntu-B.ttf";
+	public static final String FONT_R = "org/graphstream/tool/resources/Ubuntu-R.ttf";
+	public static final String FONT_M = "org/graphstream/tool/resources/VeraMono.ttf";
 
 	protected static Font fontBold = null;
 	protected static Font fontRegular = null;
@@ -123,11 +123,11 @@ public class Resources {
 
 		try {
 			InputStream boldInput = ToolGUI.class.getClassLoader()
-					.getResourceAsStream(FONT_BOLD);
+					.getResourceAsStream(FONT_B);
 			InputStream regularInput = ToolGUI.class.getClassLoader()
-					.getResourceAsStream(FONT_REGULAR);
+					.getResourceAsStream(FONT_R);
 			InputStream monospaceInput = ToolGUI.class.getClassLoader()
-					.getResourceAsStream(FONT_MONOSPACE);
+					.getResourceAsStream(FONT_M);
 
 			if (boldInput == null) {
 				System.err.printf("Can not find font resource.\n");

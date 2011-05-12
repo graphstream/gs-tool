@@ -26,4 +26,17 @@
 	
 	<!-- Misc strings -->
 	<entry key="usekeyval">Use a list of "key=value" separate by ";".</entry>
+	<entry key="configuration:available_options">Available options</entry>
+	
+	<!-- Tips -->
+	<entry key="tips:about">Show the description of this tool</entry>
+	<entry key="tips:run">Run the tool with options that have been defined</entry>
+	<entry key="tips:configuration">Open the configuration window</entry>
+	<entry key="tips:add_option">Add an option</entry>
+	<entry key="tips:choose_source">Choose the source that will be used by the tool</entry>
+	<entry key="tips:choose_sink">Choose the sink where output will be writen by the tool</entry>
+	<entry key="tips:configure_source">Configure the source</entry>
+	<entry key="tips:configure_sink">Configure the sink</entry>
+	<entry key="tips:choose_source_format">Select format of the input stream</entry>
+	<entry key="tips:choose_sink_format">Select format of the output stream</entry>
 </properties>
