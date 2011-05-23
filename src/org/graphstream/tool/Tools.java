@@ -156,9 +156,9 @@ public class Tools implements ToolsCommon {
 			String prefix = "";
 			FileSinkImages.OutputType outputType = FileSinkImages.OutputType.JPG;
 			FileSinkImages.Resolution resolution = FileSinkImages.Resolutions.VGA;
-			FileSinkImages.OutputPolicy policy = FileSinkImages.OutputPolicy.ByStepOutput;
+			FileSinkImages.OutputPolicy policy = FileSinkImages.OutputPolicy.BY_STEP;
 			FileSinkImages.Quality quality = FileSinkImages.Quality.MEDIUM;
-			FileSinkImages.LayoutPolicy layout = FileSinkImages.LayoutPolicy.NoLayout;
+			FileSinkImages.LayoutPolicy layout = FileSinkImages.LayoutPolicy.NO_LAYOUT;
 			String stylesheet = null;
 			int spf = -1;
 			int sas = -1;
